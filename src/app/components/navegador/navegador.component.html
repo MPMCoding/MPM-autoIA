@@ -53,11 +53,9 @@
     </div>
   </div>
   
-  <div class="webview-container">
-    <!-- Webview do Electron - Sempre visível agora -->
-    <webview #webview src="https://www.google.com" style="width:100%; height:500px; display:block; border:0;"></webview>
-    
-    <!-- Removido o fallback que estava causando problemas -->
+  <!-- Abordagem alternativa usando iframe em vez de webview -->
+  <div class="browser-container" style="width:100%; height:500px; border:1px solid #ccc; overflow:hidden;">
+    <iframe #browserFrame [src]="safeUrl" style="width:100%; height:100%; border:none;"></iframe>
   </div>
   
   <!-- Status da automação -->
