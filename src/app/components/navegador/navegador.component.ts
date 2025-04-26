@@ -8,17 +8,17 @@ import { ElectronService } from '../../services/electron.service';
   styleUrls: ['./navegador.component.scss']
 })
 export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('browserContainer') browserContainerRef: ElementRef;
+  @ViewChild('browserContainer') browserContainerRef!: ElementRef;
   
   url: string = '';
-  safeUrl: SafeResourceUrl;
+  safeUrl: SafeResourceUrl = '' as SafeResourceUrl;
   isElectron: boolean = true;
   browserHistory: string[] = [];
   currentHistoryIndex: number = -1;
   isAutomationRunning: boolean = false;
   isAutomationPaused: boolean = false;
   automationOutput: string = '';
-  resizeObserver: ResizeObserver;
+  resizeObserver: ResizeObserver | null = null;
   
   constructor(
     private electronService: ElectronService,
@@ -67,8 +67,13 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setupIpcListeners() {
+    if (!this.electronService.ipcRenderer) {
+      console.error('ipcRenderer não está disponível');
+      return;
+    }
+
     // Listener para receber a URL atual do BrowserView
-    this.electronService.ipcRenderer.on('current-url', (event, url) => {
+    this.electronService.ipcRenderer.on('current-url', (event: any, url: string) => {
       this.ngZone.run(() => {
         this.url = url;
         this.cdr.detectChanges();
@@ -76,7 +81,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     
     // Listener para quando a página é carregada
-    this.electronService.ipcRenderer.on('browser-page-loaded', (event, url) => {
+    this.electronService.ipcRenderer.on('browser-page-loaded', (event: any, url: string) => {
       this.ngZone.run(() => {
         this.url = url;
         this.cdr.detectChanges();
@@ -84,7 +89,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     
     // Listener para erros de navegação
-    this.electronService.ipcRenderer.on('browser-error', (event, data) => {
+    this.electronService.ipcRenderer.on('browser-error', (event: any, data: any) => {
       console.error('Erro de navegação:', data);
     });
     
@@ -95,7 +100,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     
     // Listeners para status da automação
-    this.electronService.ipcRenderer.on('automation-status', (event, data) => {
+    this.electronService.ipcRenderer.on('automation-status', (event: any, data: any) => {
       this.ngZone.run(() => {
         console.log('Status da automação:', data);
         
@@ -116,7 +121,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     
     // Listener para saída da automação
-    this.electronService.ipcRenderer.on('automation-output', (event, data) => {
+    this.electronService.ipcRenderer.on('automation-output', (event: any, data: any) => {
       this.ngZone.run(() => {
         this.automationOutput += data.data + '\n';
         this.cdr.detectChanges();
@@ -125,7 +130,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initializeBrowserView() {
-    if (this.isElectron) {
+    if (this.isElectron && this.electronService.ipcRenderer) {
       console.log('Solicitando inicialização do BrowserView');
       this.electronService.ipcRenderer.send('initialize-browser-view');
     }
@@ -150,7 +155,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateBrowserViewBounds() {
-    if (!this.isElectron || !this.browserContainerRef || !this.browserContainerRef.nativeElement) {
+    if (!this.isElectron || !this.browserContainerRef || !this.browserContainerRef.nativeElement || !this.electronService.ipcRenderer) {
       return;
     }
     
@@ -176,7 +181,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     
     this.url = url;
     
-    if (this.isElectron) {
+    if (this.isElectron && this.electronService.ipcRenderer) {
       // Envia a URL para o processo principal carregar no BrowserView
       this.electronService.ipcRenderer.send('navigate-to-url', url);
       
@@ -195,7 +200,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    if (this.isElectron) {
+    if (this.isElectron && this.electronService.ipcRenderer) {
       this.electronService.ipcRenderer.send('browser-back');
     } else if (this.currentHistoryIndex > 0) {
       this.currentHistoryIndex--;
@@ -205,7 +210,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goForward() {
-    if (this.isElectron) {
+    if (this.isElectron && this.electronService.ipcRenderer) {
       this.electronService.ipcRenderer.send('browser-forward');
     } else if (this.currentHistoryIndex < this.browserHistory.length - 1) {
       this.currentHistoryIndex++;
@@ -215,7 +220,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   reload() {
-    if (this.isElectron) {
+    if (this.isElectron && this.electronService.ipcRenderer) {
       this.electronService.ipcRenderer.send('browser-reload');
     } else {
       this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
@@ -226,19 +231,19 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startAutomation() {
-    if (this.isElectron && !this.isAutomationRunning) {
+    if (this.isElectron && !this.isAutomationRunning && this.electronService.ipcRenderer) {
       this.electronService.ipcRenderer.send('start-automation');
     }
   }
 
   stopAutomation() {
-    if (this.isElectron && this.isAutomationRunning) {
+    if (this.isElectron && this.isAutomationRunning && this.electronService.ipcRenderer) {
       this.electronService.ipcRenderer.send('stop-automation');
     }
   }
 
   pauseResumeAutomation() {
-    if (this.isElectron && this.isAutomationRunning) {
+    if (this.isElectron && this.isAutomationRunning && this.electronService.ipcRenderer) {
       this.electronService.ipcRenderer.send('pause-automation');
     }
   }

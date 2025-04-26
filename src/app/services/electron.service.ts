@@ -6,6 +6,15 @@ interface ElectronAPI {
   getAutomationPort: () => number;
   getActivities: () => Promise<any[]>;
   platform: string;
+  isElectron: boolean;
+}
+
+// Interface para o IPC Renderer
+interface IpcRenderer {
+  on: (channel: string, listener: (event: any, ...args: any[]) => void) => void;
+  send: (channel: string, ...args: any[]) => void;
+  removeListener: (channel: string, listener: Function) => void;
+  removeAllListeners: (channel: string) => void;
 }
 
 @Injectable({
@@ -13,16 +22,19 @@ interface ElectronAPI {
 })
 export class ElectronService {
   private _electron: ElectronAPI | null = null;
+  private _ipcRenderer: IpcRenderer | null = null;
 
   constructor() {
     // Verifica se estamos rodando no Electron
     if (this.isElectronApp()) {
       try {
         this._electron = (window as any).electron;
+        this._ipcRenderer = (window as any).electron.ipcRenderer;
         console.log('Electron inicializado com sucesso');
       } catch (error) {
         console.error('Erro ao inicializar Electron:', error);
         this._electron = null;
+        this._ipcRenderer = null;
       }
     }
   }
@@ -50,6 +62,11 @@ export class ElectronService {
       console.error('Erro ao verificar ambiente Electron:', error);
       return false;
     }
+  }
+
+  // Acesso ao IPC Renderer
+  get ipcRenderer(): IpcRenderer | null {
+    return this._ipcRenderer;
   }
 
   // Retorna a porta configurada para a automação
