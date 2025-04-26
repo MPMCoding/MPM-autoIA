@@ -7,6 +7,8 @@ import subprocess
 from tkinter import ttk, scrolledtext, messagebox, filedialog
 import google.generativeai as genai
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service # Importar Service
+from webdriver_manager.chrome import ChromeDriverManager # Importar ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -15,7 +17,7 @@ from PIL import Image, ImageTk
 from io import BytesIO
 
 # Logo SVG do MPM AutoIA (azul em fundo branco, seguindo o estilo do codigoexemplo.html)
-MPM_LOGO_SVG = '''
+MPM_LOGO_SVG = """
 <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
   <style>
     .text { font: bold 20px sans-serif; fill: #1a56db; }
@@ -28,12 +30,12 @@ MPM_LOGO_SVG = '''
   <path class="circuit" d="M30,60 L90,60 M60,30 L60,90 M40,40 L80,80 M40,80 L80,40"/>
   <text class="text" x="60" y="105" text-anchor="middle">MPM</text>
 </svg>
-'''
+"""
 
 # Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
         logging.FileHandler("automation.log"),
         logging.StreamHandler()
@@ -54,16 +56,16 @@ class WebQuizAutomationGUI:
         self.automation = None
         self.chrome_process = None
         self.chrome_path = self.find_chrome_path()
-        self.user_data_dir = os.path.join(os.environ['TEMP'], "chrome_debug_profile")
+        self.user_data_dir = os.path.join(os.environ["TEMP"], "chrome_debug_profile")
         self.setup_ui()
     
     def find_chrome_path(self):
         """Encontra o caminho para o executável do Chrome"""
         # Locais comuns onde o Chrome pode estar instalado
         possible_paths = [
-            os.path.join(os.environ.get('PROGRAMFILES', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-            os.path.join(os.environ.get('PROGRAMFILES(X86)', ''), 'Google', 'Chrome', 'Application', 'chrome.exe'),
-            os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Google', 'Chrome', 'Application', 'chrome.exe')
+            os.path.join(os.environ.get("PROGRAMFILES", ""), "Google", "Chrome", "Application", "chrome.exe"),
+            os.path.join(os.environ.get("PROGRAMFILES(X86)", ""), "Google", "Chrome", "Application", "chrome.exe"),
+            os.path.join(os.environ.get("LOCALAPPDATA", ""), "Google", "Chrome", "Application", "chrome.exe")
         ]
         
         for path in possible_paths:
@@ -151,13 +153,13 @@ class WebQuizAutomationGUI:
         try:
             from cairosvg import svg2png
             png_data = BytesIO()
-            svg2png(bytestring=MPM_LOGO_SVG.encode('utf-8'), write_to=png_data)
+            svg2png(bytestring=MPM_LOGO_SVG.encode("utf-8"), write_to=png_data)
             png_data.seek(0)
             logo_img = Image.open(png_data)
         except ImportError:
             # Fallback se cairosvg não estiver disponível
             # Criar uma imagem simples com texto
-            logo_img = Image.new('RGBA', (120, 120), (225, 239, 254, 255))
+            logo_img = Image.new("RGBA", (120, 120), (225, 239, 254, 255))
         
         logo_photo = ImageTk.PhotoImage(logo_img)
         
@@ -174,14 +176,14 @@ class WebQuizAutomationGUI:
         text_frame = ttk.Frame(logo_text_frame, style="Card.TFrame")
         text_frame.pack(side=tk.LEFT)
         
-        title_label = ttk.Label(text_frame, text='MPM AutoIA', style="Header.TLabel")
+        title_label = ttk.Label(text_frame, text="MPM AutoIA", style="Header.TLabel")
         title_label.pack(anchor=tk.W)
         
-        subtitle_label = ttk.Label(text_frame, text='Automação Inteligente de Quiz Web', style="SubHeader.TLabel")
+        subtitle_label = ttk.Label(text_frame, text="Automação Inteligente de Quiz Web", style="SubHeader.TLabel")
         subtitle_label.pack(anchor=tk.W)
         
         # Separador
-        separator0 = ttk.Separator(card_frame, orient='horizontal')
+        separator0 = ttk.Separator(card_frame, orient="horizontal")
         separator0.pack(fill=tk.X, pady=10)
         
         # Frame para Chrome
@@ -233,7 +235,7 @@ class WebQuizAutomationGUI:
         self.chrome_status_label.pack(side=tk.LEFT, padx=10)
         
         # Separador
-        separator = ttk.Separator(card_frame, orient='horizontal')
+        separator = ttk.Separator(card_frame, orient="horizontal")
         separator.pack(fill=tk.X, pady=15)
         
         # Frame para seletores
@@ -257,7 +259,7 @@ class WebQuizAutomationGUI:
         
         self.options_selector = ttk.Entry(selectors_frame, width=40)
         self.options_selector.grid(row=1, column=1, padx=5, pady=8, sticky=tk.W+tk.E)
-        self.options_selector.insert(0, "input[type='radio']")
+        self.options_selector.insert(0, "input[type=\"radio\"]")
         
         # Seletor do botão próxima
         next_button_label = ttk.Label(selectors_frame, text="Seletor do botão próxima:", style="Card.TLabel")
@@ -265,13 +267,13 @@ class WebQuizAutomationGUI:
         
         self.next_button_selector = ttk.Entry(selectors_frame, width=40)
         self.next_button_selector.grid(row=2, column=1, padx=5, pady=8, sticky=tk.W+tk.E)
-        self.next_button_selector.insert(0, "input[value='Próxima página']")
+        self.next_button_selector.insert(0, "input[value=\"Próxima página\"]")
         
         # Configurar o grid para expandir
         selectors_frame.columnconfigure(1, weight=1)
         
         # Separador
-        separator2 = ttk.Separator(card_frame, orient='horizontal')
+        separator2 = ttk.Separator(card_frame, orient="horizontal")
         separator2.pack(fill=tk.X, pady=15)
         
         # Botões de controle
@@ -291,7 +293,7 @@ class WebQuizAutomationGUI:
         self.stop_button.pack(side=tk.LEFT, padx=5, pady=5)
         
         # Separador
-        separator3 = ttk.Separator(card_frame, orient='horizontal')
+        separator3 = ttk.Separator(card_frame, orient="horizontal")
         separator3.pack(fill=tk.X, pady=15)
         
         # Área de log
@@ -322,7 +324,7 @@ class WebQuizAutomationGUI:
         chrome_path = filedialog.askopenfilename(
             title="Selecione o executável do Chrome",
             filetypes=[("Executáveis", "*.exe")],
-            initialdir=os.environ.get('PROGRAMFILES', '')
+            initialdir=os.environ.get("PROGRAMFILES", "")
         )
         if chrome_path:
             self.chrome_path_entry.delete(0, tk.END)
@@ -341,98 +343,108 @@ class WebQuizAutomationGUI:
                 return
             
             if not port.isdigit():
-                messagebox.showerror("MPM AutoIA - Erro", "Porta inválida. Por favor, insira um número de porta válido.")
+                messagebox.showerror("MPM AutoIA - Erro", "Porta de depuração inválida. Insira um número.")
                 return
             
-            # Garantir que o diretório de perfil exista
-            os.makedirs(self.user_data_dir, exist_ok=True)
-            
-            # Construir o comando
-            cmd = [
+            # Comando para iniciar o Chrome
+            command = [
                 chrome_path,
                 f"--remote-debugging-port={port}",
                 f"--user-data-dir={self.user_data_dir}"
             ]
             
-            # Iniciar o Chrome como um processo separado
-            self.chrome_process = subprocess.Popen(cmd)
+            logging.info(f"Iniciando Chrome com comando: {" ".join(command)}")
             
-            # Atualizar a interface
-            self.chrome_status_label.config(text=f"Chrome iniciado na porta {port}")
-            self.start_chrome_button.config(state=tk.DISABLED)
-            
-            logging.info(f"Chrome iniciado em modo de depuração na porta {port}")
-            
-            # Mostrar mensagem com a nova paleta de cores
-            messagebox.showinfo("MPM AutoIA", f"Chrome iniciado em modo de depuração na porta {port}")
+            # Iniciar o processo do Chrome
+            self.chrome_process = subprocess.Popen(command)
+            self.chrome_status_label.config(text=f"Chrome iniciado na porta {port}", foreground="green")
+            logging.info(f"Chrome iniciado com sucesso na porta {port}.")
             
         except Exception as e:
             logging.error(f"Erro ao iniciar o Chrome: {e}")
             messagebox.showerror("MPM AutoIA - Erro", f"Falha ao iniciar o Chrome: {e}")
-    
+            self.chrome_status_label.config(text="Falha ao iniciar Chrome", foreground="red")
+
     def start_automation(self):
-        port = self.port_entry.get()
+        """Inicia a automação em uma thread separada"""
+        if self.automation and self.automation.is_running:
+            logging.warning("Automação já está em execução.")
+            return
+            
+        # Obter seletores e porta
         question_selector = self.question_selector.get()
         options_selector = self.options_selector.get()
         next_button_selector = self.next_button_selector.get()
+        port = self.port_entry.get()
         
+        if not all([question_selector, options_selector, next_button_selector, port]):
+            messagebox.showerror("MPM AutoIA - Erro", "Por favor, preencha todos os seletores e a porta de depuração.")
+            return
+            
         if not port.isdigit():
-            messagebox.showerror("MPM AutoIA - Erro", "Porta inválida. Por favor, insira um número de porta válido.")
+            messagebox.showerror("MPM AutoIA - Erro", "Porta de depuração inválida.")
             return
         
-        # Desabilitar botão de iniciar e habilitar botões de controle
-        self.start_button.config(state=tk.DISABLED)
-        self.pause_button.config(state=tk.NORMAL)
-        self.stop_button.config(state=tk.NORMAL)
-        
-        # Iniciar a automação em uma thread separada
+        # Instanciar e iniciar a automação
         self.automation = WebQuizAutomation(
-            port=port,
+            port=int(port),
             question_selector=question_selector,
             options_selector=options_selector,
             next_button_selector=next_button_selector
         )
         
-        automation_thread = threading.Thread(target=self.automation.run)
-        automation_thread.daemon = True
-        automation_thread.start()
+        self.automation_thread = threading.Thread(target=self.automation.run, daemon=True)
+        self.automation_thread.start()
         
-        logging.info(f"Automação iniciada conectando na porta: {port}")
-    
+        # Atualizar UI
+        self.start_button.config(state=tk.DISABLED)
+        self.pause_button.config(state=tk.NORMAL, text="Pausar")
+        self.stop_button.config(state=tk.NORMAL)
+        logging.info("Automação iniciada.")
+
     def toggle_pause(self):
+        """Pausa ou retoma a automação"""
         if self.automation:
-            self.automation.toggle_pause()
-            pause_status = "Pausar" if not self.automation.paused else "Continuar"
-            self.pause_button.config(text=pause_status)
-    
+            if self.automation.is_paused:
+                self.automation.resume()
+                self.pause_button.config(text="Pausar")
+                logging.info("Automação retomada.")
+            else:
+                self.automation.pause()
+                self.pause_button.config(text="Retomar")
+                logging.info("Automação pausada.")
+
     def stop_automation(self):
+        """Para a automação"""
         if self.automation:
             self.automation.stop()
-            # Resetar botões
+            # Aguardar a thread terminar (opcional, mas bom para limpeza)
+            # self.automation_thread.join(timeout=2)
+            
+            # Atualizar UI
             self.start_button.config(state=tk.NORMAL)
             self.pause_button.config(state=tk.DISABLED, text="Pausar")
             self.stop_button.config(state=tk.DISABLED)
-            logging.info("Automação interrompida")
-    
-    def __del__(self):
-        # Garantir que o processo do Chrome seja encerrado quando a aplicação for fechada
-        if hasattr(self, 'chrome_process') and self.chrome_process:
-            try:
-                self.chrome_process.terminate()
-            except:
-                pass
+            logging.info("Automação parada pelo usuário.")
+            self.automation = None # Limpar referência
 
-class LogHandler(logging.Handler):
-    def __init__(self, text_widget):
-        logging.Handler.__init__(self)
-        self.text_widget = text_widget
-    
-    def emit(self, record):
-        msg = self.format(record) + '\n'
-        self.text_widget.configure(state='normal')
-        self.text_widget.insert(tk.END, msg)
-        self.text_widget.see(tk.END)
-        self.text_widget.configure(state='disabled')
+    def on_close(self):
+        """Chamado quando a janela é fechada"""
+        if self.automation and self.automation.is_running:
+            self.stop_automation()
+            
+        if self.chrome_process:
+            logging.info("Fechando processo do Chrome...")
+            try:
+                self.chrome_process.terminate() # Tenta terminar graciosamente
+                self.chrome_process.wait(timeout=5) # Espera um pouco
+            except subprocess.TimeoutExpired:
+                logging.warning("Processo do Chrome não terminou, forçando...")
+                self.chrome_process.kill() # Força o fechamento
+            except Exception as e:
+                logging.error(f"Erro ao fechar o Chrome: {e}")
+                
+        self.root.destroy()
 
 class WebQuizAutomation:
     def __init__(self, port, question_selector, options_selector, next_button_selector):
@@ -440,311 +452,276 @@ class WebQuizAutomation:
         self.question_selector = question_selector
         self.options_selector = options_selector
         self.next_button_selector = next_button_selector
-        self.running = False
-        self.paused = False
-        self.current_question = 0
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
         self.driver = None
-    
-    def run(self):
-        """Método principal que executa a automação do quiz"""
+        self.is_running = False
+        self.is_paused = False
+        self.stop_event = threading.Event()
+        self.pause_event = threading.Event()
+        self.pause_event.set() # Inicia não pausado
+        
+        # Configurar modelo Gemini
+        self.model = genai.GenerativeModel("gemini-pro")
+
+    def setup_driver(self):
+        """Configura o WebDriver para se conectar ao Chrome existente"""
         try:
-            logging.info("Iniciando automação do quiz...")
-            
-            # Configurar as opções do Chrome
+            logging.info(f"Tentando conectar ao Chrome na porta {self.port}...")
             options = webdriver.ChromeOptions()
-            options.add_experimental_option("debuggerAddress", f"localhost:{self.port}")
+            options.add_experimental_option("debuggerAddress", f"127.0.0.1:{self.port}")
             
-            # Conectar ao Chrome já aberto
-            logging.info(f"Conectando ao Chrome na porta {self.port}...")
-            self.driver = webdriver.Chrome(options=options)
-            logging.info(f"Conectado com sucesso ao Chrome. Título da página: {self.driver.title}")
+            # Configuração mais robusta para o ChromeDriver
+            logging.info("Configurando ChromeDriver com abordagem robusta...")
             
-            # Iniciar o loop de automação
-            self.running = True
-            while self.running:
-                # Verificar se está pausado
-                if self.paused:
-                    time.sleep(1)  # Esperar enquanto estiver pausado
-                    continue
-                
-                # Processar a pergunta atual
-                self.current_question += 1
-                logging.info(f"\n--- Processando pergunta #{self.current_question} ---")
-                
-                # Esperar que a pergunta seja carregada
+            # Método 1: Usar webdriver-manager com opções avançadas
+            from webdriver_manager.chrome import ChromeDriverManager
+            from webdriver_manager.core.utils import ChromeType
+            
+            # Tenta diferentes estratégias para obter o ChromeDriver correto
+            try:
+                # Tenta com configuração padrão
+                driver_path = ChromeDriverManager().install()
+                logging.info(f"ChromeDriver instalado em: {driver_path}")
+                service = Service(executable_path=driver_path)
+            except Exception as driver_error:
+                logging.warning(f"Falha no método padrão de obtenção do ChromeDriver: {driver_error}")
                 try:
-                    wait = WebDriverWait(self.driver, 10)
-                    question_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, self.question_selector)))
-                    question_text = question_element.text.strip()
-                    logging.info(f"Pergunta detectada: {question_text}")
-                except TimeoutException:
-                    logging.warning("Não foi possível encontrar a pergunta. Verificando se o quiz terminou...")
-                    # Verificar se há alguma mensagem de conclusão
-                    if "concluído" in self.driver.page_source.lower() or "finalizado" in self.driver.page_source.lower():
-                        logging.info("Quiz concluído!")
-                        break
-                    else:
-                        logging.warning("Continuando mesmo sem detectar a pergunta...")
-                        question_text = "[Pergunta não detectada]"
-                
-                # Encontrar as opções
-                try:
-                    options_elements = self.driver.find_elements(By.CSS_SELECTOR, self.options_selector)
-                    if not options_elements:
-                        logging.warning("Nenhuma opção encontrada. Tentando passar para a próxima pergunta...")
-                        if not self.click_next_button():
-                            logging.error("Não foi possível avançar. Parando automação.")
-                            break
-                        time.sleep(2)  # Esperar a próxima página carregar
-                        continue
+                    # Tenta com configuração alternativa
+                    driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
+                    logging.info(f"ChromeDriver (Chromium) instalado em: {driver_path}")
+                    service = Service(executable_path=driver_path)
+                except Exception as chromium_error:
+                    logging.warning(f"Falha no método alternativo: {chromium_error}")
                     
-                    # Extrair o texto das opções
-                    options_text = ""
-                    for i, option in enumerate(options_elements):
-                        option_text = self._get_option_text(option)
-                        options_text += f"{chr(65+i)}. {option_text}\n"
-                    
-                    logging.info(f"Opções detectadas:\n{options_text}")
-                    
-                    # Consultar a IA para obter a resposta
-                    answer = self.get_ai_answer(question_text, options_text)
-                    if not answer:
-                        logging.warning("Não foi possível obter uma resposta da IA. Selecionando a primeira opção.")
-                        if options_elements:
-                            options_elements[0].click()
-                    else:
-                        logging.info(f"Resposta da IA: {answer}")
-                        self.select_answer(answer, options_elements)
-                    
-                    # Esperar um pouco antes de avançar (para simular comportamento humano)
-                    time.sleep(2)
-                    
-                    # Clicar no botão de próxima pergunta
-                    if not self.click_next_button():
-                        logging.warning("Não foi possível encontrar o botão de próxima pergunta. Verificando se o quiz terminou...")
-                        # Verificar se há alguma mensagem de conclusão
-                        if "concluído" in self.driver.page_source.lower() or "finalizado" in self.driver.page_source.lower():
-                            logging.info("Quiz concluído!")
-                            break
-                    
-                    # Esperar a próxima página carregar
-                    time.sleep(3)
-                    
-                except Exception as e:
-                    logging.error(f"Erro ao processar pergunta: {e}")
-                    # Tentar continuar mesmo com erro
-                    if not self.click_next_button():
-                        logging.error("Não foi possível avançar após erro. Parando automação.")
-                        break
-                    time.sleep(2)
+                    # Método 2: Usar o Selenium Manager diretamente (disponível no Selenium 4.6+)
+                    logging.info("Tentando usar Selenium Manager diretamente...")
+                    service = Service()
             
-            logging.info("Automação finalizada.")
+            # Configuração adicional para evitar problemas de compatibilidade
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
             
+            # Inicializa o driver com as opções configuradas
+            logging.info("Inicializando Chrome WebDriver...")
+            self.driver = webdriver.Chrome(service=service, options=options)
+            logging.info("WebDriver conectado com sucesso ao Chrome existente.")
+            return True
         except Exception as e:
-            logging.error(f"Erro na automação: {e}")
-        finally:
-            self.running = False
-            # Não fechamos o driver, pois o Chrome foi iniciado pelo usuário
-    
-    def toggle_pause(self):
-        self.paused = not self.paused
-        status = "pausada" if self.paused else "retomada"
-        logging.info(f"Automação {status}")
-    
-    def stop(self):
-        self.running = False
-        # Não fechamos o navegador, pois ele foi aberto pelo usuário
-        logging.info("Automação interrompida")
-    
-    def get_ai_answer(self, question, options):
-        """Consulta a IA para obter a resposta para a pergunta com validação dupla"""
-        try:
-            prompt = f"""Pergunta: {question}\n\nOpções:\n{options}\n\nQual é a resposta correta? Responda apenas com a letra da opção (A, B, C, D, etc.) ou o texto exato da opção correta."""
-            
-            # Primeira consulta
-            response1 = self.model.generate_content(prompt)
-            answer1 = response1.text.strip()
-            logging.info(f"Primeira resposta da IA: {answer1}")
-            
-            # Segunda consulta para validação
-            response2 = self.model.generate_content(prompt)
-            answer2 = response2.text.strip()
-            logging.info(f"Segunda resposta da IA: {answer2}")
-            
-            # Verificar se as respostas são iguais
-            if answer1 == answer2:
-                logging.info("As duas respostas da IA são idênticas, usando esta resposta.")
-                return answer1
-            
-            # Se as respostas forem diferentes, pedir uma reavaliação
-            reevaluation_prompt = f"""Pergunta: {question}\n\nOpções:\n{options}\n\nVocê deu duas respostas diferentes para esta pergunta:\nResposta 1: {answer1}\nResposta 2: {answer2}\n\nPor favor, reavalie cuidadosamente e forneça a resposta correta com pelo menos 80% de certeza. Responda apenas com a letra da opção (A, B, C, D, etc.) ou o texto exato da opção correta."""
-            
-            response3 = self.model.generate_content(reevaluation_prompt)
-            answer3 = response3.text.strip()
-            logging.info(f"Resposta final após reavaliação: {answer3}")
-            return answer3
-        except Exception as e:
-            logging.error(f"Erro ao consultar IA: {e}")
-            return ""
-    
-    def select_answer(self, answer, options_elements):
-        """Seleciona a resposta na interface"""
-        try:
-            # Se a resposta for uma letra (A, B, C, D...)
-            if len(answer) == 1 and answer.isalpha():
-                option_index = ord(answer.upper()[0]) - ord('A')
-                if 0 <= option_index < len(options_elements):
-                    options_elements[option_index].click()
-                    logging.info(f"Clicou na opção {answer}")
-                    return True
-                logging.warning(f"Índice de opção {option_index} fora do intervalo válido (0-{len(options_elements)-1})")
-            else:
-                # Se a resposta for o texto completo da opção
-                for option in options_elements:
-                    # Obter o texto da opção usando uma função auxiliar para reduzir duplicação
-                    option_text = self._get_option_text(option)
-                    
-                    if answer.lower() in option_text.lower():
-                        option.click()
-                        logging.info(f"Clicou na opção com texto: {option_text}")
-                        return True
-            
-            # Se não encontrou a opção específica, clique na primeira opção
-            if options_elements:
-                options_elements[0].click()
-                logging.info("Não foi possível encontrar a opção exata. Clicou na primeira opção.")
-                return True
-            
+            logging.error(f"Erro ao configurar o driver: {e}")
+            logging.error("Detalhes do erro para diagnóstico:")
+            import traceback
+            logging.error(traceback.format_exc())
             return False
-        except Exception as e:
-            logging.error(f"Erro ao selecionar resposta: {e}")
-            return False
-    
-    def _get_option_text(self, option):
-        """Função auxiliar para obter o texto de uma opção"""
+
+    def get_question_and_options(self):
+        """Extrai o texto da pergunta e das opções da página atual"""
         try:
-            # Tentar obter o texto do label associado
-            option_id = option.get_attribute("id")
-            if option_id:
+            wait = WebDriverWait(self.driver, 10)
+            question_element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, self.question_selector)))
+            question_text = question_element.text
+            
+            option_elements = self.driver.find_elements(By.CSS_SELECTOR, self.options_selector)
+            options = []
+            for option in option_elements:
+                # Tenta encontrar o texto associado ao radio button (geralmente no label pai ou irmão)
                 try:
-                    label = self.driver.find_element(By.CSS_SELECTOR, f"label[for='{option_id}']")
-                    return label.text
+                    # Tenta encontrar o label pai
+                    label = option.find_element(By.XPATH, "./ancestor::label")
+                    option_text = label.text
                 except NoSuchElementException:
-                    pass
+                    try:
+                        # Tenta encontrar o label irmão
+                        label = option.find_element(By.XPATH, "./following-sibling::label | ./preceding-sibling::label")
+                        option_text = label.text
+                    except NoSuchElementException:
+                        try:
+                            # Tenta encontrar texto dentro de um span irmão
+                            span = option.find_element(By.XPATH, "./following-sibling::span | ./preceding-sibling::span")
+                            option_text = span.text
+                        except NoSuchElementException:
+                            # Fallback: usa o valor do atributo 'value' se não encontrar texto
+                            option_text = option.get_attribute("value") or "Opção sem texto"
+                
+                if option_text:
+                    options.append(option_text.strip())
             
-            # Se não tiver id ou não encontrar o label, tentar obter o texto do elemento pai
-            try:
-                parent = option.find_element(By.XPATH, "..")
-                return parent.text
-            except NoSuchElementException:
-                pass
-            
-            # Se falhar, usar o valor do elemento
-            return option.get_attribute("value") or ""
-        except Exception:
-            return ""
-    
-    def click_next_button(self):
-        """Clica no botão 'PRÓXIMA PÁGINA'"""
+            logging.info(f"Pergunta encontrada: {question_text[:50]}...")
+            logging.info(f"Opções encontradas: {options}")
+            return question_text, options
+        except TimeoutException:
+            logging.error("Tempo esgotado ao esperar pela pergunta ou opções.")
+            return None, None
+        except Exception as e:
+            logging.error(f"Erro ao extrair pergunta/opções: {e}")
+            return None, None
+
+    def get_gemini_answer(self, question, options):
+        """Usa a API Gemini para obter a resposta correta"""
         try:
-            # Lista de seletores para tentar encontrar o botão
-            selectors = [
-                self.next_button_selector,  # Seletor fornecido pelo usuário
-                "input[value='Próxima página']",  # Input com valor exato
-                "input.mod_quiz-next-nav",        # Input com classe específica
-                ".mod_quiz-next-nav",             # Qualquer elemento com a classe específica
-                "input[type='submit'][name='next']", # Input do tipo submit com name="next"
-                "input[type='submit'][value*='próxima']", # Input com valor contendo 'próxima' (case insensitive)
-                "input[type='submit'][value*='Próxima']", # Input com valor contendo 'Próxima'
-                "[id*='next']",                   # Qualquer elemento com id contendo 'next'
-                "[id*='nextpage']",               # Qualquer elemento com id contendo 'nextpage'
-                "[class*='next']",                # Qualquer elemento com classe contendo 'next'
-                "[aria-label*='próxima']",        # Elementos com aria-label contendo 'próxima'
-                "[aria-label*='Próxima']",        # Elementos com aria-label contendo 'Próxima'
-                "form input[type='submit']:last-of-type" # Último botão de submit em um formulário
-            ]
-            # Tentar cada seletor
-            for selector in selectors:
+            prompt = f"Dada a seguinte pergunta de múltipla escolha e suas opções, qual é a resposta correta? Retorne APENAS o texto exato da opção correta.\n\nPergunta: {question}\n\nOpções:\n" + "\n".join([f"- {opt}" for opt in options])
+            
+            logging.info("Enviando prompt para Gemini...")
+            response = self.model.generate_content(prompt)
+            answer_text = response.text.strip()
+            logging.info(f"Resposta recebida do Gemini: {answer_text}")
+            
+            # Validar se a resposta do Gemini corresponde a uma das opções
+            for option in options:
+                if answer_text.lower() == option.lower():
+                    return option # Retorna a opção original para correspondência exata
+            
+            logging.warning(f"Resposta do Gemini (\"{answer_text}\") não corresponde exatamente a nenhuma opção. Tentando correspondência parcial.")
+            # Tenta correspondência parcial se a exata falhar
+            for option in options:
+                if answer_text.lower() in option.lower() or option.lower() in answer_text.lower():
+                    logging.info(f"Correspondência parcial encontrada: {option}")
+                    return option
+            
+            logging.error("Não foi possível encontrar uma opção correspondente à resposta do Gemini.")
+            return None
+            
+        except Exception as e:
+            logging.error(f"Erro ao obter resposta do Gemini: {e}")
+            return None
+
+    def select_answer_and_next(self, correct_option_text):
+        """Seleciona a opção correta e clica no botão Próxima"""
+        try:
+            option_elements = self.driver.find_elements(By.CSS_SELECTOR, self.options_selector)
+            selected = False
+            for option in option_elements:
+                option_label_text = ""
                 try:
-                    # Usar espera explícita para garantir que o elemento está clicável
-                    wait = WebDriverWait(self.driver, 5)
-                    next_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
-                    next_button.click()
-                    logging.info(f"Clicou no botão 'PRÓXIMA PÁGINA' usando seletor: {selector}")
-                    return True
-                except Exception:
-                    continue  # Tentar o próximo seletor
+                    label = option.find_element(By.XPATH, "./ancestor::label")
+                    option_label_text = label.text.strip()
+                except NoSuchElementException:
+                    try:
+                        label = option.find_element(By.XPATH, "./following-sibling::label | ./preceding-sibling::label")
+                        option_label_text = label.text.strip()
+                    except NoSuchElementException:
+                         try:
+                            span = option.find_element(By.XPATH, "./following-sibling::span | ./preceding-sibling::span")
+                            option_label_text = span.text.strip()
+                         except NoSuchElementException:
+                            option_label_text = option.get_attribute("value") or ""
+                
+                if option_label_text.lower() == correct_option_text.lower():
+                    logging.info(f"Selecionando opção: {option_label_text}")
+                    # Usar JavaScript para clicar pode ser mais robusto
+                    self.driver.execute_script("arguments[0].click();", option)
+                    # option.click() # Método padrão
+                    selected = True
+                    break
             
-            # Se ainda não encontrou, tentar com XPath
-            xpath_selectors = [
-                "//input[@value='Próxima página']",
-                "//input[contains(@value, 'Próxima')]",
-                "//input[@name='next']",
-                "//button[contains(text(), 'Próxima')]",
-                "//a[contains(text(), 'Próxima')]",
-                "//input[@type='submit'][last()]"
-            ]
+            if not selected:
+                logging.error(f"Não foi possível encontrar o elemento da opção: {correct_option_text}")
+                return False
+
+            time.sleep(1) # Pequena pausa após selecionar
+
+            next_button = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, self.next_button_selector))
+            )
+            logging.info("Clicando no botão Próxima.")
+            # Usar JavaScript para clicar
+            self.driver.execute_script("arguments[0].click();", next_button)
+            # next_button.click() # Método padrão
+            return True
             
-            for xpath in xpath_selectors:
-                try:
-                    next_button = self.driver.find_element(By.XPATH, xpath)
-                    next_button.click()
-                    logging.info(f"Clicou no botão 'PRÓXIMA PÁGINA' usando XPath: {xpath}")
-                    return True
-                except Exception:
-                    continue
-            
-            # Se ainda não encontrou, tentar com JavaScript
-            try:
-                self.driver.execute_script("""
-                    // Tentar encontrar o botão por texto
-                    var buttons = document.querySelectorAll('input[type="submit"], button');
-                    for (var i = 0; i < buttons.length; i++) {
-                        var btn = buttons[i];
-                        if (btn.value && (btn.value.includes('Próxima') || btn.value.includes('próxima'))) {
-                            btn.click();
-                            return true;
-                        }
-                        if (btn.textContent && (btn.textContent.includes('Próxima') || btn.textContent.includes('próxima'))) {
-                            btn.click();
-                            return true;
-                        }
-                    }
-                    
-                    // Se não encontrou, clicar no último botão de submit do formulário
-                    var forms = document.querySelectorAll('form');
-                    for (var i = 0; i < forms.length; i++) {
-                        var submits = forms[i].querySelectorAll('input[type="submit"]');
-                        if (submits.length > 0) {
-                            submits[submits.length - 1].click();
-                            return true;
-                        }
-                    }
-                    
-                    return false;
-                """)
-                logging.info("Tentativa de clicar no botão 'PRÓXIMA PÁGINA' usando JavaScript")
-                return True
-            except Exception as js_error:
-                logging.error(f"Erro ao tentar clicar com JavaScript: {js_error}")
-            
-            logging.warning("Botão 'PRÓXIMA PÁGINA' não encontrado após tentar múltiplos métodos")
+        except TimeoutException:
+            logging.error("Tempo esgotado ao esperar pelo botão Próxima.")
             return False
         except Exception as e:
-            logging.error(f"Erro ao clicar no botão 'PRÓXIMA PÁGINA': {e}")
+            logging.error(f"Erro ao selecionar resposta ou clicar em Próxima: {e}")
             return False
 
+    def run(self):
+        """Loop principal da automação"""
+        self.is_running = True
+        self.stop_event.clear()
+        
+        if not self.setup_driver():
+            self.is_running = False
+            messagebox.showerror("MPM AutoIA - Erro", "Falha ao conectar ao Chrome. Verifique se ele está em modo de depuração na porta correta.")
+            # Atualizar UI via callback ou fila seria ideal aqui
+            return
 
-# Ponto de entrada principal do programa
+        while not self.stop_event.is_set():
+            self.pause_event.wait() # Bloqueia aqui se pausado
+            
+            if self.stop_event.is_set(): # Verifica novamente após pausa
+                break
+                
+            logging.info("--- Nova Iteração ---")
+            question, options = self.get_question_and_options()
+            
+            if question and options:
+                correct_option = self.get_gemini_answer(question, options)
+                if correct_option:
+                    if not self.select_answer_and_next(correct_option):
+                        logging.error("Falha ao selecionar/avançar. Parando automação.")
+                        break
+                else:
+                    logging.error("Não foi possível obter resposta do Gemini. Parando automação.")
+                    break
+            else:
+                logging.warning("Não foi possível encontrar pergunta/opções. Verifique os seletores ou o estado da página. Tentando novamente em 5s...")
+                # Verificar se ainda estamos na mesma URL ou se algo mudou
+                try:
+                    current_url = self.driver.current_url
+                    logging.info(f"URL atual: {current_url}")
+                    # Poderia adicionar lógica aqui para detectar fim do quiz ou erro
+                except Exception as e:
+                    logging.error(f"Erro ao obter URL atual: {e}. Parando automação.")
+                    break
+                time.sleep(5)
+                continue # Tenta novamente
+                
+            time.sleep(3) # Pausa entre perguntas
+            
+        logging.info("Loop de automação encerrado.")
+        if self.driver:
+            try:
+                # Não fechar o driver, pois ele está conectado a um Chrome externo
+                # self.driver.quit()
+                logging.info("WebDriver desconectado (não fechado).")
+            except Exception as e:
+                logging.error(f"Erro ao tentar desconectar o WebDriver: {e}")
+        self.is_running = False
+        self.is_paused = False
+        # Idealmente, sinalizar para a GUI que parou
+
+    def pause(self):
+        self.pause_event.clear() # Bloqueia a thread no wait()
+        self.is_paused = True
+
+    def resume(self):
+        self.pause_event.set() # Libera a thread do wait()
+        self.is_paused = False
+
+    def stop(self):
+        self.stop_event.set()
+        self.pause_event.set() # Garante que saia do pause para verificar stop
+        self.is_running = False
+
+class LogHandler(logging.Handler):
+    """Handler personalizado para direcionar logs para a área de texto Tkinter"""
+    def __init__(self, text_widget):
+        super().__init__()
+        self.text_widget = text_widget
+
+    def emit(self, record):
+        msg = self.format(record)
+        def append():
+            self.text_widget.configure(state="normal")
+            self.text_widget.insert(tk.END, msg + "\n")
+            self.text_widget.configure(state="disabled")
+            self.text_widget.yview(tk.END)
+        # Usar after para garantir que a atualização da UI ocorra na thread principal
+        self.text_widget.after(0, append)
+
 if __name__ == "__main__":
-    try:
-        # Configurar e iniciar a interface gráfica
-        root = tk.Tk()
-        app = WebQuizAutomationGUI(root)
-        root.mainloop()
-    except Exception as e:
-        logging.error(f"Erro ao iniciar a aplicação: {e}")
-        print(f"Erro ao iniciar a aplicação: {e}")
-        import traceback
-        traceback.print_exc()
+    root = tk.Tk()
+    app = WebQuizAutomationGUI(root)
+    root.protocol("WM_DELETE_WINDOW", app.on_close) # Lidar com fechamento da janela
+    root.mainloop()
+

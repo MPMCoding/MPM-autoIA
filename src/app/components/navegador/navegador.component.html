@@ -10,9 +10,9 @@
       <button class="nav-button" (click)="reload()">
         <i class="fas fa-sync-alt"></i>
       </button>
-      <!-- Botão de Inicialização Manual -->
-      <button class="nav-button manual-init" (click)="manualInitializeBrowserView()" [disabled]="!isElectron" title="Inicializar Navegador Manualmente">
-        <i class="fas fa-rocket"></i> Inicializar
+      <!-- Botão Home -->
+      <button class="nav-button home-button" (click)="goHome()" title="Ir para a página inicial (Google)">
+        <i class="fas fa-home"></i> Home
       </button>
     </div>
     <div class="url-bar">

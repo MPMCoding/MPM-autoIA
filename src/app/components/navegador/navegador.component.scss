@@ -1,7 +1,7 @@
 .navegador-container {
   display: flex;
   flex-direction: column;
-  height: 600px;
+  height: 100%;
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
@@ -110,10 +110,10 @@
 }
 
 .browser-container {
-  flex: 1;
+  height: 90%; /* Ocupa 90% da altura disponível */
   position: relative;
   background-color: white;
-  min-height: 400px; /* Altura mínima para garantir visibilidade */
+  min-height: 300px; /* Altura mínima para garantir visibilidade */
 }
 
 .browser-placeholder {
@@ -138,15 +138,15 @@
 }
 
 .automation-output {
+  height: 10%; /* Ocupa 10% da altura disponível */
   padding: 10px;
   background-color: #f8f9fa;
   border-top: 1px solid #ddd;
-  max-height: 200px;
   overflow-y: auto;
   
   h4 {
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     font-size: 14px;
     color: #333;
   }
@@ -157,5 +157,7 @@
     font-size: 12px;
     white-space: pre-wrap;
     color: #333;
+    max-height: calc(100% - 25px); /* Altura máxima considerando o título */
+    overflow-y: auto;
   }
 }

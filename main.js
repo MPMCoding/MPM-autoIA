@@ -105,7 +105,8 @@ function createBrowserView(initialUrl) {
       allowRunningInsecureContent: true, // Permite conteúdo misto (HTTP em HTTPS)
       images: true,
       javascript: true,
-      plugins: true
+      plugins: true,
+      nativeWindowOpen: false // Impede abertura de novas janelas nativas
     }
   });
 
@@ -137,6 +138,14 @@ function createBrowserView(initialUrl) {
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('browser-page-loaded', loadedUrl);
     }
+  });
+  
+  // Intercepta tentativas de abrir novas janelas e redireciona para a mesma janela
+  browserView.webContents.setWindowOpenHandler(({ url }) => {
+    console.log(`[main.js] Interceptando tentativa de abrir nova janela para URL: ${url}`);
+    // Carrega a URL na janela atual em vez de abrir uma nova
+    browserView.webContents.loadURL(url);
+    return { action: 'deny' }; // Impede a abertura da nova janela
   });
   
   // Intercepta erros de navegação

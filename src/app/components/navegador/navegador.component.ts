@@ -203,19 +203,33 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log("[NavegadorComponent] setupIpcListeners - Listeners configurados.");
   }
 
-  manualInitializeBrowserView() {
-      console.log("[NavegadorComponent] manualInitializeBrowserView() chamado pelo botão.");
-      if (this.ipcAvailable && this.ipcRenderer) {
-          if (this.browserViewInitialized) {
-              console.warn("[NavegadorComponent] BrowserView já inicializado. Ignorando inicialização manual.");
-              return;
+  goHome() {
+      console.log("[NavegadorComponent] goHome() chamado pelo botão Home.");
+      const googleUrl = "https://www.google.com";
+      
+      if (this.isElectron) {
+          if (!this.browserViewInitialized) {
+              console.log("[NavegadorComponent] BrowserView não inicializado. Inicializando primeiro...");
+              // Inicializa o BrowserView se ainda não estiver inicializado
+              if (this.ipcAvailable && this.ipcRenderer) {
+                  this.ipcRenderer.send("initialize-browser-view");
+                  // Aguarda um pouco para dar tempo de inicializar antes de navegar
+                  setTimeout(() => {
+                      this.navigateToUrl(googleUrl);
+                  }, 300);
+              } else {
+                  console.error("[NavegadorComponent] ERRO: Tentativa de navegação sem IPC disponível!");
+                  this.errorMessage = "Não é possível navegar: Comunicação IPC indisponível.";
+                  this.cdr.detectChanges();
+              }
+          } else {
+              // BrowserView já inicializado, apenas navega para o Google
+              this.navigateToUrl(googleUrl);
           }
-          console.log("[NavegadorComponent] Enviando IPC "initialize-browser-view" manualmente.");
-          this.ipcRenderer.send("initialize-browser-view");
-          // Não marca como inicializado aqui, espera a confirmação 'browser-view-created'
       } else {
-          console.error("[NavegadorComponent] ERRO: Tentativa de inicialização manual sem IPC disponível!");
-          this.errorMessage = "Não é possível inicializar o navegador: Comunicação IPC indisponível.";
+          // Fallback para ambiente não-Electron
+          this.url = googleUrl;
+          this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(googleUrl);
           this.cdr.detectChanges();
       }
   }
