@@ -1,78 +1,66 @@
 <div class="navegador-container">
-  <div class="browser-controls p-mb-2">
-    <div class="p-grid p-nogutter">
-      <div class="p-col-1">
-        <button pButton type="button" icon="pi pi-arrow-left" class="p-button-secondary p-button-sm" 
-                [disabled]="!canGoBack" (click)="goBack()"></button>
-      </div>
-      <div class="p-col-1">
-        <button pButton type="button" icon="pi pi-arrow-right" class="p-button-secondary p-button-sm" 
-                [disabled]="!canGoForward" (click)="goForward()"></button>
-      </div>
-      <div class="p-col-6">
-        <div class="p-inputgroup">
-          <span class="p-inputgroup-addon">
-            <i class="pi pi-link"></i>
-          </span>
-          <input type="text" pInputText [(ngModel)]="url" placeholder="https://www.google.com" />
-        </div>
-      </div>
-      <div class="p-col-1">
-        <button pButton type="button" icon="pi pi-search" class="p-button-primary p-button-sm" 
-                (click)="navigate()"></button>
-      </div>
-      <div class="p-col-1">
-        <button pButton type="button" icon="pi pi-refresh" class="p-button-secondary p-button-sm" 
-                [loading]="isLoading" (click)="reload()"></button>
-      </div>
+  <div class="navegador-toolbar">
+    <div class="navegador-controls">
+      <button class="nav-button" (click)="goBack()" [disabled]="currentHistoryIndex <= 0">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <button class="nav-button" (click)="goForward()" [disabled]="currentHistoryIndex >= browserHistory.length - 1">
+        <i class="fas fa-arrow-right"></i>
+      </button>
+      <button class="nav-button" (click)="reload()">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
+    <div class="url-bar">
+      <input 
+        type="text" 
+        [(ngModel)]="url" 
+        (keydown)="onUrlKeyDown($event)" 
+        placeholder="Digite uma URL"
+      />
+    </div>
+    <div class="automation-controls">
+      <button 
+        class="automation-button start" 
+        (click)="startAutomation()" 
+        [disabled]="isAutomationRunning"
+        title="Iniciar Automação"
+      >
+        <i class="fas fa-play"></i>
+      </button>
+      <button 
+        class="automation-button pause" 
+        (click)="pauseResumeAutomation()" 
+        [disabled]="!isAutomationRunning"
+        title="{{ isAutomationPaused ? 'Continuar' : 'Pausar' }} Automação"
+      >
+        <i class="fas" [ngClass]="{'fa-pause': !isAutomationPaused, 'fa-play': isAutomationPaused}"></i>
+      </button>
+      <button 
+        class="automation-button stop" 
+        (click)="stopAutomation()" 
+        [disabled]="!isAutomationRunning"
+        title="Parar Automação"
+      >
+        <i class="fas fa-stop"></i>
+      </button>
     </div>
   </div>
   
-  <!-- Controles de automação -->
-  <div class="automation-controls p-mb-2">
-    <div class="p-grid p-nogutter">
-      <div class="p-col-4">
-        <button pButton type="button" icon="pi pi-play" label="Iniciar Automação" 
-                class="p-button-success p-button-sm" 
-                [disabled]="isAutomationRunning" 
-                (click)="startAutomation()"></button>
+  <!-- Área do navegador - Agora gerenciada pelo BrowserView no processo principal -->
+  <div class="browser-container" #browserContainer>
+    <!-- O BrowserView será renderizado aqui pelo processo principal -->
+    <div class="browser-placeholder" *ngIf="!isElectron">
+      <div class="browser-icon">
+        <i class="fas fa-desktop"></i>
       </div>
-      <div class="p-col-4">
-        <button pButton type="button" [icon]="isPaused ? 'pi pi-play' : 'pi pi-pause'" 
-                [label]="isPaused ? 'Continuar' : 'Pausar'" 
-                class="p-button-warning p-button-sm" 
-                [disabled]="!isAutomationRunning" 
-                (click)="togglePauseAutomation()"></button>
-      </div>
-      <div class="p-col-4">
-        <button pButton type="button" icon="pi pi-stop" label="Parar Automação" 
-                class="p-button-danger p-button-sm" 
-                [disabled]="!isAutomationRunning" 
-                (click)="stopAutomation()"></button>
-      </div>
+      <p>O navegador embutido será carregado aqui quando o aplicativo for executado no Electron.</p>
     </div>
   </div>
   
-  <!-- Abordagem alternativa usando iframe em vez de webview -->
-  <div class="browser-container" style="width:100%; height:500px; border:1px solid #ccc; overflow:hidden;">
-    <iframe #browserFrame [src]="safeUrl" style="width:100%; height:100%; border:none;"></iframe>
-  </div>
-  
-  <!-- Status da automação -->
-  <div class="automation-status p-mt-2" *ngIf="isAutomationRunning">
-    <div class="p-grid">
-      <div class="p-col-12">
-        <div class="p-card p-p-2">
-          <div class="p-card-body">
-            <p class="p-m-0">
-              <i class="pi" [ngClass]="{'pi-spin pi-spinner': !isPaused, 'pi-pause': isPaused}"></i>
-              <span class="p-ml-2">
-                {{isPaused ? 'Automação pausada' : 'Automação em execução...'}}
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Área de saída da automação -->
+  <div class="automation-output" *ngIf="isAutomationRunning || automationOutput">
+    <h4>Saída da Automação</h4>
+    <pre>{{ automationOutput }}</pre>
   </div>
 </div>

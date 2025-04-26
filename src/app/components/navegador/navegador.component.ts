@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef, OnDestroy, NgZone } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ElectronService } from '../../services/electron.service';
 
@@ -7,167 +7,245 @@ import { ElectronService } from '../../services/electron.service';
   templateUrl: './navegador.component.html',
   styleUrls: ['./navegador.component.scss']
 })
-export class NavegadorComponent implements OnInit, AfterViewInit {
-  @ViewChild('browserFrame') browserFrameRef!: ElementRef;
-  url: string = 'https://www.google.com';
+export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('browserContainer') browserContainerRef: ElementRef;
+  
+  url: string = '';
   safeUrl: SafeResourceUrl;
-  isElectron: boolean = false;
-  automationPort: number = 3000;
-  isLoading: boolean = false;
-  canGoBack: boolean = false;
-  canGoForward: boolean = false;
-  isAutomationRunning: boolean = false;
-  isPaused: boolean = false;
+  isElectron: boolean = true;
   browserHistory: string[] = [];
   currentHistoryIndex: number = -1;
-
+  isAutomationRunning: boolean = false;
+  isAutomationPaused: boolean = false;
+  automationOutput: string = '';
+  resizeObserver: ResizeObserver;
+  
   constructor(
     private electronService: ElectronService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {
+    // Verifica se está rodando no Electron
     this.isElectron = this.electronService.isElectron;
-    if (this.isElectron) {
-      this.automationPort = this.electronService.automationPort;
-    }
-    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
-    console.log('Navegador inicializado com URL:', this.url);
+    console.log('Navegador inicializado, isElectron:', this.isElectron);
   }
 
   ngOnInit() {
-    // Define a URL inicial como Google novamente, agora que webSecurity está desabilitado
+    // Inicialização básica
     this.url = 'https://www.google.com';
-    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
     this.browserHistory = [this.url];
     this.currentHistoryIndex = 0;
     console.log('URL inicial definida como:', this.url);
+    
+    // Configura os listeners para comunicação com o processo principal
+    if (this.isElectron) {
+      this.setupIpcListeners();
+    }
   }
 
   ngAfterViewInit() {
     console.log('ngAfterViewInit chamado');
-    if (this.browserFrameRef) {
-      console.log('Referência do iframe obtida');
-      
-      // Adiciona evento de carregamento ao iframe
-      const iframe = this.browserFrameRef.nativeElement;
-      iframe.onload = () => {
-        console.log('Iframe carregado:', this.url);
-        this.isLoading = false;
+    
+    // Aguarda um momento para garantir que o DOM esteja completamente renderizado
+    setTimeout(() => {
+      if (this.isElectron && this.browserContainerRef) {
+        // Inicializa o BrowserView no processo principal
+        this.initializeBrowserView();
         
-        // Atualiza o histórico apenas se for uma nova URL
-        if (this.browserHistory[this.currentHistoryIndex] !== this.url) {
-          // Remove entradas futuras se estamos navegando a partir de um ponto no histórico
-          this.browserHistory = this.browserHistory.slice(0, this.currentHistoryIndex + 1);
-          this.browserHistory.push(this.url);
-          this.currentHistoryIndex = this.browserHistory.length - 1;
+        // Configura o observer para redimensionamento
+        this.setupResizeObserver();
+      }
+    }, 500);
+  }
+
+  ngOnDestroy() {
+    // Limpa o observer quando o componente for destruído
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+  }
+
+  setupIpcListeners() {
+    // Listener para receber a URL atual do BrowserView
+    this.electronService.ipcRenderer.on('current-url', (event, url) => {
+      this.ngZone.run(() => {
+        this.url = url;
+        this.cdr.detectChanges();
+      });
+    });
+    
+    // Listener para quando a página é carregada
+    this.electronService.ipcRenderer.on('browser-page-loaded', (event, url) => {
+      this.ngZone.run(() => {
+        this.url = url;
+        this.cdr.detectChanges();
+      });
+    });
+    
+    // Listener para erros de navegação
+    this.electronService.ipcRenderer.on('browser-error', (event, data) => {
+      console.error('Erro de navegação:', data);
+    });
+    
+    // Listener para confirmação de criação do BrowserView
+    this.electronService.ipcRenderer.on('browser-view-created', () => {
+      console.log('BrowserView criado, enviando coordenadas');
+      this.updateBrowserViewBounds();
+    });
+    
+    // Listeners para status da automação
+    this.electronService.ipcRenderer.on('automation-status', (event, data) => {
+      this.ngZone.run(() => {
+        console.log('Status da automação:', data);
+        
+        if (data.status === 'started') {
+          this.isAutomationRunning = true;
+          this.isAutomationPaused = false;
+        } else if (data.status === 'stopped') {
+          this.isAutomationRunning = false;
+          this.isAutomationPaused = false;
+        } else if (data.status === 'paused') {
+          this.isAutomationPaused = true;
+        } else if (data.status === 'resumed') {
+          this.isAutomationPaused = false;
         }
         
-        this.updateNavigationState();
-      };
+        this.cdr.detectChanges();
+      });
+    });
+    
+    // Listener para saída da automação
+    this.electronService.ipcRenderer.on('automation-output', (event, data) => {
+      this.ngZone.run(() => {
+        this.automationOutput += data.data + '\n';
+        this.cdr.detectChanges();
+      });
+    });
+  }
+
+  initializeBrowserView() {
+    if (this.isElectron) {
+      console.log('Solicitando inicialização do BrowserView');
+      this.electronService.ipcRenderer.send('initialize-browser-view');
+    }
+  }
+
+  setupResizeObserver() {
+    if (!this.browserContainerRef || !this.browserContainerRef.nativeElement) {
+      console.error('Referência do contêiner não encontrada');
+      return;
+    }
+    
+    // Cria um observer para monitorar mudanças de tamanho no contêiner
+    this.resizeObserver = new ResizeObserver(() => {
+      this.updateBrowserViewBounds();
+    });
+    
+    // Inicia a observação do elemento
+    this.resizeObserver.observe(this.browserContainerRef.nativeElement);
+    
+    // Atualiza as coordenadas iniciais
+    this.updateBrowserViewBounds();
+  }
+
+  updateBrowserViewBounds() {
+    if (!this.isElectron || !this.browserContainerRef || !this.browserContainerRef.nativeElement) {
+      return;
+    }
+    
+    const container = this.browserContainerRef.nativeElement;
+    const rect = container.getBoundingClientRect();
+    
+    // Obtém as coordenadas do contêiner em relação à janela
+    const bounds = {
+      x: Math.round(rect.left),
+      y: Math.round(rect.top),
+      width: Math.round(rect.width),
+      height: Math.round(rect.height)
+    };
+    
+    console.log('Enviando coordenadas do contêiner:', bounds);
+    this.electronService.ipcRenderer.send('set-browser-view-bounds', bounds);
+  }
+
+  navigateToUrl(url: string) {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+    
+    this.url = url;
+    
+    if (this.isElectron) {
+      // Envia a URL para o processo principal carregar no BrowserView
+      this.electronService.ipcRenderer.send('navigate-to-url', url);
       
-      iframe.onerror = (error: any) => {
-        console.error('Erro ao carregar iframe:', error);
-        this.isLoading = false;
-      };
+      // Atualiza o histórico
+      if (this.currentHistoryIndex < this.browserHistory.length - 1) {
+        // Se estamos no meio do histórico, remove os itens à frente
+        this.browserHistory = this.browserHistory.slice(0, this.currentHistoryIndex + 1);
+      }
+      
+      this.browserHistory.push(url);
+      this.currentHistoryIndex = this.browserHistory.length - 1;
     } else {
-      console.error('Referência do iframe não disponível');
+      // Fallback para navegadores normais (não Electron)
+      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
   }
 
-  // Atualiza o estado dos botões de navegação
-  updateNavigationState() {
-    this.canGoBack = this.currentHistoryIndex > 0;
-    this.canGoForward = this.currentHistoryIndex < this.browserHistory.length - 1;
-    console.log('Estado de navegação atualizado - Voltar:', this.canGoBack, 'Avançar:', this.canGoForward);
-  }
-
-  // Navega para a URL especificada
-  navigate() {
-    console.log('Navegando para:', this.url);
-    this.isLoading = true;
-    
-    // Adiciona https:// se não estiver presente
-    if (!this.url.startsWith('http://') && !this.url.startsWith('https://')) {
-      this.url = 'https://' + this.url;
-    }
-    
-    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
-  }
-
-  // Recarrega a página atual
-  reload() {
-    console.log('Recarregando página atual');
-    this.isLoading = true;
-    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
-    
-    // Pequeno atraso para garantir que o iframe seja recarregado
-    setTimeout(() => {
-      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
-    }, 100);
-  }
-
-  // Navega para trás no histórico
   goBack() {
-    if (this.canGoBack) {
-      console.log('Navegando para trás no histórico');
-      this.isLoading = true;
+    if (this.isElectron) {
+      this.electronService.ipcRenderer.send('browser-back');
+    } else if (this.currentHistoryIndex > 0) {
       this.currentHistoryIndex--;
       this.url = this.browserHistory[this.currentHistoryIndex];
       this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
-      this.updateNavigationState();
     }
   }
 
-  // Navega para frente no histórico
   goForward() {
-    if (this.canGoForward) {
-      console.log('Navegando para frente no histórico');
-      this.isLoading = true;
+    if (this.isElectron) {
+      this.electronService.ipcRenderer.send('browser-forward');
+    } else if (this.currentHistoryIndex < this.browserHistory.length - 1) {
       this.currentHistoryIndex++;
       this.url = this.browserHistory[this.currentHistoryIndex];
       this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
-      this.updateNavigationState();
     }
   }
 
-  // Inicia a automação Python
-  startAutomation() {
+  reload() {
     if (this.isElectron) {
-      console.log('Iniciando automação na URL:', this.url);
-      this.isAutomationRunning = true;
-      this.isPaused = false;
-      
-      // Aqui vamos chamar o script Python através do IPC
-      const { ipcRenderer } = (window as any).require('electron');
-      ipcRenderer.send('start-automation', {
-        url: this.url
-      });
+      this.electronService.ipcRenderer.send('browser-reload');
     } else {
-      console.warn('Automação só está disponível no ambiente Electron');
+      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
+      setTimeout(() => {
+        this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
+      }, 100);
     }
   }
 
-  // Para a automação Python
+  startAutomation() {
+    if (this.isElectron && !this.isAutomationRunning) {
+      this.electronService.ipcRenderer.send('start-automation');
+    }
+  }
+
   stopAutomation() {
-    if (this.isElectron) {
-      console.log('Parando automação');
-      this.isAutomationRunning = false;
-      this.isPaused = false;
-      
-      // Aqui vamos enviar o comando para parar o script Python
-      const { ipcRenderer } = (window as any).require('electron');
-      ipcRenderer.send('stop-automation');
+    if (this.isElectron && this.isAutomationRunning) {
+      this.electronService.ipcRenderer.send('stop-automation');
     }
   }
 
-  // Pausa/Continua a automação Python
-  togglePauseAutomation() {
+  pauseResumeAutomation() {
     if (this.isElectron && this.isAutomationRunning) {
-      this.isPaused = !this.isPaused;
-      console.log(this.isPaused ? 'Pausando automação' : 'Continuando automação');
-      
-      // Aqui vamos enviar o comando para pausar/continuar o script Python
-      const { ipcRenderer } = (window as any).require('electron');
-      ipcRenderer.send('toggle-pause-automation', { paused: this.isPaused });
+      this.electronService.ipcRenderer.send('pause-automation');
+    }
+  }
+
+  onUrlKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.navigateToUrl(this.url);
     }
   }
 }
