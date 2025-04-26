@@ -34,8 +34,8 @@ export class NavegadorComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    // Define a URL inicial como um site que permite ser carregado em iframe
-    this.url = 'https://example.com';
+    // Define a URL inicial como Google novamente, agora que webSecurity está desabilitado
+    this.url = 'https://www.google.com';
     this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
     this.browserHistory = [this.url];
     this.currentHistoryIndex = 0;

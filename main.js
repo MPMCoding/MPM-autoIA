@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, BrowserView } = require('electron');
 const path = require('path');
 const url = require('url');
 const { spawn } = require('child_process');
@@ -20,6 +20,9 @@ const AUTOMATION_PORT = 3000; // Ajuste para a porta correta da sua automação
 // será fechada automaticamente quando o objeto JavaScript for coletado pelo garbage collector.
 let mainWindow;
 
+// Referência para o BrowserView que será usado como navegador embutido
+let browserView;
+
 // Referência para o processo de automação Python
 let automationProcess = null;
 let automationPaused = false;
@@ -33,6 +36,7 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       webviewTag: true, // Habilita a tag webview
+      webSecurity: false, // Desabilita restrições de segurança para permitir carregamento de qualquer site
       preload: path.join(__dirname, 'preload.js')
     },
     icon: path.join(__dirname, 'src/assets/icons/icon.png')
@@ -56,6 +60,9 @@ function createWindow() {
     // em um array se seu app suporta múltiplas janelas, este é o momento
     // em que você deve excluir o elemento correspondente.
     mainWindow = null;
+    if (browserView) {
+      browserView = null;
+    }
   });
 
   // Configuração do banco de dados SQLite
@@ -126,6 +133,133 @@ ipcMain.on('get-automation-port', (event) => {
   event.returnValue = AUTOMATION_PORT;
 });
 
+// Manipulador para criar o navegador embutido
+ipcMain.on('create-browser-view', (event, args) => {
+  try {
+    console.log('Criando BrowserView para navegador embutido');
+    
+    // Remove o BrowserView existente, se houver
+    if (browserView) {
+      mainWindow.removeBrowserView(browserView);
+      browserView = null;
+    }
+    
+    // Cria um novo BrowserView
+    browserView = new BrowserView({
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        sandbox: true,
+        webSecurity: true
+      }
+    });
+    
+    // Adiciona o BrowserView à janela principal
+    mainWindow.addBrowserView(browserView);
+    
+    // Define a posição e tamanho do BrowserView
+    const bounds = args.bounds || { x: 300, y: 400, width: 800, height: 500 };
+    browserView.setBounds(bounds);
+    
+    // Carrega o Google como página inicial
+    browserView.webContents.loadURL('https://www.google.com');
+    
+    // Envia o ID do BrowserView para o renderer
+    event.reply('browser-view-created', { id: browserView.id });
+    
+    // Eventos do BrowserView
+    browserView.webContents.on('did-start-loading', () => {
+      event.reply('browser-view-loading', { isLoading: true });
+    });
+    
+    browserView.webContents.on('did-stop-loading', () => {
+      event.reply('browser-view-loading', { isLoading: false });
+      event.reply('browser-view-url-changed', { url: browserView.webContents.getURL() });
+      event.reply('browser-view-navigation-state', {
+        canGoBack: browserView.webContents.canGoBack(),
+        canGoForward: browserView.webContents.canGoForward()
+      });
+    });
+    
+    browserView.webContents.on('did-navigate', (e, url) => {
+      event.reply('browser-view-url-changed', { url });
+    });
+    
+    console.log('BrowserView criado com sucesso');
+  } catch (error) {
+    console.error('Erro ao criar BrowserView:', error);
+    event.reply('browser-view-error', { error: error.toString() });
+  }
+});
+
+// Manipulador para navegar para uma URL
+ipcMain.on('browser-view-navigate', (event, args) => {
+  try {
+    if (browserView) {
+      console.log('Navegando para:', args.url);
+      browserView.webContents.loadURL(args.url);
+    } else {
+      console.error('BrowserView não está disponível');
+      event.reply('browser-view-error', { error: 'BrowserView não está disponível' });
+    }
+  } catch (error) {
+    console.error('Erro ao navegar:', error);
+    event.reply('browser-view-error', { error: error.toString() });
+  }
+});
+
+// Manipulador para voltar na navegação
+ipcMain.on('browser-view-go-back', (event) => {
+  try {
+    if (browserView && browserView.webContents.canGoBack()) {
+      console.log('Voltando na navegação');
+      browserView.webContents.goBack();
+    }
+  } catch (error) {
+    console.error('Erro ao voltar:', error);
+    event.reply('browser-view-error', { error: error.toString() });
+  }
+});
+
+// Manipulador para avançar na navegação
+ipcMain.on('browser-view-go-forward', (event) => {
+  try {
+    if (browserView && browserView.webContents.canGoForward()) {
+      console.log('Avançando na navegação');
+      browserView.webContents.goForward();
+    }
+  } catch (error) {
+    console.error('Erro ao avançar:', error);
+    event.reply('browser-view-error', { error: error.toString() });
+  }
+});
+
+// Manipulador para recarregar a página
+ipcMain.on('browser-view-reload', (event) => {
+  try {
+    if (browserView) {
+      console.log('Recarregando página');
+      browserView.webContents.reload();
+    }
+  } catch (error) {
+    console.error('Erro ao recarregar:', error);
+    event.reply('browser-view-error', { error: error.toString() });
+  }
+});
+
+// Manipulador para redimensionar o BrowserView
+ipcMain.on('browser-view-resize', (event, args) => {
+  try {
+    if (browserView) {
+      console.log('Redimensionando BrowserView:', args.bounds);
+      browserView.setBounds(args.bounds);
+    }
+  } catch (error) {
+    console.error('Erro ao redimensionar:', error);
+    event.reply('browser-view-error', { error: error.toString() });
+  }
+});
+
 // Manipuladores de banco de dados
 ipcMain.handle('get-activities', async () => {
   // Se o módulo SQLite não foi carregado, retorna dados mockados
@@ -179,12 +313,6 @@ function getMockActivities() {
     }
   ];
 }
-
-// Manipulador para carregar URL no webview
-ipcMain.handle('load-url', async (event, url) => {
-  console.log('Solicitação para carregar URL:', url);
-  return { success: true, url };
-});
 
 // Manipuladores para a automação Python
 ipcMain.on('start-automation', (event, args) => {

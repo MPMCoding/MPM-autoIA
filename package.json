@@ -10,7 +10,9 @@
     "electron": "electron .",
     "electron-dev": "ng build --base-href ./ && electron .",
     "electron-start": "node electron-start.js",
-    "package": "electron-builder build --win"
+    "package": "electron-builder build --win",
+    "postinstall": "electron-rebuild",
+    "rebuild": "electron-rebuild"
   },
   "keywords": [
     "electron",
@@ -28,6 +30,7 @@
     "@types/node": "^18.16.0",
     "electron": "^25.0.0",
     "electron-builder": "^24.0.0",
+    "electron-rebuild": "^3.2.13",
     "typescript": "~5.0.4"
   },
   "dependencies": {
