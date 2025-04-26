@@ -9,12 +9,12 @@
         <button pButton type="button" icon="pi pi-arrow-right" class="p-button-secondary p-button-sm" 
                 [disabled]="!canGoForward" (click)="goForward()"></button>
       </div>
-      <div class="p-col-8">
+      <div class="p-col-6">
         <div class="p-inputgroup">
           <span class="p-inputgroup-addon">
             <i class="pi pi-link"></i>
           </span>
-          <input type="text" pInputText [(ngModel)]="url" placeholder="http://localhost:3000" />
+          <input type="text" pInputText [(ngModel)]="url" placeholder="https://www.google.com" />
         </div>
       </div>
       <div class="p-col-1">
@@ -24,6 +24,31 @@
       <div class="p-col-1">
         <button pButton type="button" icon="pi pi-refresh" class="p-button-secondary p-button-sm" 
                 [loading]="isLoading" (click)="reload()"></button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Controles de automação -->
+  <div class="automation-controls p-mb-2">
+    <div class="p-grid p-nogutter">
+      <div class="p-col-4">
+        <button pButton type="button" icon="pi pi-play" label="Iniciar Automação" 
+                class="p-button-success p-button-sm" 
+                [disabled]="isAutomationRunning" 
+                (click)="startAutomation()"></button>
+      </div>
+      <div class="p-col-4">
+        <button pButton type="button" [icon]="isPaused ? 'pi pi-play' : 'pi pi-pause'" 
+                [label]="isPaused ? 'Continuar' : 'Pausar'" 
+                class="p-button-warning p-button-sm" 
+                [disabled]="!isAutomationRunning" 
+                (click)="togglePauseAutomation()"></button>
+      </div>
+      <div class="p-col-4">
+        <button pButton type="button" icon="pi pi-stop" label="Parar Automação" 
+                class="p-button-danger p-button-sm" 
+                [disabled]="!isAutomationRunning" 
+                (click)="stopAutomation()"></button>
       </div>
     </div>
   </div>
@@ -40,6 +65,24 @@
         <br>
         URL de automação: {{url}}
       </p>
+    </div>
+  </div>
+  
+  <!-- Status da automação -->
+  <div class="automation-status p-mt-2" *ngIf="isAutomationRunning">
+    <div class="p-grid">
+      <div class="p-col-12">
+        <div class="p-card p-p-2">
+          <div class="p-card-body">
+            <p class="p-m-0">
+              <i class="pi" [ngClass]="{'pi-spin pi-spinner': !isPaused, 'pi-pause': isPaused}"></i>
+              <span class="p-ml-2">
+                {{isPaused ? 'Automação pausada' : 'Automação em execução...'}}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

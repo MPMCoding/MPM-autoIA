@@ -2,6 +2,8 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
 const sqlite3 = require('better-sqlite3');
+const { spawn } = require('child_process');
+const fs = require('fs');
 
 // Porta para a automação
 const AUTOMATION_PORT = 3000; // Ajuste para a porta correta da sua automação
@@ -9,6 +11,10 @@ const AUTOMATION_PORT = 3000; // Ajuste para a porta correta da sua automação
 // Mantenha uma referência global do objeto window, se não fizer isso, a janela
 // será fechada automaticamente quando o objeto JavaScript for coletado pelo garbage collector.
 let mainWindow;
+
+// Referência para o processo de automação Python
+let automationProcess = null;
+let automationPaused = false;
 
 function createWindow() {
   // Cria a janela do navegador.
@@ -115,6 +121,73 @@ ipcMain.handle('get-activities', async () => {
   } catch (err) {
     console.error('Erro ao buscar atividades:', err);
     return [];
+  }
+});
+
+// Manipuladores para a automação Python
+ipcMain.on('start-automation', (event, args) => {
+  try {
+    if (automationProcess) {
+      console.log('Automação já está em execução');
+      return;
+    }
+
+    const currentUrl = args.url;
+    console.log('Iniciando automação na URL:', currentUrl);
+    
+    // Verifica se o Python está instalado
+    const pythonCommand = process.platform === 'win32' ? 'python' : 'python3';
+    
+    // Cria um arquivo temporário com a URL atual
+    fs.writeFileSync('current_url.txt', currentUrl);
+    
+    // Inicia o processo Python
+    automationProcess = spawn(pythonCommand, ['mpm_autoia_interface_embedded.py', '--embedded', '--url', currentUrl]);
+    
+    automationProcess.stdout.on('data', (data) => {
+      console.log(`Automação (stdout): ${data}`);
+      mainWindow.webContents.send('automation-log', data.toString());
+    });
+    
+    automationProcess.stderr.on('data', (data) => {
+      console.error(`Automação (stderr): ${data}`);
+      mainWindow.webContents.send('automation-error', data.toString());
+    });
+    
+    automationProcess.on('close', (code) => {
+      console.log(`Processo de automação encerrado com código ${code}`);
+      automationProcess = null;
+      automationPaused = false;
+      mainWindow.webContents.send('automation-stopped');
+    });
+    
+    mainWindow.webContents.send('automation-started');
+    
+  } catch (error) {
+    console.error('Erro ao iniciar automação:', error);
+    mainWindow.webContents.send('automation-error', error.toString());
+  }
+});
+
+ipcMain.on('stop-automation', () => {
+  if (automationProcess) {
+    console.log('Parando automação');
+    automationProcess.kill();
+    automationProcess = null;
+    automationPaused = false;
+    mainWindow.webContents.send('automation-stopped');
+  }
+});
+
+ipcMain.on('toggle-pause-automation', (event, args) => {
+  if (automationProcess) {
+    automationPaused = args.paused;
+    console.log(automationPaused ? 'Pausando automação' : 'Continuando automação');
+    
+    // Envia sinal para o processo Python
+    automationProcess.stdin.write(automationPaused ? 'pause\n' : 'continue\n');
+    
+    mainWindow.webContents.send('automation-paused', automationPaused);
   }
 });
 
