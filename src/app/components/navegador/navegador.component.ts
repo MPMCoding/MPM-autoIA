@@ -46,17 +46,8 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     console.log('ngAfterViewInit chamado');
-    
-    // Aguarda um momento para garantir que o DOM esteja completamente renderizado
-    setTimeout(() => {
-      if (this.isElectron && this.browserContainerRef) {
-        // Inicializa o BrowserView no processo principal
-        this.initializeBrowserView();
-        
-        // Configura o observer para redimensionamento
-        this.setupResizeObserver();
-      }
-    }, 500);
+    // A inicialização do BrowserView agora é acionada pelo componente pai ou serviço após o login.
+    // A configuração do ResizeObserver será feita após a confirmação da criação do BrowserView.
   }
 
   ngOnDestroy() {
