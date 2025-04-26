@@ -1,0 +1,111 @@
+<div class="p-grid">
+  <div class="p-col-12">
+    <p-card>
+      <div class="p-card-title">
+        <h2>Painel de Administração</h2>
+      </div>
+      <div class="p-card-subtitle">
+        <p>Gerencie usuários e visualize estatísticas do sistema</p>
+      </div>
+      
+      <!-- Estatísticas -->
+      <div class="p-grid p-mb-4">
+        <div class="p-col-12 p-md-4">
+          <p-card styleClass="stat-card">
+            <div class="stat-icon users">
+              <i class="pi pi-users"></i>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-label">Total de Usuários</h3>
+              <p class="stat-value">{{estatisticas.totalUsuarios}}</p>
+            </div>
+          </p-card>
+        </div>
+        
+        <div class="p-col-12 p-md-4">
+          <p-card styleClass="stat-card">
+            <div class="stat-icon active">
+              <i class="pi pi-user-plus"></i>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-label">Usuários Ativos</h3>
+              <p class="stat-value">{{estatisticas.usuariosAtivos}}</p>
+            </div>
+          </p-card>
+        </div>
+        
+        <div class="p-col-12 p-md-4">
+          <p-card styleClass="stat-card">
+            <div class="stat-icon access">
+              <i class="pi pi-calendar"></i>
+            </div>
+            <div class="stat-info">
+              <h3 class="stat-label">Acessos na Semana</h3>
+              <p class="stat-value">{{estatisticas.acessosUltimaSemana}}</p>
+            </div>
+          </p-card>
+        </div>
+      </div>
+      
+      <!-- Botão para adicionar novo usuário -->
+      <div class="p-mb-3">
+        <button pButton type="button" label="Novo Usuário" icon="pi pi-plus" 
+                (click)="abrirDialogNovoUsuario()"></button>
+      </div>
+      
+      <!-- Tabela de usuários -->
+      <p-table [value]="usuarios" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Último Acesso</th>
+            <th>Ações</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-usuario>
+          <tr>
+            <td>{{usuario.nome}}</td>
+            <td>{{usuario.email}}</td>
+            <td>{{usuario.tipo | titlecase}}</td>
+            <td>
+              <span class="status-badge" [ngClass]="{'status-active': usuario.status === 'Ativo'}">
+                {{usuario.status}}
+              </span>
+            </td>
+            <td>{{usuario.ultimoAcesso | date:'dd/MM/yyyy'}}</td>
+            <td>
+              <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"></button>
+              <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+</div>
+
+<!-- Dialog para adicionar novo usuário -->
+<p-dialog header="Novo Usuário" [(visible)]="displayDialog" [modal]="true" [style]="{width: '450px'}">
+  <div class="p-fluid">
+    <div class="p-field p-mb-3">
+      <label for="nome">Nome</label>
+      <input id="nome" type="text" pInputText [(ngModel)]="novoUsuario.nome" required>
+    </div>
+    <div class="p-field p-mb-3">
+      <label for="email">Email</label>
+      <input id="email" type="email" pInputText [(ngModel)]="novoUsuario.email" required>
+    </div>
+    <div class="p-field p-mb-3">
+      <label for="tipo">Tipo de Usuário</label>
+      <p-dropdown id="tipo" [options]="tiposUsuario" [(ngModel)]="novoUsuario.tipo" 
+                  placeholder="Selecione um tipo" optionLabel="label" optionValue="value"></p-dropdown>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="cancelar()"></button>
+    <button pButton type="button" label="Salvar" icon="pi pi-check" (click)="salvarUsuario()"></button>
+  </ng-template>
+</p-dialog>

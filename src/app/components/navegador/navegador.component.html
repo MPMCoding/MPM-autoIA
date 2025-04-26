@@ -1,0 +1,45 @@
+<div class="navegador-container">
+  <div class="browser-controls p-mb-2">
+    <div class="p-grid p-nogutter">
+      <div class="p-col-1">
+        <button pButton type="button" icon="pi pi-arrow-left" class="p-button-secondary p-button-sm" 
+                [disabled]="!canGoBack" (click)="goBack()"></button>
+      </div>
+      <div class="p-col-1">
+        <button pButton type="button" icon="pi pi-arrow-right" class="p-button-secondary p-button-sm" 
+                [disabled]="!canGoForward" (click)="goForward()"></button>
+      </div>
+      <div class="p-col-8">
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon">
+            <i class="pi pi-link"></i>
+          </span>
+          <input type="text" pInputText [(ngModel)]="url" placeholder="http://localhost:3000" />
+        </div>
+      </div>
+      <div class="p-col-1">
+        <button pButton type="button" icon="pi pi-search" class="p-button-primary p-button-sm" 
+                (click)="navigate()"></button>
+      </div>
+      <div class="p-col-1">
+        <button pButton type="button" icon="pi pi-refresh" class="p-button-secondary p-button-sm" 
+                [loading]="isLoading" (click)="reload()"></button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="webview-container">
+    <!-- Webview do Electron -->
+    <webview *ngIf="isElectron" #webview [attr.src]="url" style="width:100%; height:500px;"></webview>
+    
+    <!-- Fallback para quando não estiver no Electron -->
+    <div *ngIf="!isElectron" class="webview-placeholder">
+      <p class="text-center p-4">
+        <i class="pi pi-desktop text-4xl mb-3 block"></i>
+        O navegador embutido só está disponível quando o aplicativo é executado no Electron.
+        <br>
+        URL de automação: {{url}}
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+/* Estilos para o componente de perguntas */
+
+.question-card {
+  min-height: 300px;
+}
+
+.question-header {
+  margin-bottom: 1rem;
+}
+
+.question-meta {
+  background-color: #e9ecef;
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+.question-content h3 {
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+.answer-section {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 5px;
+  border-left: 4px solid #28a745;
+}

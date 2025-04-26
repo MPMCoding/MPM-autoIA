@@ -1,0 +1,27 @@
+/* Estilos para o componente de pesquisa */
+
+.search-result-card {
+  margin-bottom: 1rem;
+}
+
+.search-result-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.search-result-title {
+  font-weight: bold;
+}
+
+.search-result-type {
+  background-color: #e9ecef;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.search-result-match {
+  color: #28a745;
+  font-size: 0.8rem;
+}

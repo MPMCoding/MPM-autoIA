@@ -1,0 +1,28 @@
+<div class="sidebar-container">
+  <div class="logo-section p-d-flex p-ai-center p-mb-4">
+    <div class="logo-icon">
+      <i class="pi pi-desktop text-2xl"></i>
+    </div>
+    <div class="p-ml-3">
+      <h2 class="app-name">MPM AutoIA</h2>
+      <p class="app-description">Assistente AVA</p>
+    </div>
+  </div>
+  
+  <nav class="menu-section">
+    <ul class="menu-list">
+      <li *ngFor="let item of menuItems" 
+          class="menu-item" 
+          [ngClass]="{'active': item.active}"
+          (click)="navigateTo(item.route)">
+        <i class="{{item.icon}} menu-icon"></i>
+        <span>{{item.label}}</span>
+      </li>
+      
+      <li class="menu-item logout" (click)="logout()">
+        <i class="pi pi-sign-out menu-icon"></i>
+        <span>Sair</span>
+      </li>
+    </ul>
+  </nav>
+</div>

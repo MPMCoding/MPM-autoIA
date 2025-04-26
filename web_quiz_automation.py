@@ -14,15 +14,15 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from PIL import Image, ImageTk
 from io import BytesIO
 
-# Logo SVG do MPM AutoIA (amarelo vibrante em fundo transparente)
+# Logo SVG do MPM AutoIA (azul em fundo branco, seguindo o estilo do codigoexemplo.html)
 MPM_LOGO_SVG = '''
 <svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .text { font: bold 20px sans-serif; fill: #FFD700; }
-    .brain { fill: none; stroke: #FFD700; stroke-width: 3; }
-    .circuit { fill: none; stroke: #FFD700; stroke-width: 2; stroke-dasharray: 5,3; }
+    .text { font: bold 20px sans-serif; fill: #1a56db; }
+    .brain { fill: none; stroke: #1a56db; stroke-width: 3; }
+    .circuit { fill: none; stroke: #3b82f6; stroke-width: 2; stroke-dasharray: 5,3; }
   </style>
-  <circle cx="60" cy="60" r="50" fill="#0D0D0D" stroke="#FFD700" stroke-width="3"/>
+  <circle cx="60" cy="60" r="50" fill="#e1effe" stroke="#1a56db" stroke-width="3"/>
   <path class="brain" d="M40,45 C40,35 50,30 60,30 C70,30 80,35 80,45 C80,55 70,60 60,65 C50,60 40,55 40,45 Z"/>
   <path class="brain" d="M40,75 C40,65 50,60 60,60 C70,60 80,65 80,75 C80,85 70,90 60,90 C50,90 40,85 40,75 Z"/>
   <path class="circuit" d="M30,60 L90,60 M60,30 L60,90 M40,40 L80,80 M40,80 L80,40"/>
@@ -48,8 +48,8 @@ class WebQuizAutomationGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("MPM AutoIA - Automação de Quiz Web")
-        self.root.geometry("800x700")
-        self.root.configure(bg="#0D0D0D")  # Fundo principal: preto profundo
+        self.root.geometry("900x750")
+        self.root.configure(bg="#f0f5ff")  # Fundo principal: azul claro como no codigoexemplo.html
         
         self.automation = None
         self.chrome_process = None
@@ -74,28 +74,78 @@ class WebQuizAutomationGUI:
         return None
     
     def setup_ui(self):
-        # Estilo para os widgets com a nova paleta de cores
+        # Estilo para os widgets com a nova paleta de cores do codigoexemplo.html
         style = ttk.Style()
-        style.configure("TFrame", background="#0D0D0D")  # Fundo principal: preto profundo
-        style.configure("TLabel", background="#0D0D0D", foreground="#FFFFFF", font=("Helvetica", 10))  # Texto principal: branco puro
-        style.configure("TButton", background="#FFD700", foreground="#0D0D0D", font=("Helvetica", 10, "bold"))  # Botões: amarelo vibrante com texto preto
-        style.configure("Header.TLabel", font=("Helvetica", 18, "bold"), foreground="#FFD700")  # Título: amarelo vibrante
-        style.configure("SubHeader.TLabel", font=("Helvetica", 12, "bold"), foreground="#FFD700")  # Subtítulo: amarelo vibrante
-        style.configure("Info.TLabel", font=("Helvetica", 9, "italic"), foreground="#BFBFBF")  # Texto secundário: cinza claro
+        style.configure("TFrame", background="#f0f5ff")
+        style.configure("Card.TFrame", background="#ffffff")
+        style.configure("TLabel", background="#f0f5ff", foreground="#1a1a1a", font=("Segoe UI", 10))
+        style.configure("Card.TLabel", background="#ffffff")
+        style.configure("Header.TLabel", font=("Segoe UI", 18, "bold"), foreground="#1a56db")
+        style.configure("SubHeader.TLabel", font=("Segoe UI", 14, "bold"), foreground="#1a56db")
+        style.configure("Info.TLabel", font=("Segoe UI", 9), foreground="#6b7280")
+        
+        # Definir classe para aplicar estilo de card com sombra
+        class CardFrame(ttk.Frame):
+            """Frame personalizado com estilo de card com sombra e bordas arredondadas"""
+            def __init__(self, parent, **kwargs):
+                super().__init__(parent, style="Card.TFrame", **kwargs)
+                self.bind("<Map>", self._on_map)
+                
+            def _on_map(self, event):
+                # Aplicar bordas arredondadas e sombra após o widget ser mapeado
+                self.update_idletasks()
+                # Criar efeito de sombra com frames sobrepostos
+                shadow = tk.Frame(self.master, bg="#dbeafe", bd=0)
+                shadow.place(x=self.winfo_x()+3, y=self.winfo_y()+3, 
+                             width=self.winfo_width(), height=self.winfo_height())
+                shadow.lower(self)
+                # Criar borda arredondada (simulada)
+                border = tk.Frame(self.master, bg="#ffffff", bd=0,
+                                highlightbackground="#e1effe", highlightthickness=1)
+                border.place(x=self.winfo_x(), y=self.winfo_y(), 
+                            width=self.winfo_width(), height=self.winfo_height())
+                border.lower(self)
+        
+        # Configurar estilo para os botões
+        style.configure("TButton", 
+                      font=("Segoe UI", 10, "bold"),
+                      background="#1a56db",
+                      foreground="#ffffff")
+        
+        style.map("TButton",
+                 background=[("active", "#1e429f")],
+                 foreground=[("active", "#ffffff")])
+        
+        style.configure("Secondary.TButton", 
+                      background="#3b82f6",
+                      foreground="#ffffff")
+        
+        style.map("Secondary.TButton",
+                 background=[("active", "#2563eb")],
+                 foreground=[("active", "#ffffff")])
         
         # Configurar estilo para os elementos de entrada
-        style.configure("TEntry", fieldbackground="#1E1E1E", foreground="#FFFFFF", insertcolor="#FFFFFF")
-        style.map("TButton",
-                 background=[("active", "#FF8C00")],  # Hover: laranja queimado
-                 foreground=[("active", "#FFFFFF")])  # Texto branco no hover
+        style.configure("TEntry", fieldbackground="#ffffff", foreground="#1a1a1a")
+        style.configure("TCombobox", fieldbackground="#ffffff", foreground="#1a1a1a")
         
         # Frame principal
-        main_frame = ttk.Frame(self.root, style="TFrame")
-        main_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
+        main_frame = ttk.Frame(self.root)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+        
+        # Card principal (container branco com sombra e bordas arredondadas)
+        card_frame = ttk.Frame(main_frame, style="Card.TFrame")
+        card_frame.pack(fill=tk.BOTH, expand=True, padx=0, pady=0)
+        card_frame.configure(padding=15)
+        
+        # Aplicar estilo de card com sombra (simulado com borda)
+        card_frame_border = tk.Frame(card_frame, bg="#e1effe", bd=0, highlightbackground="#e1effe", 
+                                   highlightcolor="#e1effe", highlightthickness=1)
+        card_frame_border.place(x=-5, y=-5, relwidth=1.01, relheight=1.01)
+        card_frame_border.lower()
         
         # Logo e Título
-        title_frame = ttk.Frame(main_frame, style="TFrame")
-        title_frame.pack(fill=tk.X, pady=(0, 15))
+        header_frame = ttk.Frame(card_frame, style="Card.TFrame")
+        header_frame.pack(fill=tk.X, pady=(0, 20))
         
         # Converter SVG para imagem Tkinter
         try:
@@ -107,21 +157,21 @@ class WebQuizAutomationGUI:
         except ImportError:
             # Fallback se cairosvg não estiver disponível
             # Criar uma imagem simples com texto
-            logo_img = Image.new('RGBA', (120, 120), (13, 13, 13, 0))
+            logo_img = Image.new('RGBA', (120, 120), (225, 239, 254, 255))
         
         logo_photo = ImageTk.PhotoImage(logo_img)
         
         # Criar um frame para o logo e texto
-        logo_text_frame = ttk.Frame(title_frame, style="TFrame")
+        logo_text_frame = ttk.Frame(header_frame, style="Card.TFrame")
         logo_text_frame.pack(pady=(0, 10))
         
         # Adicionar o logo
-        logo_label = ttk.Label(logo_text_frame, image=logo_photo, background="#0D0D0D")
+        logo_label = ttk.Label(logo_text_frame, image=logo_photo, background="#ffffff")
         logo_label.image = logo_photo  # Manter referência para evitar coleta de lixo
-        logo_label.pack(side=tk.LEFT, padx=(0, 10))
+        logo_label.pack(side=tk.LEFT, padx=(0, 15))
         
         # Frame para título e subtítulo
-        text_frame = ttk.Frame(logo_text_frame, style="TFrame")
+        text_frame = ttk.Frame(logo_text_frame, style="Card.TFrame")
         text_frame.pack(side=tk.LEFT)
         
         title_label = ttk.Label(text_frame, text='MPM AutoIA', style="Header.TLabel")
@@ -130,33 +180,39 @@ class WebQuizAutomationGUI:
         subtitle_label = ttk.Label(text_frame, text='Automação Inteligente de Quiz Web', style="SubHeader.TLabel")
         subtitle_label.pack(anchor=tk.W)
         
+        # Separador
+        separator0 = ttk.Separator(card_frame, orient='horizontal')
+        separator0.pack(fill=tk.X, pady=10)
+        
         # Frame para Chrome
-        chrome_frame = ttk.Frame(main_frame, style="TFrame")
+        chrome_frame = CardFrame(card_frame)
         chrome_frame.pack(fill=tk.X, pady=10)
         
-        chrome_label = ttk.Label(chrome_frame, text="Configuração do Chrome:", style="SubHeader.TLabel")
-        chrome_label.pack(anchor=tk.W, padx=5, pady=(0, 5))
+        chrome_label = ttk.Label(chrome_frame, text="Configuração do Chrome", style="SubHeader.TLabel")
+        chrome_label.pack(anchor=tk.W, padx=5, pady=(0, 10))
         
         # Frame para caminho do Chrome
-        chrome_path_frame = ttk.Frame(chrome_frame, style="TFrame")
+        chrome_path_frame = ttk.Frame(chrome_frame, style="Card.TFrame")
+        chrome_path_frame.configure(padding=5)
         chrome_path_frame.pack(fill=tk.X, pady=5)
         
-        path_label = ttk.Label(chrome_path_frame, text="Caminho do Chrome:", style="TLabel")
+        path_label = ttk.Label(chrome_path_frame, text="Caminho do Chrome:", style="Card.TLabel")
         path_label.pack(side=tk.LEFT, padx=5)
         
-        self.chrome_path_entry = ttk.Entry(chrome_path_frame, width=40)
+        self.chrome_path_entry = ttk.Entry(chrome_path_frame, width=50)
         self.chrome_path_entry.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
         if self.chrome_path:
             self.chrome_path_entry.insert(0, self.chrome_path)
         
-        browse_button = ttk.Button(chrome_path_frame, text="Procurar", command=self.browse_chrome)
+        browse_button = ttk.Button(chrome_path_frame, text="Procurar", command=self.browse_chrome, style="Secondary.TButton")
         browse_button.pack(side=tk.LEFT, padx=5)
         
         # Frame para porta de depuração
-        remote_frame = ttk.Frame(chrome_frame, style="TFrame")
-        remote_frame.pack(fill=tk.X, pady=5)
+        remote_frame = ttk.Frame(chrome_frame, style="Card.TFrame")
+        remote_frame.configure(padding=5)
+        remote_frame.pack(fill=tk.X, pady=10)
         
-        remote_label = ttk.Label(remote_frame, text="Porta de depuração:", style="TLabel")
+        remote_label = ttk.Label(remote_frame, text="Porta de depuração:", style="Card.TLabel")
         remote_label.pack(side=tk.LEFT, padx=5)
         
         self.port_entry = ttk.Entry(remote_frame, width=10)
@@ -164,87 +220,102 @@ class WebQuizAutomationGUI:
         self.port_entry.insert(0, "9222")
         
         # Botão para iniciar o Chrome
-        chrome_button_frame = ttk.Frame(chrome_frame, style="TFrame")
+        chrome_button_frame = ttk.Frame(chrome_frame, style="Card.TFrame")
+        chrome_button_frame.configure(padding=5)
         chrome_button_frame.pack(fill=tk.X, pady=10)
         
-        self.start_chrome_button = ttk.Button(chrome_button_frame, text="Iniciar Chrome em Modo Depuração", command=self.start_chrome)
+        self.start_chrome_button = ttk.Button(chrome_button_frame, 
+                                             text="Iniciar Chrome em Modo Depuração", 
+                                             command=self.start_chrome)
         self.start_chrome_button.pack(side=tk.LEFT, padx=5, pady=5)
         
         self.chrome_status_label = ttk.Label(chrome_button_frame, text="Chrome não iniciado", style="Info.TLabel")
         self.chrome_status_label.pack(side=tk.LEFT, padx=10)
         
         # Separador
-        separator = ttk.Separator(main_frame, orient='horizontal')
-        separator.pack(fill=tk.X, pady=10)
+        separator = ttk.Separator(card_frame, orient='horizontal')
+        separator.pack(fill=tk.X, pady=15)
         
         # Frame para seletores
-        selectors_frame_title = ttk.Label(main_frame, text="Configuração dos Seletores CSS:", style="SubHeader.TLabel")
-        selectors_frame_title.pack(anchor=tk.W, padx=5, pady=(5, 5))
+        selectors_frame_title = ttk.Label(card_frame, text="Configuração dos Seletores CSS", style="SubHeader.TLabel")
+        selectors_frame_title.pack(anchor=tk.W, padx=5, pady=(5, 10))
         
-        selectors_frame = ttk.Frame(main_frame, style="TFrame")
+        selectors_frame = CardFrame(card_frame)
         selectors_frame.pack(fill=tk.X, pady=5)
         
         # Seletor de pergunta
-        question_label = ttk.Label(selectors_frame, text="Seletor da pergunta:", style="TLabel")
-        question_label.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        question_label = ttk.Label(selectors_frame, text="Seletor da pergunta:", style="Card.TLabel")
+        question_label.grid(row=0, column=0, padx=5, pady=8, sticky=tk.W)
         
         self.question_selector = ttk.Entry(selectors_frame, width=40)
-        self.question_selector.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
+        self.question_selector.grid(row=0, column=1, padx=5, pady=8, sticky=tk.W+tk.E)
         self.question_selector.insert(0, ".qtext")
         
         # Seletor de opções
-        options_label = ttk.Label(selectors_frame, text="Seletor das opções:", style="TLabel")
-        options_label.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        options_label = ttk.Label(selectors_frame, text="Seletor das opções:", style="Card.TLabel")
+        options_label.grid(row=1, column=0, padx=5, pady=8, sticky=tk.W)
         
         self.options_selector = ttk.Entry(selectors_frame, width=40)
-        self.options_selector.grid(row=1, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
+        self.options_selector.grid(row=1, column=1, padx=5, pady=8, sticky=tk.W+tk.E)
         self.options_selector.insert(0, "input[type='radio']")
         
         # Seletor do botão próxima
-        next_button_label = ttk.Label(selectors_frame, text="Seletor do botão próxima:", style="TLabel")
-        next_button_label.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
+        next_button_label = ttk.Label(selectors_frame, text="Seletor do botão próxima:", style="Card.TLabel")
+        next_button_label.grid(row=2, column=0, padx=5, pady=8, sticky=tk.W)
         
         self.next_button_selector = ttk.Entry(selectors_frame, width=40)
-        self.next_button_selector.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
+        self.next_button_selector.grid(row=2, column=1, padx=5, pady=8, sticky=tk.W+tk.E)
         self.next_button_selector.insert(0, "input[value='Próxima página']")
         
         # Configurar o grid para expandir
         selectors_frame.columnconfigure(1, weight=1)
         
         # Separador
-        separator2 = ttk.Separator(main_frame, orient='horizontal')
-        separator2.pack(fill=tk.X, pady=10)
+        separator2 = ttk.Separator(card_frame, orient='horizontal')
+        separator2.pack(fill=tk.X, pady=15)
         
         # Botões de controle
-        control_frame_title = ttk.Label(main_frame, text="Controles da Automação:", style="SubHeader.TLabel")
-        control_frame_title.pack(anchor=tk.W, padx=5, pady=(5, 5))
+        control_frame_title = ttk.Label(card_frame, text="Controles da Automação", style="SubHeader.TLabel")
+        control_frame_title.pack(anchor=tk.W, padx=5, pady=(5, 10))
         
-        control_frame = ttk.Frame(main_frame, style="TFrame")
+        control_frame = CardFrame(card_frame)
         control_frame.pack(fill=tk.X, pady=5)
         
         self.start_button = ttk.Button(control_frame, text="Iniciar Automação", command=self.start_automation)
         self.start_button.pack(side=tk.LEFT, padx=5, pady=5)
         
-        self.pause_button = ttk.Button(control_frame, text="Pausar", command=self.toggle_pause, state=tk.DISABLED)
+        self.pause_button = ttk.Button(control_frame, text="Pausar", command=self.toggle_pause, state=tk.DISABLED, style="Secondary.TButton")
         self.pause_button.pack(side=tk.LEFT, padx=5, pady=5)
         
-        self.stop_button = ttk.Button(control_frame, text="Parar", command=self.stop_automation, state=tk.DISABLED)
+        self.stop_button = ttk.Button(control_frame, text="Parar", command=self.stop_automation, state=tk.DISABLED, style="Secondary.TButton")
         self.stop_button.pack(side=tk.LEFT, padx=5, pady=5)
         
         # Separador
-        separator3 = ttk.Separator(main_frame, orient='horizontal')
-        separator3.pack(fill=tk.X, pady=10)
+        separator3 = ttk.Separator(card_frame, orient='horizontal')
+        separator3.pack(fill=tk.X, pady=15)
         
         # Área de log
-        log_label = ttk.Label(main_frame, text="Log de Execução:", style="SubHeader.TLabel")
-        log_label.pack(anchor=tk.W, padx=5, pady=(5, 5))
+        log_frame = CardFrame(card_frame)
+        log_frame.pack(fill=tk.BOTH, expand=True, pady=5)
         
-        self.log_area = scrolledtext.ScrolledText(main_frame, height=15, width=80, bg="#1E1E1E", fg="#FFD700", font=("Consolas", 9))
+        log_label = ttk.Label(log_frame, text="Log de Execução", style="SubHeader.TLabel")
+        log_label.pack(anchor=tk.W, padx=5, pady=(0, 10))
+        
+        # Estilo para a área de log
+        self.log_area = scrolledtext.ScrolledText(log_frame, height=15, width=80, bg="#ffffff", fg="#1a56db", font=("Consolas", 9))
         self.log_area.pack(fill=tk.BOTH, expand=True, pady=5)
+        self.log_area.configure(borderwidth=1, relief="solid")
         
         # Configurar handler de log personalizado
         self.log_handler = LogHandler(self.log_area)
         logging.getLogger().addHandler(self.log_handler)
+        
+        # Adicionar informação de status na parte inferior
+        status_frame = CardFrame(card_frame)
+        status_frame.pack(fill=tk.X, pady=(10, 0))
+        
+        status_label = ttk.Label(status_frame, text="MPM AutoIA v1.0 - Pronto para uso", style="Info.TLabel")
+        status_label.pack(side=tk.RIGHT)
     
     def browse_chrome(self):
         """Abre um diálogo para selecionar o executável do Chrome"""
@@ -294,10 +365,6 @@ class WebQuizAutomationGUI:
             
             # Mostrar mensagem com a nova paleta de cores
             messagebox.showinfo("MPM AutoIA", f"Chrome iniciado em modo de depuração na porta {port}")
-            # Configurar estilo para as caixas de diálogo
-            self.root.option_add('*Dialog.msg.font', 'Helvetica 10')
-            self.root.option_add('*Dialog.msg.background', '#0D0D0D')
-            self.root.option_add('*Dialog.msg.foreground', '#FFFFFF')
             
         except Exception as e:
             logging.error(f"Erro ao iniciar o Chrome: {e}")
@@ -378,6 +445,107 @@ class WebQuizAutomation:
         self.current_question = 0
         self.model = genai.GenerativeModel('gemini-1.5-flash')
         self.driver = None
+    
+    def run(self):
+        """Método principal que executa a automação do quiz"""
+        try:
+            logging.info("Iniciando automação do quiz...")
+            
+            # Configurar as opções do Chrome
+            options = webdriver.ChromeOptions()
+            options.add_experimental_option("debuggerAddress", f"localhost:{self.port}")
+            
+            # Conectar ao Chrome já aberto
+            logging.info(f"Conectando ao Chrome na porta {self.port}...")
+            self.driver = webdriver.Chrome(options=options)
+            logging.info(f"Conectado com sucesso ao Chrome. Título da página: {self.driver.title}")
+            
+            # Iniciar o loop de automação
+            self.running = True
+            while self.running:
+                # Verificar se está pausado
+                if self.paused:
+                    time.sleep(1)  # Esperar enquanto estiver pausado
+                    continue
+                
+                # Processar a pergunta atual
+                self.current_question += 1
+                logging.info(f"\n--- Processando pergunta #{self.current_question} ---")
+                
+                # Esperar que a pergunta seja carregada
+                try:
+                    wait = WebDriverWait(self.driver, 10)
+                    question_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, self.question_selector)))
+                    question_text = question_element.text.strip()
+                    logging.info(f"Pergunta detectada: {question_text}")
+                except TimeoutException:
+                    logging.warning("Não foi possível encontrar a pergunta. Verificando se o quiz terminou...")
+                    # Verificar se há alguma mensagem de conclusão
+                    if "concluído" in self.driver.page_source.lower() or "finalizado" in self.driver.page_source.lower():
+                        logging.info("Quiz concluído!")
+                        break
+                    else:
+                        logging.warning("Continuando mesmo sem detectar a pergunta...")
+                        question_text = "[Pergunta não detectada]"
+                
+                # Encontrar as opções
+                try:
+                    options_elements = self.driver.find_elements(By.CSS_SELECTOR, self.options_selector)
+                    if not options_elements:
+                        logging.warning("Nenhuma opção encontrada. Tentando passar para a próxima pergunta...")
+                        if not self.click_next_button():
+                            logging.error("Não foi possível avançar. Parando automação.")
+                            break
+                        time.sleep(2)  # Esperar a próxima página carregar
+                        continue
+                    
+                    # Extrair o texto das opções
+                    options_text = ""
+                    for i, option in enumerate(options_elements):
+                        option_text = self._get_option_text(option)
+                        options_text += f"{chr(65+i)}. {option_text}\n"
+                    
+                    logging.info(f"Opções detectadas:\n{options_text}")
+                    
+                    # Consultar a IA para obter a resposta
+                    answer = self.get_ai_answer(question_text, options_text)
+                    if not answer:
+                        logging.warning("Não foi possível obter uma resposta da IA. Selecionando a primeira opção.")
+                        if options_elements:
+                            options_elements[0].click()
+                    else:
+                        logging.info(f"Resposta da IA: {answer}")
+                        self.select_answer(answer, options_elements)
+                    
+                    # Esperar um pouco antes de avançar (para simular comportamento humano)
+                    time.sleep(2)
+                    
+                    # Clicar no botão de próxima pergunta
+                    if not self.click_next_button():
+                        logging.warning("Não foi possível encontrar o botão de próxima pergunta. Verificando se o quiz terminou...")
+                        # Verificar se há alguma mensagem de conclusão
+                        if "concluído" in self.driver.page_source.lower() or "finalizado" in self.driver.page_source.lower():
+                            logging.info("Quiz concluído!")
+                            break
+                    
+                    # Esperar a próxima página carregar
+                    time.sleep(3)
+                    
+                except Exception as e:
+                    logging.error(f"Erro ao processar pergunta: {e}")
+                    # Tentar continuar mesmo com erro
+                    if not self.click_next_button():
+                        logging.error("Não foi possível avançar após erro. Parando automação.")
+                        break
+                    time.sleep(2)
+            
+            logging.info("Automação finalizada.")
+            
+        except Exception as e:
+            logging.error(f"Erro na automação: {e}")
+        finally:
+            self.running = False
+            # Não fechamos o driver, pois o Chrome foi iniciado pelo usuário
     
     def toggle_pause(self):
         self.paused = not self.paused
@@ -496,7 +664,6 @@ class WebQuizAutomation:
                 "[aria-label*='Próxima']",        # Elementos com aria-label contendo 'Próxima'
                 "form input[type='submit']:last-of-type" # Último botão de submit em um formulário
             ]
-            
             # Tentar cada seletor
             for selector in selectors:
                 try:
@@ -567,177 +734,17 @@ class WebQuizAutomation:
         except Exception as e:
             logging.error(f"Erro ao clicar no botão 'PRÓXIMA PÁGINA': {e}")
             return False
-    
-    def process_question(self):
-        """Processa uma pergunta do quiz"""
-        try:
-            # Esperar pelo carregamento da página
-            time.sleep(2)  # Dar tempo para a página carregar completamente
-            
-            # Extrair a pergunta
-            question_text = self._extract_question()
-            if not question_text:
-                return False
-            
-            # Extrair as opções
-            options_elements, options_text = self._extract_options()
-            if not options_elements:
-                return False
-            
-            # Obter resposta da IA com validação dupla
-            answer = self.get_ai_answer(question_text, options_text)
-            if not answer:
-                logging.warning("Não foi possível obter uma resposta da IA")
-                return False
-            
-            logging.info(f"Resposta selecionada com confiança mínima de 80%: {answer}")
-            
-            # Selecionar a resposta
-            if not self.select_answer(answer, options_elements):
-                logging.warning("Não foi possível selecionar a resposta")
-                return False
-            
-            # Aguardar um pouco para garantir que a resposta foi registrada
-            time.sleep(1)
-            
-            # Clicar no botão de próxima página
-            if not self.click_next_button():
-                logging.warning("Não foi possível avançar para a próxima página")
-                return False
-            
-            self.current_question += 1
-            logging.info(f"Pergunta {self.current_question} processada com sucesso")
-            return True
-        
-        except Exception as e:
-            logging.error(f"Erro ao processar pergunta: {e}")
-            return False
-    
-    def _extract_question(self):
-        """Extrai o texto da pergunta da página"""
-        try:
-            question_element = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, self.question_selector))
-            )
-            question_text = question_element.text
-            logging.info(f"Pergunta detectada: {question_text[:100]}...")
-            return question_text
-        except Exception as e:
-            logging.warning(f"Elemento de pergunta não encontrado: {e}")
-            # Tentar encontrar a pergunta com outros seletores
-            alternative_selectors = [".qtext", ".question-text", ".questiontext", "#question"]
-            for selector in alternative_selectors:
-                try:
-                    question_element = self.driver.find_element(By.CSS_SELECTOR, selector)
-                    question_text = question_element.text
-                    logging.info(f"Pergunta detectada com seletor alternativo {selector}: {question_text[:100]}...")
-                    return question_text
-                except:
-                    continue
-            
-            # Se não encontrou com nenhum seletor, usar o texto da página
-            logging.warning("Não foi possível extrair a pergunta específica. Analisando toda a página.")
-            return "Não foi possível extrair a pergunta específica. Analisando toda a página."
-    
-    def _extract_options(self):
-        """Extrai as opções de resposta da página"""
-        try:
-            options_elements = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_all_elements_located((By.CSS_SELECTOR, self.options_selector))
-            )
-            
-            # Obter o texto das opções
-            options_text = ""
-            for i, option in enumerate(options_elements):
-                option_text = self._get_option_text(option) or f"Opção {i+1}"
-                options_text += f"{chr(65+i)}) {option_text}\n"
-            
-            logging.info(f"Opções detectadas:\n{options_text}")
-            return options_elements, options_text
-        except Exception as e:
-            logging.warning(f"Elementos de opções não encontrados: {e}")
-            # Tentar encontrar as opções com outros seletores
-            alternative_selectors = [
-                "input[type='radio']", 
-                ".answer input", 
-                ".option", 
-                ".answer",
-                "label"
-            ]
-            for selector in alternative_selectors:
-                try:
-                    options_elements = self.driver.find_elements(By.CSS_SELECTOR, selector)
-                    if options_elements:
-                        options_text = ""
-                        for i, option in enumerate(options_elements):
-                            option_text = self._get_option_text(option) or f"Opção {i+1}"
-                            options_text += f"{chr(65+i)}) {option_text}\n"
-                        logging.info(f"Opções encontradas com seletor alternativo: {selector}")
-                        return options_elements, options_text
-                except:
-                    continue
-            
-            logging.error("Não foi possível encontrar as opções de resposta")
-            return None, ""
-    
-    def run(self):
-        """Executa a automação do quiz"""
-        self.running = True
-        self.paused = False
-        
-        try:
-            # Configurar o driver do Selenium para conectar a uma instância existente do Chrome
-            chrome_options = webdriver.ChromeOptions()
-            chrome_options.add_experimental_option("debuggerAddress", f"localhost:{self.port}")
-            
-            # Conectar ao navegador existente
-            try:
-                self.driver = webdriver.Chrome(options=chrome_options)
-                logging.info(f"Conectado com sucesso ao Chrome na porta {self.port}")
-            except Exception as e:
-                logging.error(f"Erro ao conectar ao Chrome: {e}")
-                logging.error("Certifique-se de que o Chrome está aberto com a flag --remote-debugging-port={self.port}")
-                self.running = False
-                return
-            
-            # Obter a URL atual
-            current_url = self.driver.current_url
-            logging.info(f"Página atual: {current_url}")
-            
-            # Loop principal da automação
-            while self.running:
-                # Verificar se está pausado
-                if self.paused:
-                    time.sleep(1)
-                    continue
-                
-                # Processar a pergunta atual
-                success = self.process_question()
-                
-                if not success:
-                    logging.warning("Falha ao processar pergunta, tentando novamente em 5 segundos...")
-                    time.sleep(5)
-                else:
-                    # Aguardar um pouco antes de processar a próxima pergunta
-                    time.sleep(2)
-            
-            # Não fechamos o navegador, pois ele foi aberto pelo usuário
-            logging.info("Automação finalizada")
-        
-        except Exception as e:
-            logging.error(f"Erro na automação: {e}")
-            self.running = False
 
-def main():
-    # Criar a janela principal do Tkinter
-    root = tk.Tk()
-    app = WebQuizAutomationGUI(root)
-    
-    # Executar o loop do Tkinter
-    root.mainloop()
 
+# Ponto de entrada principal do programa
 if __name__ == "__main__":
     try:
-        main()
+        # Configurar e iniciar a interface gráfica
+        root = tk.Tk()
+        app = WebQuizAutomationGUI(root)
+        root.mainloop()
     except Exception as e:
-        logging.error(f"Erro ao iniciar aplicação: {e}")
+        logging.error(f"Erro ao iniciar a aplicação: {e}")
+        print(f"Erro ao iniciar a aplicação: {e}")
+        import traceback
+        traceback.print_exc()

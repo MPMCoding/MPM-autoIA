@@ -1,0 +1,53 @@
+/* Estilos para o componente de professor */
+
+.status-badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+.status-active {
+  background-color: #e9f5ff;
+  color: #007bff;
+}
+
+/* Estilos para o componente de admin */
+.stat-card {
+  display: flex;
+  align-items: center;
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.stat-icon i {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.stat-icon.users {
+  background-color: #007bff;
+}
+
+.stat-icon.active {
+  background-color: #28a745;
+}
+
+.stat-label {
+  margin: 0;
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}

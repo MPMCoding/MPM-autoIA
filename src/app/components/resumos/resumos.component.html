@@ -1,0 +1,44 @@
+<div class="p-grid">
+  <div class="p-col-12">
+    <p-card>
+      <div class="p-card-title">
+        <h2>Resumos de Tópicos</h2>
+      </div>
+      <div class="p-card-subtitle">
+        <p>Consulte resumos de tópicos importantes para seus estudos</p>
+      </div>
+      
+      <!-- Filtros -->
+      <div class="p-grid p-mb-3">
+        <div class="p-col-12 p-md-4">
+          <p-dropdown [options]="disciplinasFiltro" [(ngModel)]="disciplinaSelecionada" 
+            placeholder="Selecione uma disciplina" (onChange)="filtrarPorDisciplina()" 
+            [showClear]="true" styleClass="w-full"></p-dropdown>
+        </div>
+        <div class="p-col-12 p-md-4">
+          <p-dropdown [options]="modulosFiltro" [(ngModel)]="moduloSelecionado" 
+            placeholder="Selecione um módulo" (onChange)="filtrarPorModulo()" 
+            [showClear]="true" styleClass="w-full"></p-dropdown>
+        </div>
+        <div class="p-col-12 p-md-4">
+          <button pButton type="button" label="Limpar Filtros" icon="pi pi-filter-slash" 
+            (click)="limparFiltros()" class="p-button-outlined"></button>
+        </div>
+      </div>
+      
+      <!-- Lista de Resumos -->
+      <div class="p-grid">
+        <div class="p-col-12 p-md-6 p-lg-4" *ngFor="let resumo of resumos">
+          <p-card [header]="resumo.titulo" subheader="{{resumo.disciplina}} - {{resumo.modulo}}" styleClass="h-full">
+            <p class="resumo-content">{{resumo.conteudo}}</p>
+          </p-card>
+        </div>
+      </div>
+      
+      <!-- Mensagem quando não há resumos -->
+      <div *ngIf="resumos.length === 0" class="p-text-center p-mt-4">
+        <p>Nenhum resumo encontrado com os filtros selecionados.</p>
+      </div>
+    </p-card>
+  </div>
+</div>

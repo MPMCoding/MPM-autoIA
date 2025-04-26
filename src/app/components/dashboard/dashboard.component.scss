@@ -1,0 +1,50 @@
+/* Estilos para o componente de dashboard */
+
+.dashboard-container {
+  padding: 1rem;
+}
+
+.welcome-card {
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.stat-icon.completed {
+  background-color: #22c55e;
+  color: white;
+}
+
+.stat-icon.pending {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-label {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}

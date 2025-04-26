@@ -1,0 +1,135 @@
+<div class="dashboard-container p-4">
+  <p-card styleClass="welcome-card mb-4">
+    <div class="p-card-title">
+      <h2>Bem-vindo(a), Estudante!</h2>
+    </div>
+    <div class="p-card-content">
+      <p class="mb-4">Utilize o MPM AutoIA para ajudar nos seus estudos e manter-se atualizado com suas atividades.</p>
+      
+      <div class="info-alert p-mb-4">
+        <p-message severity="info" text="Você tem {{pendingActivities}} atividades pendentes esta semana." styleClass="w-full"></p-message>
+      </div>
+      
+      <div class="p-grid p-mt-4">
+        <div class="p-col-12 p-md-6">
+          <p-button label="Ver Resumos de Tópicos" icon="pi pi-file" styleClass="p-button-primary w-full" routerLink="/resumos"></p-button>
+        </div>
+        <div class="p-col-12 p-md-6">
+          <p-button label="Praticar com Perguntas" icon="pi pi-question-circle" styleClass="p-button-secondary w-full" routerLink="/perguntas"></p-button>
+        </div>
+      </div>
+    </div>
+  </p-card>
+  
+  <!-- Estatísticas rápidas -->
+  <div class="p-grid mb-4">
+    <div class="p-col-12 p-md-4">
+      <p-card>
+        <div class="stat-card">
+          <div class="stat-icon completed">
+            <i class="pi pi-check"></i>
+          </div>
+          <div class="stat-info">
+            <h3 class="stat-label">Atividades Concluídas</h3>
+            <p class="stat-value">{{completedActivities}}</p>
+          </div>
+        </div>
+      </p-card>
+    </div>
+    
+    <div class="p-col-12 p-md-4">
+      <p-card>
+        <div class="stat-card">
+          <div class="stat-icon pending">
+            <i class="pi pi-clock"></i>
+          </div>
+          <div class="stat-info">
+            <h3 class="stat-label">Pendentes</h3>
+            <p class="stat-value">{{pendingActivities}}</p>
+          </div>
+        </div>
+      </p-card>
+    </div>
+    
+    <div class="p-col-12 p-md-4">
+      <p-card>
+        <div class="stat-card">
+          <div class="stat-icon average">
+            <i class="pi pi-star"></i>
+          </div>
+          <div class="stat-info">
+            <h3 class="stat-label">Média</h3>
+            <p class="stat-value">{{averageGrade}}</p>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+  
+  <!-- Últimas atividades -->
+  <p-card>
+    <div class="p-card-title">
+      <h3>Atividades Recentes</h3>
+    </div>
+    <div class="p-card-content">
+      <p-table [value]="activities" styleClass="p-datatable-sm" [paginator]="activities.length > 5" [rows]="5">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Título</th>
+            <th>Descrição</th>
+            <th>Status</th>
+            <th>Nota/Prazo</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-activity>
+          <tr>
+            <td class="font-semibold text-primary">{{activity.titulo}}</td>
+            <td>{{activity.descricao}}</td>
+            <td>
+              <span class="status-badge" [ngClass]="{'status-completed': activity.status === 'Concluído', 'status-pending': activity.status === 'Pendente'}">
+                {{activity.status}}
+              </span>
+            </td>
+            <td>
+              <span *ngIf="activity.status === 'Concluído'">Nota: {{activity.nota}}/10</span>
+              <span *ngIf="activity.status === 'Pendente'">Prazo: {{activity.prazo | date:'dd/MM/yyyy'}}</span>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center">Nenhuma atividade encontrada.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-card>
+  
+  <!-- Componente de navegador embutido -->
+  <p-card styleClass="mt-4">
+    <div class="p-card-title">
+      <h3>Navegador Embutido</h3>
+    </div>
+    <div class="p-card-content">
+      <div class="browser-controls mb-2">
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon">
+            <i class="pi pi-link"></i>
+          </span>
+          <input type="text" pInputText placeholder="http://localhost:3000" value="http://localhost:3000" readonly />
+          <button pButton type="button" icon="pi pi-refresh" class="p-button-secondary"></button>
+        </div>
+      </div>
+      
+      <div class="webview-container">
+        <!-- Aqui será renderizado o webview do Electron -->
+        <div class="webview-placeholder">
+          <p class="text-center p-4">
+            <i class="pi pi-desktop text-4xl mb-3 block"></i>
+            O navegador embutido será carregado aqui quando o aplicativo for executado no Electron.
+          </p>
+        </div>
+      </div>
+    </div>
+  </p-card>
+</div>

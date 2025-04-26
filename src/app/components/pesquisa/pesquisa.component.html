@@ -1,0 +1,56 @@
+<div class="p-grid">
+  <div class="p-col-12">
+    <p-card>
+      <div class="p-card-title">
+        <h2>Pesquisa Inteligente</h2>
+      </div>
+      <div class="p-card-subtitle">
+        <p>Pesquise por tópicos, resumos ou perguntas</p>
+      </div>
+      
+      <!-- Campo de pesquisa -->
+      <div class="p-grid p-mb-3">
+        <div class="p-col-12">
+          <div class="p-inputgroup">
+            <input type="text" pInputText [(ngModel)]="searchQuery" 
+                   placeholder="Digite sua pesquisa aqui..." 
+                   (keyup.enter)="search()">
+            <button type="button" pButton icon="pi pi-search" (click)="search()"></button>
+            <button type="button" pButton icon="pi pi-times" class="p-button-danger" 
+                    (click)="clearSearch()" *ngIf="searchQuery"></button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Indicador de carregamento -->
+      <div *ngIf="isSearching" class="p-text-center p-mt-3">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <p>Pesquisando...</p>
+      </div>
+      
+      <!-- Resultados da pesquisa -->
+      <div *ngIf="searchResults.length > 0 && !isSearching" class="p-mt-3">
+        <h3>Resultados da Pesquisa</h3>
+        <div class="p-grid">
+          <div class="p-col-12" *ngFor="let result of searchResults">
+            <p-card styleClass="search-result-card">
+              <div class="search-result-header">
+                <span class="search-result-title">{{result.title}}</span>
+                <span class="search-result-type">{{result.type}}</span>
+                <span class="search-result-match">{{result.match}}% relevante</span>
+              </div>
+              <div class="search-result-content">
+                <p>{{result.content}}</p>
+              </div>
+            </p-card>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mensagem quando não há resultados -->
+      <div *ngIf="searchResults.length === 0 && searchQuery && !isSearching" class="p-text-center p-mt-4">
+        <p>Nenhum resultado encontrado para "{{searchQuery}}".</p>
+      </div>
+    </p-card>
+  </div>
+</div>

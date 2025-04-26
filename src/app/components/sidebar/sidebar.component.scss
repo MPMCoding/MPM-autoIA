@@ -1,0 +1,43 @@
+/* Estilos para o componente de sidebar */
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #1e293b;
+  color: white;
+}
+
+.sidebar-header {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo {
+  max-width: 120px;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-title {
+  font-size: 1.2rem;
+  margin: 0;
+  color: white;
+}
+
+.sidebar-menu {
+  flex: 1;
+  padding: 1rem 0;
+}
+
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+  text-align: center;
+}

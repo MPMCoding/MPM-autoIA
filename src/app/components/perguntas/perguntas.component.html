@@ -1,0 +1,76 @@
+<div class="p-grid">
+  <div class="p-col-12">
+    <p-card>
+      <div class="p-card-title">
+        <h2>Praticar com Perguntas</h2>
+      </div>
+      <div class="p-card-subtitle">
+        <p>Teste seus conhecimentos com perguntas sobre diversos tópicos</p>
+      </div>
+      
+      <!-- Filtros -->
+      <div class="p-grid p-mb-3">
+        <div class="p-col-12 p-md-4">
+          <p-dropdown [options]="disciplinasFiltro" [(ngModel)]="disciplinaSelecionada" 
+            placeholder="Selecione uma disciplina" 
+            [showClear]="true" styleClass="w-full"></p-dropdown>
+        </div>
+        <div class="p-col-12 p-md-4">
+          <p-dropdown [options]="modulosFiltro" [(ngModel)]="moduloSelecionado" 
+            placeholder="Selecione um módulo" 
+            [showClear]="true" styleClass="w-full"></p-dropdown>
+        </div>
+        <div class="p-col-12 p-md-4">
+          <div class="p-grid">
+            <div class="p-col-6">
+              <button pButton type="button" label="Aplicar" icon="pi pi-filter" 
+                (click)="aplicarFiltros()" class="p-button-outlined w-full"></button>
+            </div>
+            <div class="p-col-6">
+              <button pButton type="button" label="Limpar" icon="pi pi-filter-slash" 
+                (click)="limparFiltros()" class="p-button-outlined p-button-secondary w-full"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Cartão de Pergunta -->
+      <div *ngIf="perguntaAtual" class="p-mt-4">
+        <p-card styleClass="question-card">
+          <div class="question-header">
+            <span class="question-meta">{{perguntaAtual.disciplina}} - {{perguntaAtual.modulo}}</span>
+          </div>
+          <div class="question-content p-mt-3">
+            <h3>{{perguntaAtual.pergunta}}</h3>
+          </div>
+          
+          <!-- Botões de ação -->
+          <div class="p-grid p-mt-4" *ngIf="!respostaVisivel">
+            <div class="p-col-12">
+              <button pButton type="button" label="Mostrar Resposta" 
+                (click)="mostrarResposta()" class="p-button-primary w-full"></button>
+            </div>
+          </div>
+          
+          <!-- Resposta -->
+          <div *ngIf="respostaVisivel" class="p-mt-4 answer-section">
+            <h4>Resposta:</h4>
+            <p>{{perguntaAtual.resposta}}</p>
+            
+            <div class="p-grid p-mt-3">
+              <div class="p-col-12">
+                <button pButton type="button" label="Próxima Pergunta" 
+                  (click)="proximaPergunta()" class="p-button-success w-full"></button>
+              </div>
+            </div>
+          </div>
+        </p-card>
+      </div>
+      
+      <!-- Mensagem quando não há perguntas -->
+      <div *ngIf="!perguntaAtual" class="p-text-center p-mt-4">
+        <p>Nenhuma pergunta encontrada com os filtros selecionados.</p>
+      </div>
+    </p-card>
+  </div>
+</div>

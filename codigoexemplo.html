@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPM AutoIA - Assistente de Aprendizagem</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f5ff;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .primary-blue {
+            background-color: #1a56db;
+        }
+        .secondary-blue {
+            background-color: #3b82f6;
+        }
+        .light-blue {
+            background-color: #e1effe;
+        }
+        .btn-primary {
+            background-color: #1a56db;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #1e429f;
+        }
+        .btn-secondary {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #2563eb;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .nav-item {
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+        .nav-item:hover {
+            background-color: #e1effe;
+        }
+        .nav-item.active {
+            background-color: #1a56db;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mockup Navigation - not visible in the final product, just for demonstration -->
+    <div class="bg-white shadow-md p-4 sticky top-0 z-50">
+        <div class="container mx-auto">
+            <h1 class="text-xl font-bold text-center text-gray-800 mb-4">MPM AutoIA - Mockup de Interface</h1>
+            <div class="flex flex-wrap justify-center gap-2">
+                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('login')">Login</button>
+                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('dashboard')">Dashboard</button>
+                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('resumos')">Resumos</button>
+                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('pesquisa')">Pesquisa</button>
+                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('perguntas')">Perguntas Salvas</button>
+                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('professor')">Guia do Professor</button>
+                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('admin')">Admin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Login -->
+    <div id="login" class="tab-content active p-4">
+        <div class="container mx-auto max-w-lg">
+            <div class="bg-white rounded-lg shadow-lg p-8 mt-10">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-robot text-blue-600 text-4xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mt-4">MPM AutoIA</h2>
+                    <p class="text-gray-600">Seu assistente de aprendizagem inteligente</p>
+                </div>
+                
+                <form>
+                    <div class="mb-6">
+                        <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Email</label>
+                        <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none" placeholder="seu@email.com">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">Senha</label>
+                        <input type="password" id="password" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none" placeholder="••••••••">
+                        <div class="flex justify-end mt-2">
+                            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Esqueceu a senha?</a>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <button type="button" class="w-full btn-primary py-3" onclick="showTab('dashboard')">Entrar</button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600">Ainda não tem uma conta? <a href="#" class="text-blue-600 hover:text-blue-800">Cadastre-se</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Principal -->
+    <div id="dashboard" class="tab-content p-4">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row">
+                <!-- Sidebar de navegação -->
+                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
+                            <p class="text-xs text-gray-600">Assistente AVA</p>
+                        </div>
+                    </div>
+                    
+                    <nav>
+                        <ul>
+                            <li class="nav-item active mb-2 flex items-center">
+                                <i class="fas fa-home mr-3"></i>
+                                <span>Dashboard</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('resumos')">
+                                <i class="fas fa-file-alt mr-3"></i>
+                                <span>Resumos</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('pesquisa')">
+                                <i class="fas fa-search mr-3"></i>
+                                <span>Pesquisar</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('perguntas')">
+                                <i class="fas fa-question-circle mr-3"></i>
+                                <span>Perguntas Salvas</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('professor')">
+                                <i class="fas fa-chalkboard-teacher mr-3"></i>
+                                <span>Guia do Professor</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('admin')">
+                                <i class="fas fa-cog mr-3"></i>
+                                <span>Administração</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
+                                <span>Sair</span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                
+                <!-- Conteúdo principal -->
+                <div class="flex-1">
+                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Bem-vindo(a), Estudante!</h2>
+                        <p class="text-gray-700 mb-6">Utilize o MPM AutoIA para ajudar nos seus estudos e manter-se atualizado com suas atividades.</p>
+                        
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-info-circle text-blue-500"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-blue-700">
+                                        Você tem <span class="font-bold">3 atividades</span> pendentes esta semana.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <button class="btn-primary flex-1 flex items-center justify-center" onclick="showTab('resumos')">
+                                <i class="fas fa-file-alt mr-2"></i> Ver Resumos de Tópicos
+                            </button>
+                            <button class="btn-secondary flex-1 flex items-center justify-center" onclick="showTab('perguntas')">
+                                <i class="fas fa-question-circle mr-2"></i> Praticar com Perguntas
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Estatísticas rápidas -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white shadow-md rounded-lg p-6">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-check text-green-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-gray-500 text-sm">Atividades Concluídas</h3>
+                                    <p class="text-2xl font-bold text-gray-800">12</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white shadow-md rounded-lg p-6">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-clock text-yellow-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-gray-500 text-sm">Pendentes</h3>
+                                    <p class="text-2xl font-bold text-gray-800">3</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white shadow-md rounded-lg p-6">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-star text-blue-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-gray-500 text-sm">Média</h3>
+                                    <p class="text-2xl font-bold text-gray-800">8.5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Últimas atividades -->
+                    <div class="bg-white shadow-md rounded-lg p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Atividades Recentes</h3>
+                        
+                        <div class="border-b pb-4 mb-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-semibold text-blue-600">Fundamentos de Python</h4>
+                                    <p class="text-sm text-gray-600">Módulo 2: Estruturas de Controle</p>
+                                </div>
+                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">Concluído</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-2">Nota: 9.5/10</p>
+                        </div>
+                        
+                        <div class="border-b pb-4 mb-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-semibold text-blue-600">Banco de Dados SQL</h4>
+                                    <p class="text-sm text-gray-600">Módulo 1: Introdução a Bancos Relacionais</p>
+                                </div>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded">Pendente</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-2">Prazo: 25/05/2023</p>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-semibold text-blue-600">Algoritmos e Estruturas de Dados</h4>
+                                    <p class="text-sm text-gray-600">Módulo 3: Complexidade de Algoritmos</p>
+                                </div>
+                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">Concluído</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-2">Nota: 8.0/10</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Área de Resumos -->
+    <div id="resumos" class="tab-content p-4">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row">
+                <!-- Sidebar de navegação (repetida para cada tela) -->
+                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
+                            <p class="text-xs text-gray-600">Assistente AVA</p>
+                        </div>
+                    </div>
+                    
+                    <nav>
+                        <ul>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('dashboard')">
+                                <i class="fas fa-home mr-3"></i>
+                                <span>Dashboard</span>
+                            </li>
+                            <li class="nav-item active mb-2 flex items-center">
+                                <i class="fas fa-file-alt mr-3"></i>
+                                <span>Resumos</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('pesquisa')">
+                                <i class="fas fa-search mr-3"></i>
+                                <span>Pesquisar</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('perguntas')">
+                                <i class="fas fa-question-circle mr-3"></i>
+                                <span>Perguntas Salvas</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('professor')">
+                                <i class="fas fa-chalkboard-teacher mr-3"></i>
+                                <span>Guia do Professor</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('admin')">
+                                <i class="fas fa-cog mr-3"></i>
+                                <span>Administração</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
+                                <span>Sair</span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                
+                <!-- Conteúdo principal -->
+                <div class="flex-1">
+                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Resumos de Tópicos</h2>
+                        <p class="text-gray-700 mb-6">Veja resumos gerados automaticamente dos seus conteúdos do AVA para facilitar seus estudos.</p>
+                        
+                        <!-- Filtros -->
+                        <div class="flex flex-wrap gap-4 mb-6">
+                            <div class="flex-1">
+                                <label for="disciplina" class="block text-gray-700 text-sm font-semibold mb-2">Disciplina</label>
+                                <select id="disciplina" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none">
+                                    <option value="todas">Todas as Disciplinas</option>
+                                    <option value="python">Fundamentos de Python</option>
+                                    <option value="sql">Banco de Dados SQL</option>
+                                    <option value="algoritmos">Algoritmos e Estruturas de Dados</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <label for="modulo" class="block text-gray-700 text-sm font-semibold mb-2">Módulo</label>
+                                <select id="modulo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none">
+                                    <option value="todos">Todos os Módulos</option>
+                                    <option value="mod1">Módulo 1</option>
+                                    <option value="mod2">Módulo 2</option>
+                                    <option value="mod3">Módulo 3</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista de resumos -->
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-blue-600">Fundamentos de Python</h3>
+                            <span class="text-sm text-gray-500">Atualizado: 10/05/2023</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">Módulo 2: Estruturas de Controle</h4>
+                        <div class="border-l-4 border-blue-500 pl-4 py-1 mb-4">
+                            <p class="text-sm text-gray-700">
+                                Este módulo aborda os principais conceitos de estruturas de controle em Python, incluindo:
+                            </p>
+                        </div>
+                        <ul class="list-disc list-inside text-gray-700 text-sm mb-4 pl-4">
+                            <li>Estruturas condicionais (if, elif, else)</li>
+                            <li>Loops com while e for</li>
+                            <li>Compreensão de listas</li>
+                            <li>Controles de fluxo: break, continue, pass</li>
+                            <li>Operadores lógicos e relacionais</li>
+                        </ul>
+                        <div class="flex justify-between">
+                            <button class="btn-primary text-sm">Ver Resumo Completo</button>
+                            <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-4 py-2 rounded">Exportar PDF</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-blue-600">Banco de Dados SQL</h3>
+                            <span class="text-sm text-gray-500">Atualizado: 05/05/2023</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">Módulo 1: Introdução a Bancos Relacionais</h4>
+                        <div class="border-l-4 border-blue-500 pl-4 py-1 mb-4">
+                            <p class="text-sm text-gray-700">
+                                Este módulo apresenta os conceitos fundamentais de bancos de dados relacionais e SQL:
+                            </p>
+                        </div>
+                        <ul class="list-disc list-inside text-gray-700 text-sm mb-4 pl-4">
+                            <li>Conceitos de Banco de Dados Relacional</li>
+                            <li>Estrutura SQL: Tabelas, Colunas, Registros</li>
+                            <li>Chaves primárias e estrangeiras</li>
+                            <li>Consultas básicas SELECT</li>
+                            <li>Operações INSERT, UPDATE e DELETE</li>
+                        </ul>
+                        <div class="flex justify-between">
+                            <button class="btn-primary text-sm">Ver Resumo Completo</button>
+                            <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-4 py-2 rounded">Exportar PDF</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-blue-600">Algoritmos e Estruturas de Dados</h3>
+                            <span class="text-sm text-gray-500">Atualizado: 01/05/2023</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">Módulo 3: Complexidade de Algoritmos</h4>
+                        <div class="border-l-4 border-blue-500 pl-4 py-1 mb-4">
+                            <p class="text-sm text-gray-700">
+                                Este módulo explora a análise de complexidade algorítmica e eficiência:
+                            </p>
+                        </div>
+                        <ul class="list-disc list-inside text-gray-700 text-sm mb-4 pl-4">
+                            <li>Notação Big O, Theta e Omega</li>
+                            <li>Análise de algoritmos de ordenação</li>
+                            <li>Complexidade de tempo e espaço</li>
+                            <li>Algoritmos de busca e sua eficiência</li>
+                            <li>Técnicas de otimização</li>
+                        </ul>
+                        <div class="flex justify-between">
+                            <button class="btn-primary text-sm">Ver Resumo Completo</button>
+                            <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-4 py-2 rounded">Exportar PDF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Área de Pesquisa -->
+    <div id="pesquisa" class="tab-content p-4">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row">
+                <!-- Sidebar de navegação (repetida para cada tela) -->
+                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
+                            <p class="text-xs text-gray-600">Assistente AVA</p>
+                        </div>
+                    </div>
+                    
+                    <nav>
+                        <ul>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('dashboard')">
+                                <i class="fas fa-home mr-3"></i>
+                                <span>Dashboard</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('resumos')">
+                                <i class="fas fa-file-alt mr-3"></i>
+                                <span>Resumos</span>
+                            </li>
+                            <li class="nav-item active mb-2 flex items-center">
+                                <i class="fas fa-search mr-3"></i>
+                                <span>Pesquisar</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('perguntas')">
+                                <i class="fas fa-question-circle mr-3"></i>
+                                <span>Perguntas Salvas</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('professor')">
+                                <i class="fas fa-chalkboard-teacher mr-3"></i>
+                                <span>Guia do Professor</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('admin')">
+                                <i class="fas fa-cog mr-3"></i>
+                                <span>Administração</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
+                                <span>Sair</span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                
+                <!-- Conteúdo principal -->
+                <div class="flex-1">
+                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Pesquisa Inteligente</h2>
+                        <p class="text-gray-700 mb-6">Pesquise conceitos, tire dúvidas e encontre conteúdos rapidamente em todo seu material de estudo.</p>
+                        
+                        <!-- Campo de pesquisa -->
+                        <div class="relative mb-6">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                            <input type="text" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500" placeholder="O que você quer aprender hoje? Ex: 'Como funciona herança em Python?'" required>
+                            <button type="submit" class="absolute right-2.5 bottom-2.5 btn-primary px-4 py-2 text-sm">Pesquisar</button>
+                        </div>
+                        
+                        <!-- Filtros avançados -->
+                        <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                            <h3 class="font-semibold text-gray-700 mb-3">Filtros Avançados</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label for="tipo-conteudo" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Conteúdo</label>
+                                    <select id="tipo-conteudo" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
+                                        <option value="todos">Todos</option>
+                                        <option value="artigos">Artigos</option>
+                                        <option value="videos">Vídeos</option>
+                                        <option value="exercicios">Exercícios</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="disciplina-pesquisa" class="block text-sm font-medium text-gray-700 mb-1">Disciplina</label>
+                                    <select id="disciplina-pesquisa" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
+                                        <option value="todas">Todas</option>
+                                        <option value="python">Python</option>
+                                        <option value="sql">SQL</option>
+                                        <option value="algoritmos">Algoritmos</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="data" class="block text-sm font-medium text-gray-700 mb-1">Data</label>
+                                    <select id="data" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
+                                        <option value="qualquer">Qualquer data</option>
+                                        <option value="semana">Última semana</option>
+                                        <option value="mes">Último mês</option>
+                                        <option value="ano">Último ano</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resultados da pesquisa -->
+                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Resultados para "herança em Python"</h3>
+                        
+                        <!-- Resultado 1 -->
+                        <div class="border-b pb-4 mb-4">
+                            <h4 class="font-semibold text-blue-600 mb-1">Fundamentos de Python: Herança e Polimorfismo</h4>
+                            <p class="text-sm text-gray-600 mb-2">Módulo 4 - Programação Orientada a Objetos</p>
+                            <p class="text-sm text-gray-700 mb-3">
+                                A herança em Python permite que uma classe (subclasse) herde atributos e métodos de outra classe (superclasse). Isso promove o reuso de código e estabelece uma relação "é um" entre as classes...
+                            </p>
+                            <div class="flex gap-2">
+                                <button class="text-sm text-blue-600 hover:text-blue-800">Ver conteúdo completo</button>
+                                <button class="text-sm text-gray-600 hover:text-gray-800">Salvar para depois</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Resultado 2 -->
+                        <div class="border-b pb-4 mb-4">
+                            <h4 class="font-semibold text-blue-600 mb-1">Exercício Prático: Implementando Herança em Python</h4>
+                            <p class="text-sm text-gray-600 mb-2">Laboratório Prático - Python Avançado</p>
+                            <p class="text-sm text-gray-700 mb-3">
+                                Neste exercício, você vai criar uma hierarquia de classes utilizando herança para modelar diferentes tipos de veículos. A classe base Vehicle terá propriedades comuns como...
+                            </p>
+                            <div class="flex gap-2">
+                                <button class="text-sm text-blue-600 hover:text-blue-800">Ver conteúdo completo</button>
+                                <button class="text-sm text-gray-600 hover:text-gray-800">Salvar para depois</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Resultado 3 -->
+                        <div>
+                            <h4 class="font-semibold text-blue-600 mb-1">Vídeo: Herança Múltipla em Python</h4>
+                            <p class="text-sm text-gray-600 mb-2">Mídia Complementar - Tópicos Avançados</p>
+                            <p class="text-sm text-gray-700 mb-3">
+                                Este vídeo explora o conceito de herança múltipla em Python, uma característica que permite que uma classe herde de mais de uma superclasse. São abordados os desafios e o método de resolução...
+                            </p>
+                            <div class="flex gap-2">
+                                <button class="text-sm text-blue-600 hover:text-blue-800">Assistir vídeo</button>
+                                <button class="text-sm text-gray-600 hover:text-gray-800">Salvar para depois</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Perguntas relacionadas -->
+                    <div class="bg-white shadow-md rounded-lg p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Perguntas Frequentes Relacionadas</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="border-l-4 border-blue-500 pl-4 py-2">
+                                <h4 class="font-semibold text-gray-800">Qual a diferença entre herança e composição em Python?</h4>
+                                <p class="text-sm text-gray-700 mt-2">
+                                    Herança estabelece uma relação "é um" onde uma subclasse herda características da superclasse. Composição estabelece uma relação "tem um" onde uma classe contém instâncias de outras classes como atributos...
+                                </p>
+                            </div>
+                            
+                            <div class="border-l-4 border-blue-500 pl-4 py-2">
+                                <h4 class="font-semibold text-gray-800">Como funciona a sobrescrita de métodos em Python?</h4>
+                                <p class="text-sm text-gray-700 mt-2">
+                                    A sobrescrita de métodos permite que uma subclasse forneça uma implementação específica de um método já definido na superclasse. Para acessar o método da superclasse, usa-se super()...
+                                </p>
+                            </div>
+                            
+                            <div class="border-l-4 border-blue-500 pl-4 py-2">
+                                <h4 class="font-semibold text-gray-800">Python suporta herança múltipla?</h4>
+                                <p class="text-sm text-gray-700 mt-2">
+                                    Sim, Python suporta herança múltipla, permitindo que uma classe herde de várias superclasses. A ordem de resolução de métodos (MRO) determina qual método será chamado em caso de conflito...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Perguntas Salvas -->
+    <div id="perguntas" class="tab-content p-4">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row">
+                <!-- Sidebar de navegação (repetida para cada tela) -->
+                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
+                            <p class="text-xs text-gray-600">Assistente AVA</p>
+                        </div>
+                    </div>
+                    
+                    <nav>
+                        <ul>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('dashboard')">
+                                <i class="fas fa-home mr-3"></i>
+                                <span>Dashboard</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('resumos')">
+                                <i class="fas fa-file-alt mr-3"></i>
+                                <span>Resumos</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('pesquisa')">
+                                <i class="fas fa-search mr-3"></i>
+                                <span>Pesquisar</span>
+                            </li>
+                            <li class="nav-item active mb-2 flex items-center">
+                                <i class="fas fa-question-circle mr-3"></i>
+                                <span>Perguntas Salvas</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('professor')">
+                                <i class="fas fa-chalkboard-teacher mr-3"></i>
+                                <span>Guia do Professor</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('admin')">
+                                <i class="fas fa-cog mr-3"></i>
+                                <span>Administração</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
+                                <span>Sair</span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                
+                <!-- Conteúdo principal -->
+                <div class="flex-1">
+                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Perguntas Salvas</h2>
+                        <p class="text-gray-700 mb-6">Revise e pratique com perguntas salvas de suas disciplinas para reforçar seu aprendizado.</p>
+                        
+                        <!-- Filtros -->
+                        <div class="flex flex-wrap gap-4 mb-6">
+                            <div class="flex-1">
+                                <label for="disciplina-perguntas" class="block text-gray-700 text-sm font-semibold mb-2">Disciplina</label>
+                                <select id="disciplina-perguntas" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none">
+                                    <option value="todas">Todas as Disciplinas</option>
+                                    <option value="python">Fundamentos de Python</option>
+                                    <option value="sql">Banco de Dados SQL</option>
+                                    <option value="algoritmos">Algoritmos e Estruturas de Dados</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <label for="dificuldade" class="block text-gray-700 text-sm font-semibold mb-2">Dificuldade</label>
+                                <select id="dificuldade" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none">
+                                    <option value="todas">Todas</option>
+                                    <option value="facil">Fácil</option>
+                                    <option value="medio">Médio</option>
+                                    <option value="dificil">Difícil</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Modo de estudo -->
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-lightbulb text-blue-500"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-blue-800">Modo de Estudo</h3>
+                                    <div class="mt-2 text-sm text-blue-700">
+                                        <p>Pratique com perguntas automaticamente ou crie seu próprio quiz personalizado.</p>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button class="btn-primary text-sm">Iniciar Quiz Aleatório</button>
+                                        <button class="ml-3 bg-white text-blue-600 border border-blue-500 hover:bg-blue-50 text-sm px-4 py-2 rounded">Criar Quiz Personalizado</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista de perguntas salvas -->
+                    <div class="bg-white shadow-md rounded-lg p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Suas Perguntas Salvas</h3>
+                        
+                        <!-- Pergunta 1 -->
+                        <div class="card mb-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Python</span>
+                                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-2">Fácil</span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2">Qual é a diferença entre listas e tuplas em Python?</h4>
+                            <div class="pl-4 border-l-2 border-gray-200 mb-3">
+                                <p class="text-sm text-gray-700">
+                                    As listas são mutáveis (podem ser modificadas após a criação) e são definidas com colchetes [ ]. Tuplas são imutáveis (não podem ser alteradas após a criação) e são definidas com parênteses ( ).
+                                </p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                                    <i class="fas fa-eye mr-1"></i> Ver Resposta Completa
+                                </button>
+                                <button class="text-sm text-gray-600 hover:text-gray-800 flex items-center">
+                                    <i class="fas fa-plus mr-1"></i> Adicionar ao Quiz
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Pergunta 2 -->
+                        <div class="card mb-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">SQL</span>
+                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-2">Médio</span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2">Explique a diferença entre INNER JOIN e LEFT JOIN em SQL.</h4>
+                            <div class="pl-4 border-l-2 border-gray-200 mb-3">
+                                <p class="text-sm text-gray-700">
+                                    INNER JOIN retorna registros que têm valores correspondentes em ambas as tabelas. LEFT JOIN retorna todos os registros da tabela à esquerda e os registros correspondentes da tabela à direita (ou NULL se não houver correspondência).
+                                </p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                                    <i class="fas fa-eye mr-1"></i> Ver Resposta Completa
+                                </button>
+                                <button class="text-sm text-gray-600 hover:text-gray-800 flex items-center">
+                                    <i class="fas fa-plus mr-1"></i> Adicionar ao Quiz
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Pergunta 3 -->
+                        <div class="card mb-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Algoritmos</span>
+                                    <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-2">Difícil</span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <h4 class="font-semibold text-gray-800 mb-2">Descreva o algoritmo de ordenação QuickSort e sua complexidade de tempo.</h4>
+                            <div class="pl-4 border-l-2 border-gray-200 mb-3">
+                                <p class="text-sm text-gray-700">
+                                    QuickSort é um algoritmo de divisão e conquista que seleciona um elemento como pivô e particiona o array ao redor do pivô. Sua complexidade de tempo média é O(n log n), mas no pior caso pode ser O(n²) quando o pivô escolhido é sempre o maior ou menor elemento.
+                                </p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                                    <i class="fas fa-eye mr-1"></i> Ver Resposta Completa
+                                </button>
+                                <button class="text-sm text-gray-600 hover:text-gray-800 flex items-center">
+                                    <i class="fas fa-plus mr-1"></i> Adicionar ao Quiz
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Adicionar nova pergunta -->
+                        <div class="mt-6 text-center">
+                            <button class="btn-primary flex items-center justify-center mx-auto">
+                                <i class="fas fa-plus mr-2"></i> Adicionar Nova Pergunta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guia do Professor -->
+    <div id="professor" class="tab-content p-4">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row">
+                <!-- Sidebar de navegação (repetida para cada tela) -->
+                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
+                            <p class="text-xs text-gray-600">Assistente AVA</p>
+                        </div>
+                    </div>
+                    
+                    <nav>
+                        <ul>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('dashboard')">
+                                <i class="fas fa-home mr-3"></i>
+                                <span>Dashboard</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('resumos')">
+                                <i class="fas fa-file-alt mr-3"></i>
+                                <span>Resumos</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('pesquisa')">
+                                <i class="fas fa-search mr-3"></i>
+                                <span>Pesquisar</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('perguntas')">
+                                <i class="fas fa-question-circle mr-3"></i>
+                                <span>Perguntas Salvas</span>
+                            </li>
+                            <li class="nav-item active mb-2 flex items-center">
+                                <i class="fas fa-chalkboard-teacher mr-3"></i>
+                                <span>Guia do Professor</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('admin')">
+                                <i class="fas fa-cog mr-3"></i>
+                                <span>Administração</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
+                                <span>Sair</span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                
+                <!-- Conteúdo principal -->
+                <div class="flex-1">
+                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Guia do Professor</h2>
+                        <p class="text-gray-700 mb-6">Recursos avançados para aprofundar conhecimentos e preparar materiais didáticos de alta qualidade.</p>
+                        
+                        <!-- Seleção de tópico -->
+                        <div class="mb-6">
+                            <label for="topico" class="block text-gray-700 text-sm font-semibold mb-2">Selecione um tópico para aprofundar</label>
+                            <select id="topico" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none">
+                                <option value="">-- Selecione um tópico --</option>
+                                <option value="python-poo">Python - Programação Orientada a Objetos</option>
+                                <option value="sql-indices">SQL - Otimização com Índices</option>
+                                <option value="algoritmos-grafos">Algoritmos - Teoria dos Grafos</option>
+                                <option value="web-api">Desenvolvimento Web - APIs RESTful</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Conteúdo detalhado do tópico -->
+                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-blue-600">Python - Programação Orientada a Objetos</h3>
+                            <div class="flex space-x-2">
+                                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-3 py-1 rounded flex items-center">
+                                    <i class="fas fa-download mr-1"></i> PDF
+                                </button>
+                                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-3 py-1 rounded flex items-center">
+                                    <i class="fas fa-share-alt mr-1"></i> Compartilhar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Abas de conteúdo -->
+                        <div class="border-b border-gray-200 mb-6">
+                            <ul class="flex flex-wrap -mb-px">
+                                <li class="mr-2">
+                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-blue-600 border-b-2 border-blue-600 rounded-t-lg active">
+                                        Conceitos Avançados
+                                    </a>
+                                </li>
+                                <li class="mr-2">
+                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
+                                        Materiais Didáticos
+                                    </a>
+                                </li>
+                                <li class="mr-2">
+                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
+                                        Exercícios Modelo
+                                    </a>
+                                </li>
+                                <li class="mr-2">
+                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
+                                        Bibliografia
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Conteúdo da aba ativa -->
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-3">Encapsulamento Avançado em Python</h4>
+                            <p class="text-gray-700 text-sm mb-4">
+                                Embora Python não possua modificadores de acesso como private, protected e public como em outras linguagens orientadas a objetos, ele oferece convenções e mecanismos para implementar encapsulamento. Este guia explora técnicas avançadas de encapsulamento em Python.
+                            </p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Convenções de Nome</h5>
+                                <ul class="list-disc list-inside text-sm text-gray-700 space-y-2">
+                                    <li><strong>_nome</strong>: Atributo/método protegido (convenção) - não deve ser acessado diretamente fora da classe ou subclasses</li>
+                                    <li><strong>__nome</strong>: Atributo/método "privado" - sofre name mangling para dificultar acesso externo</li>
+                                    <li><strong>__nome__</strong>: Métodos especiais/dunder - métodos mágicos do Python</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Properties e Descritores</h5>
+                                <p class="text-sm text-gray-700 mb-3">
+                                    Properties permitem definir métodos especiais que atuam como atributos, possibilitando controle sobre acesso, modificação e deleção:
+                                </p>
+                                <div class="bg-gray-800 text-gray-100 p-3 rounded text-sm font-mono mb-2">
+<pre>class Pessoa:
+    def __init__(self, nome):
+        self._nome = nome
+        
+    @property
+    def nome(self):
+        return self._nome
+        
+    @nome.setter
+    def nome(self, valor):
+        if not isinstance(valor, str):
+            raise TypeError("Nome deve ser string")
+        self._nome = valor</pre>
+                                </div>
+                            </div>
+                            
+                            <h4 class="font-semibold text-gray-800 mb-3 mt-6">Herança Múltipla e MRO (Method Resolution Order)</h4>
+                            <p class="text-gray-700 text-sm mb-4">
+                                Python suporta herança múltipla, permitindo que uma classe herde de várias superclasses. Isso introduz complexidades como o problema do diamante, que é resolvido pelo algoritmo C3 de linearização para determinar a Method Resolution Order (MRO).
+                            </p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Exemplo de MRO</h5>
+                                <div class="bg-gray-800 text-gray-100 p-3 rounded text-sm font-mono mb-2">
+<pre>class A:
+    def metodo(self):
+        return "A"
+
+class B(A):
+    def metodo(self):
+        return "B"
+
+class C(A):
+    def metodo(self):
+        return "C"
+
+class D(B, C):
+    pass
+
+# A ordem MRO será: D -> B -> C -> A -> object
+print(D.__mro__)
+# Ao chamar metodo() em uma instância de D, 
+# a versão de B será executada devido à MRO</pre>
+                                </div>
+                            </div>
+                            
+                            <h4 class="font-semibold text-gray-800 mb-3 mt-6">Metaclasses</h4>
+                            <p class="text-gray-700 text-sm mb-4">
+                                Metaclasses são "classes de classes" - permitem personalizar a criação e comportamento de classes. Isso possibilita implementar padrões avançados como singletons, registros automáticos, e validação de estrutura de classe.
+                            </p>
+                            
+                            <div class="mt-6">
+                                <button class="btn-primary">Explorar Tópico Completo</button>
+                                <button class="ml-4 bg-white text-blue-600 border border-blue-500 hover:bg-blue-50 px-4 py-2 rounded">Gerar Material Didático</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Materiais relacionados -->
+                    <div class="bg-white shadow-md rounded-lg p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Materiais Relacionados</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="border rounded-lg p-4">
+                                <div class="flex items-center mb-3">
+                                    <i class="fas fa-book text-blue-600 mr-3"></i>
+                                    <h4 class="font-semibold text-gray-800">Design Patterns em Python</h4>
+                                </div>
+                                <p class="text-sm text-gray-700 mb-3">
+                                    Implementação dos principais padrões de projeto na linguagem Python, com exemplos práticos e explicações detalhadas.
+                                </p>
+                                <button class="text-sm text-blue-600 hover:text-blue-800">Ver material</button>
+                            </div>
+                            
+                            <div class="border rounded-lg p-4">
+                                <div class="flex items-center mb-3">
+                                    <i class="fas fa-video text-blue-600 mr-3"></i>
+                                    <h4 class="font-semibold text-gray-800">Webinar: POO Avançado</h4>
+                                </div>
+                                <p class="text-sm text-gray-700 mb-3">
+                                    Gravação do webinar ministrado pelo Prof. Dr. Carlos Silva sobre conceitos avançados de POO com Python.
+                                </p>
+                                <button class="text-sm text-blue-600 hover:text-blue-800">Assistir</button>
+                            </div>
+                            
+                            <div class="border rounded-lg p-4">
+                                <div class="flex items-center mb-3">
+                                    <i class="fas fa-code text-blue-600 mr-3"></i>
+                                    <h4 class="font-semibold text-gray-800">Repositório de Exemplos</h4>
+                                </div>
+                                <p class="text-sm text-gray-700 mb-3">
+                                    Coleção de código-fonte com exemplos práticos de aplicação dos conceitos apresentados no curso.
+                                </p>
+                                <button class="text-sm text-blue-600 hover:text-blue-800">Acessar repositório</button>
+                            </div>
+                            
+                            <div class="border rounded-lg p-4">
+                                <div class="flex items-center mb-3">
+                                    <i class="fas fa-tasks text-blue-600 mr-3"></i>
+                                    <h4 class="font-semibold text-gray-800">Exercícios Avaliativos</h4>
+                                </div>
+                                <p class="text-sm text-gray-700 mb-3">
+                                    Banco de questões para avaliação de conhecimentos sobre POO com Python, incluindo gabarito comentado.
+                                </p>
+                                <button class="text-sm text-blue-600 hover:text-blue-800">Baixar exercícios</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Painel de Administração -->
+    <div id="admin" class="tab-content p-4">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row">
+                <!-- Sidebar de navegação (repetida para cada tela) -->
+                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
+                            <p class="text-xs text-gray-600">Assistente AVA</p>
+                        </div>
+                    </div>
+                    
+                    <nav>
+                        <ul>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('dashboard')">
+                                <i class="fas fa-home mr-3"></i>
+                                <span>Dashboard</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('resumos')">
+                                <i class="fas fa-file-alt mr-3"></i>
+                                <span>Resumos</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('pesquisa')">
+                                <i class="fas fa-search mr-3"></i>
+                                <span>Pesquisar</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('perguntas')">
+                                <i class="fas fa-question-circle mr-3"></i>
+                                <span>Perguntas Salvas</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center" onclick="showTab('professor')">
+                                <i class="fas fa-chalkboard-teacher mr-3"></i>
+                                <span>Guia do Professor</span>
+                            </li>
+                            <li class="nav-item active mb-2 flex items-center text-gray-800">
+                                <i class="fas fa-cog mr-3"></i>
+                                <span>Administração</span>
+                            </li>
+                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
+                                <span>Sair</span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                
+                <!-- Conteúdo principal -->
+                <div class="flex-1">
+                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Painel de Administração</h2>
+                        <p class="text-gray-700 mb-6">Configure e gerencie o sistema MPM AutoIA, incluindo integração N8N com Supabase e controle de acesso.</p>
+                        
+                        <!-- Abas de configuração -->
+                        <div class="border-b border-gray-200 mb-6">
+                            <ul class="flex flex-wrap -mb-px">
+                                <li class="mr-2">
+                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-blue-600 border-b-2 border-blue-600 rounded-t-lg active">
+                                        Configurações
+                                    </a>
+                                </li>
+                                <li class="mr-2">
+                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
+                                        Usuários
+                                    </a>
+                                </li>
+                                <li class="mr-2">
+                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
+                                        Integrações
+                                    </a>
+                                </li>
+                                <li class="mr-2">
+                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
+                                        Logs
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Integração N8N e Supabase -->
+                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Integração N8N com Supabase</h3>
+                        
+                        <!-- Status da integração -->
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-green-500"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-green-700">
+                                        Integração N8N e Supabase está <span class="font-bold">ativa e funcionando</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Configurações N8N -->
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-gray-800 mb-3">Configuração N8N</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="n8n_url" class="block text-sm font-medium text-gray-700 mb-1">URL do N8N</label>
+                                    <input type="text" id="n8n_url" value="https://n8n.example.com" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
+                                </div>
+                                <div>
+                                    <label for="n8n_token" class="block text-sm font-medium text-gray-700 mb-1">Token de API</label>
+                                    <input type="password" id="n8n_token" value="●●●●●●●●●●●●●●●●" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded mb-4">
+                                <h5 class="font-medium text-gray-800 mb-2 text-sm">Fluxos de Trabalho Configurados</h5>
+                                <ul class="text-sm text-gray-700 space-y-2">
+                                    <li class="flex justify-between">
+                                        <span>Geração de Resumos AVA</span>
+                                        <span class="text-green-600">Ativo</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span>Indexação de Conteúdo para Pesquisa</span>
+                                        <span class="text-green-600">Ativo</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span>Backup Automático de Dados</span>
+                                        <span class="text-green-600">Ativo</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="flex">
+                                <button class="btn-primary text-sm">Testar Conexão</button>
+                                <button class="ml-3 bg-white text-blue-600 border border-blue-500 hover:bg-blue-50 text-sm px-4 py-2 rounded">Configurar Fluxos</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Configurações Supabase -->
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-3">Configuração Supabase</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="supabase_url" class="block text-sm font-medium text-gray-700 mb-1">URL do Supabase</label>
+                                    <input type="text" id="supabase_url" value="https://xyzabcdef.supabase.co" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
+                                </div>
+                                <div>
+                                    <label for="supabase_key" class="block text-sm font-medium text-gray-700 mb-1">Chave de API</label>
+                                    <input type="password" id="supabase_key" value="●●●●●●●●●●●●●●●●" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded mb-4">
+                                <h5 class="font-medium text-gray-800 mb-2 text-sm">Tabelas Configuradas</h5>
+                                <ul class="text-sm text-gray-700 space-y-2">
+                                    <li class="flex justify-between">
+                                        <span>users</span>
+                                        <span class="text-green-600">OK</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span>content_summaries</span>
+                                        <span class="text-green-600">OK</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span>saved_questions</span>
+                                        <span class="text-green-600">OK</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span>search_index</span>
+                                        <span class="text-green-600">OK</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="flex">
+                                <button class="btn-primary text-sm">Testar Conexão</button>
+                                <button class="ml-3 bg-white text-blue-600 border border-blue-500 hover:bg-blue-50 text-sm px-4 py-2 rounded">Gerenciar Banco</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Controle de Acesso -->
+                    <div class="bg-white shadow-md rounded-lg p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">Controle de Acesso</h3>
+                        
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-gray-800 mb-3">Níveis de Permissão</h4>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="py-2 px-4 text-left">Função</th>
+                                            <th class="py-2 px-4 text-left">Descrição</th>
+                                            <th class="py-2 px-4 text-left">Permissões</th>
+                                            <th class="py-2 px-4 text-left">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="py-2 px-4">Administrador</td>
+                                            <td class="py-2 px-4">Acesso completo ao sistema</td>
+                                            <td class="py-2 px-4">
+                                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">Todas</span>
+                                            </td>
+                                            <td class="py-2 px-4">
+                                                <button class="text-blue-600 hover:text-blue-800">Editar</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-4">Professor</td>
+                                            <td class="py-2 px-4">Gerencia conteúdos e alunos</td>
+                                            <td class="py-2 px-4">
+                                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded mr-1">Criar</span>
+                                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded mr-1">Editar</span>
+                                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">Visualizar</span>
+                                            </td>
+                                            <td class="py-2 px-4">
+                                                <button class="text-blue-600 hover:text-blue-800">Editar</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-4">Aluno</td>
+                                            <td class="py-2 px-4">Acesso a conteúdos de aprendizagem</td>
+                                            <td class="py-2 px-4">
+                                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">Visualizar</span>
+                                            </td>
+                                            <td class="py-2 px-4">
+                                                <button class="text-blue-600 hover:text-blue-800">Editar</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-4">Convidado</td>
+                                            <td class="py-2 px-4">Acesso limitado a conteúdos públicos</td>
+                                            <td class="py-2 px-4">
+                                                <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded">Restrito</span>
+                                            </td>
+                                            <td class="py-2 px-4">
+                                                <button class="text-blue-600 hover:text-blue-800">Editar</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button class="btn-primary text-sm">Adicionar Nova Função</button>
+                            <button class="bg-white text-blue-600 border border-blue-500 hover:bg-blue-50 text-sm px-4 py-2 rounded">Configurar Permissões</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para mostrar abas
+        function showTab(tabId) {
+            // Oculta todas as abas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mostra a aba selecionada
+            document.getElementById(tabId).classList.add('active');
+            
+            // Atualiza botões de navegação
+            document.querySelectorAll('.nav-button').forEach(button => {
+                if (button.getAttribute('onclick') === `showTab('${tabId}')`) {
+                    button.classList.add('bg-gray-300');
+                    button.classList.remove('bg-gray-200');
+                } else {
+                    button.classList.remove('bg-gray-300');
+                    button.classList.add('bg-gray-200');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

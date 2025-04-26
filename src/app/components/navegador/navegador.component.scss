@@ -1,0 +1,31 @@
+/* Estilos para o componente de navegador */
+
+.navegador-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.browser-controls {
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.webview-container {
+  flex: 1;
+  min-height: 500px;
+}
+
+.webview-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #f8f9fa;
+  color: #64748b;
+  text-align: center;
+  padding: 2rem;
+}

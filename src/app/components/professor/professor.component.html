@@ -1,0 +1,88 @@
+<div class="p-grid">
+  <div class="p-col-12">
+    <p-card>
+      <div class="p-card-title">
+        <h2>Área do Professor</h2>
+      </div>
+      <div class="p-card-subtitle">
+        <p>Gerencie atividades e acompanhe o progresso dos alunos</p>
+      </div>
+      
+      <!-- Botão para adicionar nova atividade -->
+      <div class="p-mb-3">
+        <button pButton type="button" label="Nova Atividade" icon="pi pi-plus" 
+                (click)="abrirDialogNovaAtividade()"></button>
+      </div>
+      
+      <!-- Tabela de atividades -->
+      <p-table [value]="atividades" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Título</th>
+            <th>Descrição</th>
+            <th>Disciplina</th>
+            <th>Módulo</th>
+            <th>Prazo</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-atividade>
+          <tr>
+            <td>{{atividade.titulo}}</td>
+            <td>{{atividade.descricao}}</td>
+            <td>{{atividade.disciplina}}</td>
+            <td>{{atividade.modulo}}</td>
+            <td>{{atividade.prazo | date:'dd/MM/yyyy'}}</td>
+            <td>
+              <span class="status-badge" [ngClass]="{'status-active': atividade.status === 'Ativa'}">
+                {{atividade.status}}
+              </span>
+            </td>
+            <td>
+              <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"></button>
+              <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center">Nenhuma atividade encontrada.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+</div>
+
+<!-- Dialog para adicionar nova atividade -->
+<p-dialog header="Nova Atividade" [(visible)]="displayDialog" [modal]="true" [style]="{width: '450px'}">
+  <div class="p-fluid">
+    <div class="p-field p-mb-3">
+      <label for="titulo">Título</label>
+      <input id="titulo" type="text" pInputText [(ngModel)]="novaAtividade.titulo" required>
+    </div>
+    <div class="p-field p-mb-3">
+      <label for="descricao">Descrição</label>
+      <textarea id="descricao" pInputTextarea [(ngModel)]="novaAtividade.descricao" rows="3"></textarea>
+    </div>
+    <div class="p-field p-mb-3">
+      <label for="disciplina">Disciplina</label>
+      <p-dropdown id="disciplina" [options]="disciplinas" [(ngModel)]="novaAtividade.disciplina" 
+                  placeholder="Selecione uma disciplina" [showClear]="true" optionLabel="" optionValue=""></p-dropdown>
+    </div>
+    <div class="p-field p-mb-3">
+      <label for="modulo">Módulo</label>
+      <p-dropdown id="modulo" [options]="modulos" [(ngModel)]="novaAtividade.modulo" 
+                  placeholder="Selecione um módulo" [showClear]="true" optionLabel="" optionValue=""></p-dropdown>
+    </div>
+    <div class="p-field p-mb-3">
+      <label for="prazo">Prazo</label>
+      <input id="prazo" type="date" pInputText [(ngModel)]="novaAtividade.prazo" required>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="cancelar()"></button>
+    <button pButton type="button" label="Salvar" icon="pi pi-check" (click)="salvarAtividade()"></button>
+  </ng-template>
+</p-dialog>

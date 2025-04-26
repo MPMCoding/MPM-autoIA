@@ -1,0 +1,62 @@
+{
+  "name": "mpm-autoia-desktop",
+  "version": "1.0.0",
+  "description": "Aplicativo desktop MPM AutoIA usando Electron, Angular e PrimeNG",
+  "main": "main.js",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "electron": "electron .",
+    "electron-dev": "ng build --base-href ./ && electron .",
+    "electron-start": "node electron-start.js",
+    "package": "electron-builder build --win"
+  },
+  "keywords": [
+    "electron",
+    "angular",
+    "primeng",
+    "desktop",
+    "automation"
+  ],
+  "author": "MPM",
+  "license": "MIT",
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^16.0.0",
+    "@angular/cli": "^16.0.0",
+    "@angular/compiler-cli": "^16.0.0",
+    "@types/node": "^18.16.0",
+    "electron": "^25.0.0",
+    "electron-builder": "^24.0.0",
+    "typescript": "~5.0.4"
+  },
+  "dependencies": {
+    "@angular/animations": "^16.0.0",
+    "@angular/common": "^16.0.0",
+    "@angular/compiler": "^16.0.0",
+    "@angular/core": "^16.0.0",
+    "@angular/forms": "^16.0.0",
+    "@angular/platform-browser": "^16.0.0",
+    "@angular/platform-browser-dynamic": "^16.0.0",
+    "@angular/router": "^16.0.0",
+    "better-sqlite3": "^8.4.0",
+    "chart.js": "^4.4.9",
+    "primeflex": "^3.3.0",
+    "primeicons": "^6.0.1",
+    "primeng": "^16.0.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.5.0",
+    "zone.js": "~0.13.0"
+  },
+  "build": {
+    "appId": "com.mpm.autoia",
+    "productName": "MPM AutoIA",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/icons/icon.ico"
+    }
+  }
+}
