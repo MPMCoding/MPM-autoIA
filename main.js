@@ -322,18 +322,16 @@ app.on('browser-window-resize', () => {
       height: contentBounds.height - 150 
     });
   }
-});
-
-// Inicializa o aplicativo quando estiver pronto
-app.on('ready', () => {
+});// Inicializa o aplicativo quando estiver pronto
+app.on(\'ready\", () => {
   createWindow();
   
-  // Aguarda um pouco para garantir que a janela principal esteja carregada
-  setTimeout(() => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      browserView = createBrowserView(currentUrl);
-    }
-  }, 1000);
+  // REMOVIDO: A criação do BrowserView agora é feita sob demanda via IPC
+  // setTimeout(() => {
+  //   if (mainWindow && !mainWindow.isDestroyed()) {
+  //     browserView = createBrowserView(currentUrl);
+  //   }
+  // }, 1000);
 });
 
 // Quit when all windows are closed.
@@ -348,3 +346,21 @@ app.on('activate', function () {
   // ícone do dock é clicado e não há outras janelas abertas.
   if (mainWindow === null) createWindow();
 });
+
+
+// Manipulador para destruir/remover o BrowserView
+ipcMain.on("destroy-browser-view", (event) => {
+  if (browserView && mainWindow && !mainWindow.isDestroyed()) {
+    console.log("Removendo BrowserView da janela principal.");
+    mainWindow.removeBrowserView(browserView);
+    // Destruir o BrowserView pode causar problemas se for recriado rapidamente.
+    // Apenas remover da janela é geralmente suficiente e mais seguro.
+    // browserView.webContents.destroy(); // Opcional: descomente se a destruição for necessária
+    browserView = null;
+    browserViewReady = false;
+    console.log("BrowserView removido.");
+  } else {
+    console.log("Tentativa de destruir BrowserView, mas ele não existe ou a janela foi destruída.");
+  }
+});
+

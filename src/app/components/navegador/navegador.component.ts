@@ -60,9 +60,24 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    console.log("NavegadorComponent destruído. Solicitando remoção do BrowserView.");
     // Limpa o observer quando o componente for destruído
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
+      this.resizeObserver = null; // Garante que a referência seja limpa
+    }
+    // Informa o processo principal para remover/ocultar o BrowserView
+    if (this.isElectron && this.electronService.ipcRenderer) {
+      this.electronService.ipcRenderer.send("destroy-browser-view");
+    }
+    // Remove listeners IPC para evitar vazamentos de memória
+    if (this.isElectron && this.electronService.ipcRenderer) {
+      this.electronService.ipcRenderer.removeAllListeners("current-url");
+      this.electronService.ipcRenderer.removeAllListeners("browser-page-loaded");
+      this.electronService.ipcRenderer.removeAllListeners("browser-error");
+      this.electronService.ipcRenderer.removeAllListeners("browser-view-created");
+      this.electronService.ipcRenderer.removeAllListeners("automation-status");
+      this.electronService.ipcRenderer.removeAllListeners("automation-output");
     }
   }
 
