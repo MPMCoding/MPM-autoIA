@@ -311,27 +311,27 @@ ipcMain.on('db-query', (event, query, params) => {
   }
 });
 
-// Evento para redimensionamento da janela
-app.on('browser-window-resize', () => {
+//// Evento para redimensionamento da janela
+app.on("browser-window-resize", () => {
   if (browserView && mainWindow && !mainWindow.isDestroyed()) {
     const contentBounds = mainWindow.getContentBounds();
+    // Recalcula a posição/tamanho com base nas coordenadas fixas/relativas desejadas
+    // Exemplo mantendo a lógica anterior de coordenadas fixas:
     browserView.setBounds({ 
       x: 300, 
       y: 100, 
       width: contentBounds.width - 350, 
       height: contentBounds.height - 150 
     });
+    // Se precisar usar as coordenadas do componente, precisaria de um IPC para obtê-las novamente
   }
-});// Inicializa o aplicativo quando estiver pronto
-app.on(\'ready\", () => {
+});
+
+// Inicializa o aplicativo quando estiver pronto
+app.on("ready", () => {
   createWindow();
   
   // REMOVIDO: A criação do BrowserView agora é feita sob demanda via IPC
-  // setTimeout(() => {
-  //   if (mainWindow && !mainWindow.isDestroyed()) {
-  //     browserView = createBrowserView(currentUrl);
-  //   }
-  // }, 1000);
 });
 
 // Quit when all windows are closed.
