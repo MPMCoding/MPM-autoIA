@@ -8,7 +8,7 @@
     "start": "ng serve",
     "build": "ng build",
     "electron": "electron .",
-    "electron-dev": "./node_modules/.bin/ng build --base-href ./ && electron .",
+    "electron-dev": "ng build --base-href ./ && electron .",
     "electron-start": "node electron-start.js",
     "package": "electron-builder build --win",
     "postinstall": "electron-rebuild",
@@ -54,26 +54,12 @@
   "build": {
     "appId": "com.mpm.autoia",
     "productName": "MPM AutoIA",
-    "files": [
-      "**/*",
-      "dist/mpm-autoia-desktop/**/*",
-      "main.js",
-      "preload.js",
-      "splash.html",
-      "logo.png"
-    ],
     "directories": {
-      "output": "release",
-      "buildResources": "build"
+      "output": "dist"
     },
     "win": {
       "target": "nsis",
-      "icon": "logo.png"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "splashImage": "logo.png"
+      "icon": "src/assets/icons/icon.ico"
     }
   }
 }

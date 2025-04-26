@@ -45,7 +45,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    console.log('ngAfterViewInit chamado para NavegadorComponent');
+    console.log(\'ngAfterViewInit chamado para NavegadorComponent\');
     // Garante que a inicialização ocorra apenas no Electron e após a view ser inicializada
     if (this.isElectron && this.browserContainerRef) {
       // Solicita a inicialização do BrowserView ao processo principal
@@ -96,18 +96,16 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.electronService.ipcRenderer.on('browser-error', (event: any, data: any) => {
       console.error('Erro de navegação:', data);
     });
-    
-    // Listener para confirmação de criação do BrowserView
-    this.electronService.ipcRenderer.on('browser-view-created', () => {
+        // Listener para confirmação de criação do BrowserView
+    this.electronService.ipcRenderer.on(\'browser-view-created\', () => {
       this.ngZone.run(() => {
-        console.log('BrowserView criado, configurando ResizeObserver e enviando coordenadas iniciais');
+        console.log(\'BrowserView criado, configurando ResizeObserver e enviando coordenadas iniciais\");
         // Configura o observer para redimensionamento APÓS a confirmação da criação
         this.setupResizeObserver(); 
         // Envia as coordenadas iniciais
         this.updateBrowserViewBounds(); 
       });
     });  
-
     // Listeners para status da automação
     this.electronService.ipcRenderer.on('automation-status', (event: any, data: any) => {
       this.ngZone.run(() => {
@@ -263,4 +261,3 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 }
-
