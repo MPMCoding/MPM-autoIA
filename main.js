@@ -138,22 +138,27 @@ function createBrowserView(initialUrl) {
   return browserView;
 }
 
+// Função para posicionar o BrowserView de acordo com as coordenadas do contêiner no renderer
 function positionBrowserView(bounds) {
   if (!browserView || !mainWindow || mainWindow.isDestroyed()) return;
   
-  // Usa as coordenadas recebidas do renderer process
+  // Obtém as dimensões da janela principal
+  const contentBounds = mainWindow.getContentBounds();
+  
+  // Ajusta as coordenadas para considerar a posição da janela e decorações
+  // Usa valores fixos para garantir que o BrowserView seja sempre visível
   const adjustedBounds = {
-    x: Math.round(bounds.x),
-    y: Math.round(bounds.y),
-    width: Math.round(bounds.width),
-    height: Math.round(bounds.height)
+    x: 300, // Posição fixa à direita do menu lateral
+    y: 100, // Posição fixa abaixo da barra de navegação
+    width: contentBounds.width - 350, // Largura ajustada para considerar o menu lateral
+    height: contentBounds.height - 150 // Altura ajustada para considerar barras de navegação
   };
   
   // Aplica as coordenadas ajustadas
   browserView.setBounds(adjustedBounds);
   
   browserViewReady = true;
-  console.log(`BrowserView posicionado com coordenadas recebidas: x=${adjustedBounds.x}, y=${adjustedBounds.y}, width=${adjustedBounds.width}, height=${adjustedBounds.height}`);
+  console.log(`BrowserView posicionado com coordenadas fixas: x=${adjustedBounds.x}, y=${adjustedBounds.y}, width=${adjustedBounds.width}, height=${adjustedBounds.height}`);
 }
 
 // Manipuladores para a automação Python
@@ -323,12 +328,12 @@ app.on('browser-window-resize', () => {
 app.on('ready', () => {
   createWindow();
   
-  // Comentado para evitar criação automática do BrowserView na inicialização
-  // setTimeout(() => {
-  //   if (mainWindow && !mainWindow.isDestroyed()) {
-  //     // browserView = createBrowserView(currentUrl); // Removido para inicializar apenas via IPC
-  //   }
-  // }, 1000);
+  // Aguarda um pouco para garantir que a janela principal esteja carregada
+  setTimeout(() => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      browserView = createBrowserView(currentUrl);
+    }
+  }, 1000);
 });
 
 // Quit when all windows are closed.
