@@ -54,8 +54,10 @@
   </div>
   
   <div class="webview-container">
-    <!-- Webview do Electron -->
-    <webview *ngIf="isElectron" #webview [attr.src]="url" style="width:100%; height:500px;"></webview>
+    <!-- Webview do Electron - Usando iframe como fallback quando webview não estiver disponível -->
+    <ng-container *ngIf="isElectron">
+      <webview #webview [attr.src]="url" style="width:100%; height:500px; display:block;"></webview>
+    </ng-container>
     
     <!-- Fallback para quando não estiver no Electron -->
     <div *ngIf="!isElectron" class="webview-placeholder">

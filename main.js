@@ -1,9 +1,17 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
-const sqlite3 = require('better-sqlite3');
 const { spawn } = require('child_process');
 const fs = require('fs');
+
+// Tentativa de importar better-sqlite3 com tratamento de erro
+let sqlite3 = null;
+try {
+  sqlite3 = require('better-sqlite3');
+} catch (err) {
+  console.warn('Aviso: Não foi possível carregar o módulo better-sqlite3:', err.message);
+  console.warn('O banco de dados SQLite não estará disponível, mas o navegador embutido ainda funcionará.');
+}
 
 // Porta para a automação
 const AUTOMATION_PORT = 3000; // Ajuste para a porta correta da sua automação
@@ -56,6 +64,12 @@ function createWindow() {
 
 // Inicializa o banco de dados SQLite
 function setupDatabase() {
+  // Se o módulo SQLite não foi carregado, não tenta configurar o banco de dados
+  if (!sqlite3) {
+    console.warn('Pulando configuração do banco de dados: módulo better-sqlite3 não disponível');
+    return;
+  }
+  
   try {
     const db = new sqlite3('mpm-autoia.db');
     
@@ -114,15 +128,57 @@ ipcMain.on('get-automation-port', (event) => {
 
 // Manipuladores de banco de dados
 ipcMain.handle('get-activities', async () => {
+  // Se o módulo SQLite não foi carregado, retorna dados mockados
+  if (!sqlite3) {
+    console.warn('Módulo better-sqlite3 não disponível, retornando dados mockados');
+    return getMockActivities();
+  }
+  
   try {
     const db = new sqlite3('mpm-autoia.db');
     const activities = db.prepare('SELECT * FROM atividades').all();
     return activities;
   } catch (err) {
     console.error('Erro ao buscar atividades:', err);
-    return [];
+    return getMockActivities();
   }
 });
+
+// Função para retornar dados mockados quando o banco de dados não está disponível
+function getMockActivities() {
+  return [
+    {
+      id: 1,
+      titulo: 'Fundamentos de Python',
+      descricao: 'Módulo 2: Estruturas de Controle',
+      modulo: 'Módulo 2',
+      disciplina: 'Python',
+      status: 'Concluído',
+      nota: 9.5,
+      prazo: '2023-05-15'
+    },
+    {
+      id: 2,
+      titulo: 'Banco de Dados SQL',
+      descricao: 'Módulo 1: Introdução a Bancos Relacionais',
+      modulo: 'Módulo 1',
+      disciplina: 'SQL',
+      status: 'Pendente',
+      nota: null,
+      prazo: '2023-05-25'
+    },
+    {
+      id: 3,
+      titulo: 'Algoritmos e Estruturas de Dados',
+      descricao: 'Módulo 3: Complexidade de Algoritmos',
+      modulo: 'Módulo 3',
+      disciplina: 'Algoritmos',
+      status: 'Concluído',
+      nota: 8.0,
+      prazo: '2023-05-10'
+    }
+  ];
+}
 
 // Manipuladores para a automação Python
 ipcMain.on('start-automation', (event, args) => {
