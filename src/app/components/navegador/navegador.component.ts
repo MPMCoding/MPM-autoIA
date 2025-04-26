@@ -45,15 +45,28 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    console.log('ngAfterViewInit chamado');
-    // A inicialização do BrowserView agora é acionada pelo componente pai ou serviço após o login.
-    // A configuração do ResizeObserver será feita após a confirmação da criação do BrowserView.
+    console.log(\'ngAfterViewInit chamado para NavegadorComponent\');
+    // Garante que a inicialização ocorra apenas no Electron e após a view ser inicializada
+    if (this.isElectron && this.browserContainerRef) {
+      // Solicita a inicialização do BrowserView ao processo principal
+      this.initializeBrowserView();
+      // O ResizeObserver será configurado após a confirmação da criação via IPC ('browser-view-created')
+    } else if (!this.isElectron) {
+      // Fallback para ambiente não-Electron (carrega URL no iframe)
+      this.navigateToUrl(this.url);
+    }
   }
 
   ngOnDestroy() {
+    console.log("NavegadorComponent destruído. Solicitando remoção do BrowserView.");
     // Limpa o observer quando o componente for destruído
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
+      this.resizeObserver = null; // Garante que a referência seja limpa
+    }
+    // Informa o processo principal para remover/ocultar o BrowserView
+    if (this.isElectron && this.electronService.ipcRenderer) {
+      this.electronService.ipcRenderer.send("destroy-browser-view");
     }
   }
 
@@ -83,13 +96,16 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.electronService.ipcRenderer.on('browser-error', (event: any, data: any) => {
       console.error('Erro de navegação:', data);
     });
-    
-    // Listener para confirmação de criação do BrowserView
-    this.electronService.ipcRenderer.on('browser-view-created', () => {
-      console.log('BrowserView criado, enviando coordenadas');
-      this.updateBrowserViewBounds();
-    });
-    
+        // Listener para confirmação de criação do BrowserView
+    this.electronService.ipcRenderer.on(\'browser-view-created\', () => {
+      this.ngZone.run(() => {
+        console.log(\'BrowserView criado, configurando ResizeObserver e enviando coordenadas iniciais\");
+        // Configura o observer para redimensionamento APÓS a confirmação da criação
+        this.setupResizeObserver(); 
+        // Envia as coordenadas iniciais
+        this.updateBrowserViewBounds(); 
+      });
+    });  
     // Listeners para status da automação
     this.electronService.ipcRenderer.on('automation-status', (event: any, data: any) => {
       this.ngZone.run(() => {

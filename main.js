@@ -343,3 +343,20 @@ app.on('activate', function () {
   // ícone do dock é clicado e não há outras janelas abertas.
   if (mainWindow === null) createWindow();
 });
+
+
+// Manipulador para destruir/remover o BrowserView
+ipcMain.on("destroy-browser-view", (event) => {
+  if (browserView && mainWindow && !mainWindow.isDestroyed()) {
+    console.log("Removendo BrowserView da janela principal.");
+    mainWindow.removeBrowserView(browserView);
+    // Destruir o BrowserView pode causar problemas se for recriado rapidamente.
+    // Apenas remover da janela é geralmente suficiente e mais seguro.
+    // browserView.webContents.destroy(); // Opcional: descomente se a destruição for necessária
+    browserView = null;
+    browserViewReady = false;
+  } else {
+    console.log("Tentativa de destruir BrowserView, mas ele não existe ou a janela foi destruída.");
+  }
+});
+
