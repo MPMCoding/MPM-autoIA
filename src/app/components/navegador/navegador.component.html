@@ -10,6 +10,10 @@
       <button class="nav-button" (click)="reload()">
         <i class="fas fa-sync-alt"></i>
       </button>
+      <!-- Botão de Inicialização Manual -->
+      <button class="nav-button manual-init" (click)="manualInitializeBrowserView()" [disabled]="!isElectron" title="Inicializar Navegador Manualmente">
+        <i class="fas fa-rocket"></i> Inicializar
+      </button>
     </div>
     <div class="url-bar">
       <input 
