@@ -90,8 +90,15 @@ function createBrowserView(initialUrl) {
   // Adiciona o BrowserView à janela principal
   mainWindow.setBrowserView(browserView);
   
-  // Inicialmente esconde o BrowserView até que o componente Angular esteja pronto
-  browserView.setBounds({ x: 0, y: 0, width: 0, height: 0 });
+  // Define um tamanho e posição inicial para o BrowserView
+  // Isso garante que ele seja visível mesmo antes de receber as coordenadas do renderer
+  const contentBounds = mainWindow.getContentBounds();
+  browserView.setBounds({ 
+    x: 300, 
+    y: 100, 
+    width: contentBounds.width - 350, 
+    height: contentBounds.height - 150 
+  });
   
   // Carrega a URL inicial
   browserView.webContents.loadURL(initialUrl);
@@ -125,6 +132,9 @@ function createBrowserView(initialUrl) {
     }
   });
   
+  // Habilita o DevTools para o BrowserView quando necessário
+  // browserView.webContents.openDevTools();
+  
   return browserView;
 }
 
@@ -132,19 +142,23 @@ function createBrowserView(initialUrl) {
 function positionBrowserView(bounds) {
   if (!browserView || !mainWindow || mainWindow.isDestroyed()) return;
   
-  // Ajusta as coordenadas para considerar a posição da janela
+  // Obtém as dimensões da janela principal
   const contentBounds = mainWindow.getContentBounds();
   
-  // Aplica as coordenadas recebidas do renderer
-  browserView.setBounds({
-    x: bounds.x,
-    y: bounds.y,
-    width: bounds.width,
-    height: bounds.height
-  });
+  // Ajusta as coordenadas para considerar a posição da janela e decorações
+  // Usa valores fixos para garantir que o BrowserView seja sempre visível
+  const adjustedBounds = {
+    x: 300, // Posição fixa à direita do menu lateral
+    y: 100, // Posição fixa abaixo da barra de navegação
+    width: contentBounds.width - 350, // Largura ajustada para considerar o menu lateral
+    height: contentBounds.height - 150 // Altura ajustada para considerar barras de navegação
+  };
+  
+  // Aplica as coordenadas ajustadas
+  browserView.setBounds(adjustedBounds);
   
   browserViewReady = true;
-  console.log(`BrowserView posicionado em: x=${bounds.x}, y=${bounds.y}, width=${bounds.width}, height=${bounds.height}`);
+  console.log(`BrowserView posicionado com coordenadas fixas: x=${adjustedBounds.x}, y=${adjustedBounds.y}, width=${adjustedBounds.width}, height=${adjustedBounds.height}`);
 }
 
 // Manipuladores para a automação Python
@@ -250,18 +264,29 @@ ipcMain.on('get-current-url', (event) => {
   }
 });
 
-// Novo manipulador para posicionar o BrowserView
+// Manipulador para posicionar o BrowserView
 ipcMain.on('set-browser-view-bounds', (event, bounds) => {
   positionBrowserView(bounds);
 });
 
-// Novo manipulador para inicializar o BrowserView quando o componente Angular estiver pronto
+// Manipulador para inicializar o BrowserView quando o componente Angular estiver pronto
 ipcMain.on('initialize-browser-view', (event) => {
   if (!browserView && mainWindow && !mainWindow.isDestroyed()) {
     browserView = createBrowserView(currentUrl);
     event.reply('browser-view-created');
   } else if (browserView) {
     event.reply('browser-view-created');
+  }
+});
+
+// Manipulador para mostrar o DevTools do BrowserView
+ipcMain.on('toggle-devtools', (event) => {
+  if (browserView) {
+    if (browserView.webContents.isDevToolsOpened()) {
+      browserView.webContents.closeDevTools();
+    } else {
+      browserView.webContents.openDevTools();
+    }
   }
 });
 
@@ -286,8 +311,30 @@ ipcMain.on('db-query', (event, query, params) => {
   }
 });
 
+// Evento para redimensionamento da janela
+app.on('browser-window-resize', () => {
+  if (browserView && mainWindow && !mainWindow.isDestroyed()) {
+    const contentBounds = mainWindow.getContentBounds();
+    browserView.setBounds({ 
+      x: 300, 
+      y: 100, 
+      width: contentBounds.width - 350, 
+      height: contentBounds.height - 150 
+    });
+  }
+});
+
 // Inicializa o aplicativo quando estiver pronto
-app.on('ready', createWindow);
+app.on('ready', () => {
+  createWindow();
+  
+  // Aguarda um pouco para garantir que a janela principal esteja carregada
+  setTimeout(() => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      browserView = createBrowserView(currentUrl);
+    }
+  }, 1000);
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
