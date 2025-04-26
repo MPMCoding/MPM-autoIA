@@ -111,25 +111,8 @@
       <h3>Navegador Embutido</h3>
     </div>
     <div class="p-card-content">
-      <div class="browser-controls mb-2">
-        <div class="p-inputgroup">
-          <span class="p-inputgroup-addon">
-            <i class="pi pi-link"></i>
-          </span>
-          <input type="text" pInputText placeholder="http://localhost:3000" value="http://localhost:3000" readonly />
-          <button pButton type="button" icon="pi pi-refresh" class="p-button-secondary"></button>
-        </div>
-      </div>
-      
-      <div class="webview-container">
-        <!-- Aqui será renderizado o webview do Electron -->
-        <div class="webview-placeholder">
-          <p class="text-center p-4">
-            <i class="pi pi-desktop text-4xl mb-3 block"></i>
-            O navegador embutido será carregado aqui quando o aplicativo for executado no Electron.
-          </p>
-        </div>
-      </div>
+      <!-- Usando o componente app-navegador em vez do placeholder estático -->
+      <app-navegador></app-navegador>
     </div>
   </p-card>
 </div>
