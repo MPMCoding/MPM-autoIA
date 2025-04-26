@@ -180,6 +180,12 @@ function getMockActivities() {
   ];
 }
 
+// Manipulador para carregar URL no webview
+ipcMain.handle('load-url', async (event, url) => {
+  console.log('Solicitação para carregar URL:', url);
+  return { success: true, url };
+});
+
 // Manipuladores para a automação Python
 ipcMain.on('start-automation', (event, args) => {
   try {

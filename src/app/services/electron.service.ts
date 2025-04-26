@@ -29,7 +29,27 @@ export class ElectronService {
 
   // Verifica se a aplicação está rodando no Electron
   get isElectron(): boolean {
-    return this.isElectronApp();
+    // Verificação mais robusta para o ambiente Electron
+    try {
+      // Verifica se a propriedade isElectron está definida explicitamente
+      if (window && (window as any).electron && (window as any).electron.isElectron === true) {
+        console.log('Ambiente Electron detectado via propriedade explícita');
+        return true;
+      }
+      
+      // Verificação alternativa baseada em características do ambiente
+      const userAgent = navigator.userAgent.toLowerCase();
+      if (userAgent.indexOf(' electron/') > -1) {
+        console.log('Ambiente Electron detectado via userAgent');
+        return true;
+      }
+      
+      // Verificação padrão
+      return this.isElectronApp();
+    } catch (error) {
+      console.error('Erro ao verificar ambiente Electron:', error);
+      return false;
+    }
   }
 
   // Retorna a porta configurada para a automação

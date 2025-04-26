@@ -18,8 +18,11 @@ export class NavegadorComponent implements OnInit, AfterViewInit {
   isPaused: boolean = false;
 
   constructor(private electronService: ElectronService) {
-    this.isElectron = this.electronService.isElectron;
-    if (this.isElectron) {
+    // Forçar isElectron para true em ambiente de desenvolvimento
+    this.isElectron = true; // Sempre assume que está no Electron
+    console.log('Estado isElectron definido como:', this.isElectron);
+    
+    if (this.electronService.isElectron) {
       this.automationPort = this.electronService.automationPort;
     }
   }
@@ -27,30 +30,71 @@ export class NavegadorComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     // Define a URL inicial como Google
     this.url = 'https://www.google.com';
+    console.log('URL inicial definida como:', this.url);
   }
 
   ngAfterViewInit() {
-    if (this.isElectron && this.webviewRef) {
-      const webview = this.webviewRef.nativeElement;
-      
-      // Adiciona listeners para eventos do webview
-      webview.addEventListener('did-start-loading', () => {
-        this.isLoading = true;
-      });
-      
-      webview.addEventListener('did-stop-loading', () => {
-        this.isLoading = false;
-        this.url = webview.getURL();
-        this.canGoBack = webview.canGoBack();
-        this.canGoForward = webview.canGoForward();
-      });
-      
-      webview.addEventListener('did-navigate', (event: any) => {
-        this.url = event.url;
-      });
-
-      // Carrega o Google inicialmente
-      webview.loadURL('https://www.google.com');
+    console.log('ngAfterViewInit chamado, isElectron:', this.isElectron);
+    console.log('webviewRef existe:', !!this.webviewRef);
+    
+    // Pequeno atraso para garantir que o DOM esteja totalmente carregado
+    setTimeout(() => {
+      this.initializeWebview();
+    }, 500);
+  }
+  
+  // Método separado para inicializar o webview
+  initializeWebview() {
+    console.log('Inicializando webview...');
+    
+    if (this.webviewRef) {
+      try {
+        const webview = this.webviewRef.nativeElement;
+        console.log('Elemento webview obtido:', webview);
+        
+        // Adiciona listeners para eventos do webview
+        webview.addEventListener('did-start-loading', () => {
+          console.log('Webview começou a carregar');
+          this.isLoading = true;
+        });
+        
+        webview.addEventListener('did-stop-loading', () => {
+          console.log('Webview terminou de carregar');
+          this.isLoading = false;
+          try {
+            this.url = webview.getURL();
+            this.canGoBack = webview.canGoBack();
+            this.canGoForward = webview.canGoForward();
+          } catch (e) {
+            console.error('Erro ao obter estado do webview:', e);
+          }
+        });
+        
+        webview.addEventListener('did-navigate', (event: any) => {
+          console.log('Webview navegou para:', event.url);
+          this.url = event.url;
+        });
+        
+        webview.addEventListener('dom-ready', () => {
+          console.log('DOM do webview está pronto');
+        });
+        
+        // Carrega o Google inicialmente
+        console.log('Tentando carregar URL inicial:', this.url);
+        try {
+          webview.src = this.url;
+          // Tenta usar loadURL se disponível
+          if (typeof webview.loadURL === 'function') {
+            webview.loadURL(this.url);
+          }
+        } catch (e) {
+          console.error('Erro ao carregar URL inicial:', e);
+        }
+      } catch (e) {
+        console.error('Erro ao inicializar webview:', e);
+      }
+    } else {
+      console.error('webviewRef não está disponível');
     }
   }
 

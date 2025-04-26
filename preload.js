@@ -8,7 +8,11 @@ contextBridge.exposeInMainWorld('electron', {
   getActivities: () => ipcRenderer.invoke('get-activities'),
   
   // Funções de utilidade
-  platform: process.platform
+  platform: process.platform,
+  
+  // Funções para o webview
+  isElectron: true,
+  loadURL: (url) => ipcRenderer.invoke('load-url', url)
 });
 
 // Adiciona variáveis globais para o webview

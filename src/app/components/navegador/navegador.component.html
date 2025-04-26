@@ -54,20 +54,10 @@
   </div>
   
   <div class="webview-container">
-    <!-- Webview do Electron - Usando iframe como fallback quando webview não estiver disponível -->
-    <ng-container *ngIf="isElectron">
-      <webview #webview [attr.src]="url" style="width:100%; height:500px; display:block;"></webview>
-    </ng-container>
+    <!-- Webview do Electron - Sempre visível agora -->
+    <webview #webview src="https://www.google.com" style="width:100%; height:500px; display:block; border:0;"></webview>
     
-    <!-- Fallback para quando não estiver no Electron -->
-    <div *ngIf="!isElectron" class="webview-placeholder">
-      <p class="text-center p-4">
-        <i class="pi pi-desktop text-4xl mb-3 block"></i>
-        O navegador embutido só está disponível quando o aplicativo é executado no Electron.
-        <br>
-        URL de automação: {{url}}
-      </p>
-    </div>
+    <!-- Removido o fallback que estava causando problemas -->
   </div>
   
   <!-- Status da automação -->
