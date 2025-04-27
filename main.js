@@ -259,75 +259,25 @@ ipcMain.on('start-automation', (event, args) => {
     urlToAutomate = browserView.webContents.getURL();
   }
   
-  // Configura o monitoramento de comandos de automação
-  const automationCommandFile = path.join(__dirname, 'automation_command.json');
-  const automationResultFile = path.join(__dirname, 'automation_result.json');
-  
-  // Remove arquivos antigos se existirem
-  if (fs.existsSync(automationCommandFile)) {
-    fs.unlinkSync(automationCommandFile);
-  }
-  if (fs.existsSync(automationResultFile)) {
-    fs.unlinkSync(automationResultFile);
-  }
-  
-  // Inicia o monitoramento de comandos
-  const commandWatcher = fs.watch(path.dirname(automationCommandFile), (eventType, filename) => {
-    if (eventType === 'change' && filename === 'automation_command.json') {
-      try {
-        const commandData = JSON.parse(fs.readFileSync(automationCommandFile, 'utf8'));
-        
-        if (commandData.action === 'execute_js' && commandData.file && fs.existsSync(commandData.file)) {
-          const jsCode = fs.readFileSync(commandData.file, 'utf8');
-          console.log(`[main.js] Executando JavaScript no BrowserView: ${jsCode.substring(0, 100)}...`);
-          
-          if (browserView && browserView.webContents) {
-            browserView.webContents.executeJavaScript(jsCode)
-              .then(result => {
-                // Salva o resultado
-                const resultData = {
-                  success: true,
-                  data: result,
-                  timestamp: commandData.timestamp
-                };
-                fs.writeFileSync(automationResultFile, JSON.stringify(resultData));
-                console.log(`[main.js] Resultado da execução JavaScript: ${JSON.stringify(result).substring(0, 100)}...`);
-              })
-              .catch(error => {
-                // Salva o erro
-                const resultData = {
-                  success: false,
-                  error: error.toString(),
-                  timestamp: commandData.timestamp
-                };
-                fs.writeFileSync(automationResultFile, JSON.stringify(resultData));
-                console.error(`[main.js] Erro ao executar JavaScript: ${error}`);
-              });
-          } else {
-            const resultData = {
-              success: false,
-              error: "BrowserView não está disponível",
-              timestamp: commandData.timestamp
-            };
-            fs.writeFileSync(automationResultFile, JSON.stringify(resultData));
-            console.error('[main.js] BrowserView não está disponível para executar JavaScript');
-          }
-        }
-      } catch (error) {
-        console.error(`[main.js] Erro ao processar comando de automação: ${error}`);
+  // Força a abertura do DevTools para garantir que a depuração remota esteja ativa
+  if (browserView && browserView.webContents) {
+    browserView.webContents.openDevTools({ mode: 'detach' });
+    setTimeout(() => {
+      if (browserView && browserView.webContents) {
+        browserView.webContents.closeDevTools();
       }
-    }
-  });
+    }, 1000);
+  }
   
-  // Usa o script de automação embutida que não abre novas janelas
+  // Usa o script de automação força bruta que tenta múltiplas abordagens
   let pythonCommand = 'python';
   if (process.platform !== 'win32') {
     pythonCommand = 'python3';
   }
   
-  console.log(`[main.js] Iniciando automação embutida para URL: ${urlToAutomate}`);
+  console.log(`[main.js] Iniciando automação força bruta para URL: ${urlToAutomate}`);
   automationProcess = spawn(pythonCommand, [
-    'embedded_automation.py', 
+    'brute_force_automation.py', 
     '--url', urlToAutomate
   ]);
   
@@ -341,10 +291,6 @@ ipcMain.on('start-automation', (event, args) => {
   });
   automationProcess.on('close', (code) => {
     console.log(`Processo de automação encerrado com código ${code}`);
-    // Para o monitoramento de comandos
-    if (commandWatcher) {
-      commandWatcher.close();
-    }
     automationProcess = null;
     event.reply('automation-status', { status: 'stopped', code: code });
   });
