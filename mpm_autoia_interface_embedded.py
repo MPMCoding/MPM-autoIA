@@ -76,6 +76,35 @@ class WebQuizAutomation:
                 logging.warning(f"Erro ao ler porta de depuração do arquivo: {e}")
                 logging.warning("Usando porta padrão 9222")
             
+            # Verifica se a porta está disponível antes de tentar conectar
+            import socket
+            import time
+            
+            # Tenta verificar se a porta está aberta
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(1)
+            result = sock.connect_ex(('127.0.0.1', debug_port))
+            sock.close()
+            
+            if result != 0:
+                logging.warning(f"A porta {debug_port} não parece estar aberta. Aguardando até 10 segundos...")
+                # Aguarda até 10 segundos para a porta ficar disponível
+                for i in range(10):
+                    time.sleep(1)
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.settimeout(1)
+                    result = sock.connect_ex(('127.0.0.1', debug_port))
+                    sock.close()
+                    if result == 0:
+                        logging.info(f"Porta {debug_port} disponível após {i+1} segundos")
+                        break
+                
+                if result != 0:
+                    logging.error(f"A porta {debug_port} não está disponível após 10 segundos")
+                    raise Exception(f"Não foi possível conectar à porta de depuração {debug_port}")
+            else:
+                logging.info(f"Porta {debug_port} está disponível para conexão")
+            
             # Conectar ao navegador embutido existente
             chrome_options = Options()
             
@@ -100,12 +129,20 @@ class WebQuizAutomation:
             except Exception as e:
                 logging.warning(f"Falha ao usar ChromeDriverManager: {e}")
                 # Fallback para inicialização direta
-                self.driver = webdriver.Chrome(options=chrome_options)
-                logging.info("Driver do Chrome inicializado com fallback - conectado ao navegador embutido existente")
+                try:
+                    self.driver = webdriver.Chrome(options=chrome_options)
+                    logging.info("Driver do Chrome inicializado com fallback - conectado ao navegador embutido existente")
+                except Exception as direct_error:
+                    logging.error(f"Falha também no método direto: {direct_error}")
+                    raise Exception("Não foi possível inicializar o driver do Chrome por nenhum método")
             
             # Verifica se a conexão foi bem-sucedida
-            current_url = self.driver.current_url
-            logging.info(f"Conexão bem-sucedida! URL atual: {current_url}")
+            try:
+                current_url = self.driver.current_url
+                logging.info(f"Conexão bem-sucedida! URL atual: {current_url}")
+            except Exception as url_error:
+                logging.error(f"Erro ao obter URL atual: {url_error}")
+                raise Exception("Conexão com o navegador parece ter falhado")
             
             return True
         except Exception as e:
@@ -122,6 +159,7 @@ class WebQuizAutomation:
             logging.error("3. Instale as dependências necessárias:")
             logging.error("   pip install webdriver-manager selenium --upgrade")
             logging.error("4. Verifique se o arquivo debug_port.txt foi criado na pasta do aplicativo")
+            logging.error("5. Reinicie a aplicação para garantir que a depuração remota seja ativada corretamente")
             logging.error("="*80)
             return False
     

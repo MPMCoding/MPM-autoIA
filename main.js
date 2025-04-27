@@ -29,6 +29,10 @@ function createWindow() {
     icon: path.join(__dirname, 'src/assets/icons/icon.png')
   });
 
+  // Adiciona argumentos para habilitar depuração remota
+  app.commandLine.appendSwitch('remote-debugging-port', '9222');
+  app.commandLine.appendSwitch('remote-debugging-address', '127.0.0.1');
+  
   // Carrega o app Angular
   const angularAppUrl = url.format({
     pathname: path.join(__dirname, 'dist/mpm-autoia-desktop/index.html'),
@@ -107,9 +111,14 @@ function createBrowserView(initialUrl) {
       javascript: true,
       plugins: true,
       nativeWindowOpen: false, // Impede abertura de novas janelas nativas
-      // Habilita depuração remota para permitir conexão do WebDriver
+      // Configurações adicionais para depuração remota
       devTools: true
     }
+  });
+
+  // Habilita explicitamente a depuração remota para este BrowserView
+  browserView.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
+    callback(true); // Permite todas as permissões
   });
 
   // Adiciona o BrowserView à janela principal
@@ -129,14 +138,19 @@ function createBrowserView(initialUrl) {
   browserView.setBounds(initialBounds);
   
   // Habilita o modo de depuração remota para permitir conexão do WebDriver
-  browserView.webContents.debugger.attach('1.3');
+  console.log('[main.js] Habilitando depuração remota para o BrowserView');
+  
+  // Abre DevTools para garantir que a depuração remota esteja ativa
+  browserView.webContents.openDevTools({ mode: 'detach' });
+  setTimeout(() => {
+    if (browserView && browserView.webContents) {
+      browserView.webContents.closeDevTools();
+    }
+  }, 1000);
   
   // Salva a porta de depuração em um arquivo para que o script de automação possa encontrá-la
-  const debugPort = browserView.webContents.debugger.isAttached() ? 
-    browserView.webContents._debuggerAttachmentId || 9222 : 9222;
-  
-  console.log(`[main.js] BrowserView iniciado com depuração remota na porta: ${debugPort}`);
-  fs.writeFileSync(path.join(__dirname, 'debug_port.txt'), debugPort.toString());
+  console.log('[main.js] Salvando porta de depuração (9222) no arquivo debug_port.txt');
+  fs.writeFileSync(path.join(__dirname, 'debug_port.txt'), '9222');
   
   // Carrega a URL inicial
   console.log(`[main.js] Carregando URL no BrowserView: ${initialUrl}`);
