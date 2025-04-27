@@ -204,22 +204,22 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goHome() {
-      console.log("[NavegadorComponent] goHome() chamado pelo botão Home.");
-      const googleUrl = "https://www.google.com";
+      console.log('[NavegadorComponent] goHome() chamado pelo botão Home.');
+      const googleUrl = 'https://www.google.com';
       
       if (this.isElectron) {
           if (!this.browserViewInitialized) {
-              console.log("[NavegadorComponent] BrowserView não inicializado. Inicializando primeiro...");
+              console.log('[NavegadorComponent] BrowserView não inicializado. Inicializando primeiro...');
               // Inicializa o BrowserView se ainda não estiver inicializado
               if (this.ipcAvailable && this.ipcRenderer) {
-                  this.ipcRenderer.send("initialize-browser-view");
+                  this.ipcRenderer.send('initialize-browser-view');
                   // Aguarda um pouco para dar tempo de inicializar antes de navegar
                   setTimeout(() => {
                       this.navigateToUrl(googleUrl);
                   }, 300);
               } else {
-                  console.error("[NavegadorComponent] ERRO: Tentativa de navegação sem IPC disponível!");
-                  this.errorMessage = "Não é possível navegar: Comunicação IPC indisponível.";
+                  console.error('[NavegadorComponent] ERRO: Tentativa de navegação sem IPC disponível!');
+                  this.errorMessage = 'Não é possível navegar: Comunicação IPC indisponível.';
                   this.cdr.detectChanges();
               }
           } else {
@@ -236,59 +236,59 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   initializeBrowserView() {
     if (this.ipcAvailable && this.ipcRenderer) {
-      console.log("[NavegadorComponent] initializeBrowserView - Enviando IPC "initialize-browser-view".");
-      this.ipcRenderer.send("initialize-browser-view");
+      console.log('[NavegadorComponent] initializeBrowserView - Enviando IPC initialize-browser-view.');
+      this.ipcRenderer.send('initialize-browser-view');
     } else {
-      console.warn("[NavegadorComponent] initializeBrowserView - IPC indisponível. BrowserView não será inicializado.");
+      console.warn('[NavegadorComponent] initializeBrowserView - IPC indisponível. BrowserView não será inicializado.');
       // A mensagem de erro já deve ter sido definida no constructor ou ngOnInit
     }
   }
 
   setupResizeObserver() {
     if (!this.browserContainerRef || !this.browserContainerRef.nativeElement) {
-      console.error("[NavegadorComponent] setupResizeObserver - ERRO: Referência do contêiner (browserContainerRef) não encontrada!");
-      this.errorMessage = "Erro interno: Falha ao observar redimensionamento do contêiner.";
+      console.error('[NavegadorComponent] setupResizeObserver - ERRO: Referência do contêiner (browserContainerRef) não encontrada!');
+      this.errorMessage = 'Erro interno: Falha ao observar redimensionamento do contêiner.';
       this.cdr.detectChanges();
       return;
     }
     if (!this.ipcAvailable) {
-        console.warn("[NavegadorComponent] setupResizeObserver - IPC indisponível, observador não será configurado.");
+        console.warn('[NavegadorComponent] setupResizeObserver - IPC indisponível, observador não será configurado.');
         return;
     }
-    console.log("[NavegadorComponent] setupResizeObserver - Configurando ResizeObserver.");
+    console.log('[NavegadorComponent] setupResizeObserver - Configurando ResizeObserver.');
     
     this.resizeObserver = new ResizeObserver((entries) => {
       this.ngZone.run(() => {
         for (let entry of entries) {
             // Verifica se o BV foi inicializado antes de enviar bounds
             if (this.browserViewInitialized) {
-                console.log("[NavegadorComponent] ResizeObserver - Contêiner redimensionado. Chamando updateBrowserViewBounds().");
+                console.log('[NavegadorComponent] ResizeObserver - Contêiner redimensionado. Chamando updateBrowserViewBounds().');
                 this.updateBrowserViewBounds();
             } else {
-                console.log("[NavegadorComponent] ResizeObserver - Contêiner redimensionado, mas BrowserView não inicializado. Bounds não enviados.");
+                console.log('[NavegadorComponent] ResizeObserver - Contêiner redimensionado, mas BrowserView não inicializado. Bounds não enviados.');
             }
         }
       });
     });
     
-    console.log("[NavegadorComponent] setupResizeObserver - Iniciando observação do contêiner.");
+    console.log('[NavegadorComponent] setupResizeObserver - Iniciando observação do contêiner.');
     this.resizeObserver.observe(this.browserContainerRef.nativeElement);
     
     // Atualiza as coordenadas iniciais se o BV já estiver pronto (pouco provável aqui, mas seguro)
     if (this.browserViewInitialized) {
-        console.log("[NavegadorComponent] setupResizeObserver - Chamando updateBrowserViewBounds() inicialmente (BV já estava pronto).");
+        console.log('[NavegadorComponent] setupResizeObserver - Chamando updateBrowserViewBounds() inicialmente (BV já estava pronto).');
         this.updateBrowserViewBounds();
     }
   }
 
   updateBrowserViewBounds() {
     if (!this.ipcAvailable || !this.ipcRenderer || !this.browserContainerRef?.nativeElement) {
-      console.warn("[NavegadorComponent] updateBrowserViewBounds - Abortando: IPC indisponível ou contêiner não pronto.");
+      console.warn('[NavegadorComponent] updateBrowserViewBounds - Abortando: IPC indisponível ou contêiner não pronto.');
       return;
     }
     // Verifica se o BV foi confirmado como criado antes de enviar bounds
     if (!this.browserViewInitialized) {
-        console.warn("[NavegadorComponent] updateBrowserViewBounds - Abortando: BrowserView ainda não confirmado como criado.");
+        console.warn('[NavegadorComponent] updateBrowserViewBounds - Abortando: BrowserView ainda não confirmado como criado.');
         return;
     }
     
@@ -302,8 +302,8 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     
     if (bounds.width > 0 && bounds.height > 0) {
-        console.log(`[NavegadorComponent] updateBrowserViewBounds - Enviando IPC "set-browser-view-bounds": ${JSON.stringify(bounds)}`);
-        this.ipcRenderer.send("set-browser-view-bounds", bounds);
+        console.log(`[NavegadorComponent] updateBrowserViewBounds - Enviando IPC 'set-browser-view-bounds': ${JSON.stringify(bounds)}`);
+        this.ipcRenderer.send('set-browser-view-bounds', bounds);
     } else {
         console.warn(`[NavegadorComponent] updateBrowserViewBounds - Dimensões inválidas detectadas (${bounds.width}x${bounds.height}), não enviando coordenadas.`);
     }

@@ -472,29 +472,78 @@ class WebQuizAutomation:
             # Configuração mais robusta para o ChromeDriver
             logging.info("Configurando ChromeDriver com abordagem robusta...")
             
-            # Método 1: Usar webdriver-manager com opções avançadas
-            from webdriver_manager.chrome import ChromeDriverManager
-            from webdriver_manager.core.utils import ChromeType
+            # Verificar se existe um caminho manual para o ChromeDriver
+            chrome_driver_path = os.environ.get('CHROME_DRIVER_PATH')
+            if chrome_driver_path and os.path.exists(chrome_driver_path):
+                logging.info(f"Usando ChromeDriver especificado manualmente: {chrome_driver_path}")
+                service = Service(executable_path=chrome_driver_path)
+                self.driver = webdriver.Chrome(service=service, options=options)
+                logging.info("WebDriver conectado com sucesso usando ChromeDriver manual.")
+                return True
             
-            # Tenta diferentes estratégias para obter o ChromeDriver correto
+            # Método 1: Usar webdriver-manager com opções avançadas
             try:
-                # Tenta com configuração padrão
-                driver_path = ChromeDriverManager().install()
-                logging.info(f"ChromeDriver instalado em: {driver_path}")
-                service = Service(executable_path=driver_path)
-            except Exception as driver_error:
-                logging.warning(f"Falha no método padrão de obtenção do ChromeDriver: {driver_error}")
+                from webdriver_manager.chrome import ChromeDriverManager
+                from webdriver_manager.core.utils import ChromeType
+                
+                # Tenta diferentes estratégias para obter o ChromeDriver correto
                 try:
-                    # Tenta com configuração alternativa
-                    driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
-                    logging.info(f"ChromeDriver (Chromium) instalado em: {driver_path}")
+                    # Tenta com configuração padrão
+                    logging.info("Tentando obter ChromeDriver via ChromeDriverManager (padrão)...")
+                    driver_path = ChromeDriverManager().install()
+                    logging.info(f"ChromeDriver instalado em: {driver_path}")
                     service = Service(executable_path=driver_path)
-                except Exception as chromium_error:
-                    logging.warning(f"Falha no método alternativo: {chromium_error}")
-                    
-                    # Método 2: Usar o Selenium Manager diretamente (disponível no Selenium 4.6+)
-                    logging.info("Tentando usar Selenium Manager diretamente...")
-                    service = Service()
+                except Exception as driver_error:
+                    logging.warning(f"Falha no método padrão de obtenção do ChromeDriver: {driver_error}")
+                    try:
+                        # Tenta com configuração alternativa
+                        logging.info("Tentando obter ChromeDriver via ChromeDriverManager (Chromium)...")
+                        driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
+                        logging.info(f"ChromeDriver (Chromium) instalado em: {driver_path}")
+                        service = Service(executable_path=driver_path)
+                    except Exception as chromium_error:
+                        logging.warning(f"Falha no método alternativo: {chromium_error}")
+                        
+                        # Tenta com configuração específica de versão
+                        try:
+                            # Tenta detectar a versão do Chrome
+                            import subprocess
+                            import re
+                            
+                            logging.info("Tentando detectar versão do Chrome manualmente...")
+                            if os.name == 'nt':  # Windows
+                                chrome_path = self.find_chrome_path_windows()
+                                if chrome_path:
+                                    result = subprocess.run([chrome_path, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                    version_output = result.stdout
+                                else:
+                                    version_output = ""
+                            else:  # Linux/Mac
+                                result = subprocess.run(['google-chrome', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                version_output = result.stdout
+                            
+                            # Extrai a versão do Chrome
+                            match = re.search(r'Chrome\s+(\d+\.\d+\.\d+\.\d+)', version_output)
+                            if match:
+                                chrome_version = match.group(1)
+                                logging.info(f"Versão do Chrome detectada: {chrome_version}")
+                                # Usa a versão específica para obter o ChromeDriver
+                                driver_path = ChromeDriverManager(version=chrome_version.split('.')[0]).install()
+                                logging.info(f"ChromeDriver para versão específica instalado em: {driver_path}")
+                                service = Service(executable_path=driver_path)
+                            else:
+                                raise Exception("Não foi possível detectar a versão do Chrome")
+                        except Exception as version_error:
+                            logging.warning(f"Falha na detecção de versão: {version_error}")
+                            
+                            # Método 2: Usar o Selenium Manager diretamente (disponível no Selenium 4.6+)
+                            logging.info("Tentando usar Selenium Manager diretamente...")
+                            service = Service()
+            except ImportError as import_error:
+                logging.error(f"webdriver-manager não está instalado: {import_error}")
+                logging.info("Por favor, instale as dependências necessárias com: pip install webdriver-manager selenium --upgrade")
+                logging.info("Tentando usar Selenium Manager diretamente como fallback...")
+                service = Service()
             
             # Configuração adicional para evitar problemas de compatibilidade
             options.add_argument("--no-sandbox")
@@ -510,7 +559,33 @@ class WebQuizAutomation:
             logging.error("Detalhes do erro para diagnóstico:")
             import traceback
             logging.error(traceback.format_exc())
+            
+            # Instruções para o usuário sobre como resolver o problema
+            logging.error("\n" + "="*80)
+            logging.error("INSTRUÇÕES PARA RESOLVER O PROBLEMA DO CHROMEDRIVER:")
+            logging.error("1. Instale as dependências necessárias:")
+            logging.error("   pip install webdriver-manager selenium --upgrade")
+            logging.error("2. Baixe o ChromeDriver manualmente da página oficial:")
+            logging.error("   https://chromedriver.chromium.org/downloads")
+            logging.error("3. Extraia o arquivo e defina a variável de ambiente CHROME_DRIVER_PATH:")
+            logging.error("   - Windows: set CHROME_DRIVER_PATH=C:\\caminho\\para\\chromedriver.exe")
+            logging.error("   - Linux/Mac: export CHROME_DRIVER_PATH=/caminho/para/chromedriver")
+            logging.error("="*80)
             return False
+            
+    def find_chrome_path_windows(self):
+        """Encontra o caminho para o executável do Chrome no Windows"""
+        possible_paths = [
+            os.path.join(os.environ.get("PROGRAMFILES", ""), "Google", "Chrome", "Application", "chrome.exe"),
+            os.path.join(os.environ.get("PROGRAMFILES(X86)", ""), "Google", "Chrome", "Application", "chrome.exe"),
+            os.path.join(os.environ.get("LOCALAPPDATA", ""), "Google", "Chrome", "Application", "chrome.exe")
+        ]
+        
+        for path in possible_paths:
+            if os.path.exists(path):
+                return path
+        
+        return None
 
     def get_question_and_options(self):
         """Extrai o texto da pergunta e das opções da página atual"""
