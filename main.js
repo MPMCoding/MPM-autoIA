@@ -252,11 +252,25 @@ ipcMain.on('start-automation', (event, args) => {
     event.reply('automation-status', { status: 'already-running' });
     return;
   }
+  
+  // Obtém a URL atual do navegador embutido
+  let urlToAutomate = currentUrl;
+  if (browserView) {
+    urlToAutomate = browserView.webContents.getURL();
+  }
+  
+  // Usa o novo script de automação direta que não depende de depuração remota
   let pythonCommand = 'python';
   if (process.platform !== 'win32') {
     pythonCommand = 'python3';
   }
-  automationProcess = spawn(pythonCommand, ['mpm_autoia_interface_embedded.py', '--embedded', '--url', currentUrl]);
+  
+  console.log(`[main.js] Iniciando automação direta para URL: ${urlToAutomate}`);
+  automationProcess = spawn(pythonCommand, [
+    'direct_automation.py', 
+    '--url', urlToAutomate
+  ]);
+  
   automationProcess.stdout.on('data', (data) => {
     console.log(`Automação stdout: ${data}`);
     event.reply('automation-output', { type: 'stdout', data: data.toString() });
