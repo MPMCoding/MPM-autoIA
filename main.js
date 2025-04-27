@@ -106,7 +106,9 @@ function createBrowserView(initialUrl) {
       images: true,
       javascript: true,
       plugins: true,
-      nativeWindowOpen: false // Impede abertura de novas janelas nativas
+      nativeWindowOpen: false, // Impede abertura de novas janelas nativas
+      // Habilita depuração remota para permitir conexão do WebDriver
+      devTools: true
     }
   });
 
@@ -125,6 +127,16 @@ function createBrowserView(initialUrl) {
   };
   console.log(`[main.js] Definindo bounds iniciais do BrowserView: ${JSON.stringify(initialBounds)}`);
   browserView.setBounds(initialBounds);
+  
+  // Habilita o modo de depuração remota para permitir conexão do WebDriver
+  browserView.webContents.debugger.attach('1.3');
+  
+  // Salva a porta de depuração em um arquivo para que o script de automação possa encontrá-la
+  const debugPort = browserView.webContents.debugger.isAttached() ? 
+    browserView.webContents._debuggerAttachmentId || 9222 : 9222;
+  
+  console.log(`[main.js] BrowserView iniciado com depuração remota na porta: ${debugPort}`);
+  fs.writeFileSync(path.join(__dirname, 'debug_port.txt'), debugPort.toString());
   
   // Carrega a URL inicial
   console.log(`[main.js] Carregando URL no BrowserView: ${initialUrl}`);

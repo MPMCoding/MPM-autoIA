@@ -57,12 +57,32 @@ class WebQuizAutomation:
     def setup_driver(self):
         """Configura o driver do Chrome para se conectar ao navegador embutido existente"""
         try:
-            # Conectar ao navegador embutido existente em vez de criar uma nova instância
+            # Tenta ler a porta de depuração do arquivo criado pelo Electron
+            debug_port = 9222  # Porta padrão caso não consiga ler do arquivo
+            try:
+                import os
+                debug_port_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'debug_port.txt')
+                if os.path.exists(debug_port_file):
+                    with open(debug_port_file, 'r') as f:
+                        port_str = f.read().strip()
+                        if port_str.isdigit():
+                            debug_port = int(port_str)
+                            logging.info(f"Porta de depuração lida do arquivo: {debug_port}")
+                        else:
+                            logging.warning(f"Conteúdo do arquivo de porta inválido: {port_str}")
+                else:
+                    logging.warning(f"Arquivo de porta de depuração não encontrado: {debug_port_file}")
+            except Exception as e:
+                logging.warning(f"Erro ao ler porta de depuração do arquivo: {e}")
+                logging.warning("Usando porta padrão 9222")
+            
+            # Conectar ao navegador embutido existente
             chrome_options = Options()
             
             # Usar a porta de depuração do navegador embutido
-            # A porta padrão usada pelo Electron BrowserView é 9222
-            chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+            debug_address = f"127.0.0.1:{debug_port}"
+            logging.info(f"Tentando conectar ao navegador embutido em: {debug_address}")
+            chrome_options.add_experimental_option("debuggerAddress", debug_address)
             
             # Configurações adicionais para evitar problemas
             chrome_options.add_argument("--no-sandbox")
@@ -76,12 +96,16 @@ class WebQuizAutomation:
                 # Tenta usar o ChromeDriverManager para obter o driver correto
                 service = Service(ChromeDriverManager().install())
                 self.driver = webdriver.Chrome(service=service, options=chrome_options)
+                logging.info("Driver do Chrome inicializado com sucesso - conectado ao navegador embutido existente")
             except Exception as e:
                 logging.warning(f"Falha ao usar ChromeDriverManager: {e}")
                 # Fallback para inicialização direta
                 self.driver = webdriver.Chrome(options=chrome_options)
+                logging.info("Driver do Chrome inicializado com fallback - conectado ao navegador embutido existente")
             
-            logging.info("Driver do Chrome inicializado com sucesso - conectado ao navegador embutido existente")
+            # Verifica se a conexão foi bem-sucedida
+            current_url = self.driver.current_url
+            logging.info(f"Conexão bem-sucedida! URL atual: {current_url}")
             
             return True
         except Exception as e:
@@ -97,6 +121,7 @@ class WebQuizAutomation:
             logging.error("2. Verifique se você já está autenticado na página que deseja automatizar")
             logging.error("3. Instale as dependências necessárias:")
             logging.error("   pip install webdriver-manager selenium --upgrade")
+            logging.error("4. Verifique se o arquivo debug_port.txt foi criado na pasta do aplicativo")
             logging.error("="*80)
             return False
     
