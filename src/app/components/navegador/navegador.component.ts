@@ -159,7 +159,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     
     this.ipcRenderer.on("browser-error", (event: any, data: any) => {
       this.ngZone.run(() => {
-        console.error("[NavegadorComponent] IPC "browser-error" recebido:", data);
+        console.error("[NavegadorComponent] IPC browser-error recebido:", data);
         this.errorMessage = `Erro de navegação: ${data.errorCode} - ${data.errorDescription}`;
         this.cdr.detectChanges();
       });
@@ -167,7 +167,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     
     this.ipcRenderer.on("browser-view-created", () => {
       this.ngZone.run(() => {
-        console.log("[NavegadorComponent] IPC "browser-view-created" recebido. Marcando como inicializado e chamando updateBrowserViewBounds().");
+        console.log("[NavegadorComponent] IPC browser-view-created recebido. Marcando como inicializado e chamando updateBrowserViewBounds().");
         this.browserViewInitialized = true;
         this.errorMessage = null; // Limpa mensagens de erro anteriores
         this.updateBrowserViewBounds();
@@ -177,7 +177,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     
     this.ipcRenderer.on("automation-status", (event: any, data: any) => {
       this.ngZone.run(() => {
-        console.log("[NavegadorComponent] IPC "automation-status" recebido:", data);
+        console.log("[NavegadorComponent] IPC automation-status recebido:", data);
         if (data.status === "started") {
           this.isAutomationRunning = true;
           this.isAutomationPaused = false;
@@ -195,7 +195,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     
     this.ipcRenderer.on("automation-output", (event: any, data: any) => {
       this.ngZone.run(() => {
-        console.log("[NavegadorComponent] IPC "automation-output" recebido:", data.type);
+        console.log("[NavegadorComponent] IPC automation-output recebido:", data.type);
         this.automationOutput += data.data + "\n";
         this.cdr.detectChanges();
       });
@@ -341,7 +341,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isElectron) {
         if (!this.browserViewInitialized) {
             console.warn("[NavegadorComponent] navigateToUrl - BrowserView não inicializado. Tentando inicializar primeiro.");
-            this.manualInitializeBrowserView(); // Tenta inicializar se não estiver
+            this.initializeBrowserView(); // Tenta inicializar se não estiver
             // Idealmente, deveria esperar a confirmação antes de navegar, mas isso complica a UX.
             // Por agora, apenas envia o comando de navegação após a tentativa de inicialização.
             setTimeout(() => this.sendIpcMessage("navigate-to-url", targetUrl), 100); // Pequeno delay

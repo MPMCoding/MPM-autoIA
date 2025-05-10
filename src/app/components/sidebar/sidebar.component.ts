@@ -16,7 +16,7 @@ interface MenuItem {
 export class SidebarComponent {
   menuItems: MenuItem[] = [
     { label: 'Dashboard', icon: 'pi pi-home', route: '/dashboard', active: false },
-    { label: 'Navegador', icon: 'pi-desktop', route: '/navegador', active: false },
+    { label: 'Navegador', icon: 'pi pi-desktop', route: '/navegador', active: false },
     { label: 'Resumos', icon: 'pi pi-file', route: '/resumos', active: false },
     { label: 'Pesquisar', icon: 'pi pi-search', route: '/pesquisa', active: false },
     { label: 'Perguntas Salvas', icon: 'pi pi-question-circle', route: '/perguntas', active: false },

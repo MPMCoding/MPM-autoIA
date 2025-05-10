@@ -4,13 +4,12 @@ const url = require('url');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const os = require('os');
+const browserAutomation = require('./browser_automation');
 
 // Variáveis globais
 let mainWindow;
 let browserView;
 let currentUrl = 'https://www.google.com';
-let automationProcess = null;
-let automationPaused = false;
 let browserViewReady = false;
 
 function createWindow() {
@@ -50,11 +49,6 @@ function createWindow() {
     console.log('[main.js] Evento mainWindow closed.');
     // Dereference the window object
     mainWindow = null;
-    if (automationProcess) {
-      console.log('[main.js] Encerrando processo de automação.');
-      automationProcess.kill();
-      automationProcess = null;
-    }
     // Garante que o BrowserView seja destruído se a janela principal for fechada
     if (browserView) {
       console.log('[main.js] Destruindo BrowserView no fechamento da janela principal.');
@@ -148,10 +142,6 @@ function createBrowserView(initialUrl) {
     }
   }, 1000);
   
-  // Salva a porta de depuração em um arquivo para que o script de automação possa encontrá-la
-  console.log('[main.js] Salvando porta de depuração (9222) no arquivo debug_port.txt');
-  fs.writeFileSync(path.join(__dirname, 'debug_port.txt'), '9222');
-  
   // Carrega a URL inicial
   console.log(`[main.js] Carregando URL no BrowserView: ${initialUrl}`);
   browserView.webContents.loadURL(initialUrl);
@@ -194,6 +184,9 @@ function createBrowserView(initialUrl) {
       mainWindow.webContents.send('current-url', navigatedUrl);
     }
   });
+  
+  // Inicializa o módulo de automação com o BrowserView
+  browserAutomation.initAutomation(browserView, mainWindow);
   
   // Habilita o DevTools para o BrowserView quando necessário
   // console.log('[main.js] Abrindo DevTools para BrowserView.');
@@ -246,18 +239,22 @@ function positionBrowserView(bounds) {
 
 // --- Manipuladores IPC --- 
 
-// Manipuladores para a automação Python (sem logs adicionados aqui)
+// Os handlers para automação agora são gerenciados pelo módulo browser_automation.js
+// Apenas redirecionamos os eventos IPC para o módulo de automação
+
 ipcMain.on('start-automation', (event, args) => {
-  if (automationProcess) {
-    event.reply('automation-status', { status: 'already-running' });
+  console.log('[main.js] IPC start-automation recebido, redirecionando para o módulo de automação.');
+  // Verificar se o BrowserView está pronto
+  if (!browserView || !browserViewReady) {
+    console.error('[main.js] BrowserView não está pronto para automação.');
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('automation-status', { status: 'error', message: 'BrowserView não está pronto' });
+    }
     return;
   }
   
-  // Obtém a URL atual do navegador embutido
-  let urlToAutomate = currentUrl;
-  if (browserView) {
-    urlToAutomate = browserView.webContents.getURL();
-  }
+  // Configurações personalizadas podem ser passadas como argumentos
+  const customConfig = args ? args.config : null;
   
   // Força a abertura do DevTools para garantir que a depuração remota esteja ativa
   if (browserView && browserView.webContents) {
@@ -269,144 +266,23 @@ ipcMain.on('start-automation', (event, args) => {
     }, 1000);
   }
   
-  // Configura o monitoramento de comandos de automação
-  const automationCommandFile = path.join(__dirname, 'automation_command.json');
-  const automationResultFile = path.join(__dirname, 'automation_result.json');
-  
-  // Remove arquivos antigos se existirem
-  if (fs.existsSync(automationCommandFile)) {
-    fs.unlinkSync(automationCommandFile);
-  }
-  if (fs.existsSync(automationResultFile)) {
-    fs.unlinkSync(automationResultFile);
-  }
-  
-  // Inicia o monitoramento de comandos
-  const commandWatcher = fs.watch(path.dirname(automationCommandFile), (eventType, filename) => {
-    if (eventType === 'change' && filename === 'automation_command.json') {
-      try {
-        const commandData = JSON.parse(fs.readFileSync(automationCommandFile, 'utf8'));
-        
-        if (commandData.action === 'execute_js' && commandData.file && fs.existsSync(commandData.file)) {
-          const jsCode = fs.readFileSync(commandData.file, 'utf8');
-          console.log(`[main.js] Executando JavaScript no BrowserView: ${jsCode.substring(0, 100)}...`);
-          
-          if (browserView && browserView.webContents) {
-            browserView.webContents.executeJavaScript(jsCode)
-              .then(result => {
-                // Salva o resultado
-                const resultData = {
-                  success: true,
-                  data: result,
-                  timestamp: commandData.timestamp
-                };
-                fs.writeFileSync(automationResultFile, JSON.stringify(resultData));
-                console.log(`[main.js] Resultado da execução JavaScript: ${JSON.stringify(result).substring(0, 100)}...`);
-              })
-              .catch(error => {
-                // Salva o erro
-                const resultData = {
-                  success: false,
-                  error: error.toString(),
-                  timestamp: commandData.timestamp
-                };
-                fs.writeFileSync(automationResultFile, JSON.stringify(resultData));
-                console.error(`[main.js] Erro ao executar JavaScript: ${error}`);
-              });
-          } else {
-            const resultData = {
-              success: false,
-              error: "BrowserView não está disponível",
-              timestamp: commandData.timestamp
-            };
-            fs.writeFileSync(automationResultFile, JSON.stringify(resultData));
-            console.error('[main.js] BrowserView não está disponível para executar JavaScript');
-          }
-        } else if (commandData.action === 'open_devtools') {
-          if (browserView && browserView.webContents) {
-            browserView.webContents.openDevTools({ mode: 'detach' });
-            setTimeout(() => {
-              if (browserView && browserView.webContents) {
-                browserView.webContents.closeDevTools();
-              }
-            }, 3000);
-            
-            // Salva o resultado
-            const resultData = {
-              success: true,
-              data: "DevTools aberto e fechado com sucesso",
-              timestamp: commandData.timestamp
-            };
-            fs.writeFileSync(automationResultFile, JSON.stringify(resultData));
-          } else {
-            const resultData = {
-              success: false,
-              error: "BrowserView não está disponível",
-              timestamp: commandData.timestamp
-            };
-            fs.writeFileSync(automationResultFile, JSON.stringify(resultData));
-          }
-        }
-      } catch (error) {
-        console.error(`[main.js] Erro ao processar comando de automação: ${error}`);
-      }
-    }
-  });
-  
-  // Usa o script de automação robusta para o navegador embutido
-  let pythonCommand = 'python';
-  if (process.platform !== 'win32') {
-    pythonCommand = 'python3';
-  }
-  
-  console.log(`[main.js] Iniciando automação robusta para URL: ${urlToAutomate}`);
-  automationProcess = spawn(pythonCommand, [
-    'robust_embedded_automation.py', 
-    '--url', urlToAutomate
-  ]);
-  
-  automationProcess.stdout.on('data', (data) => {
-    console.log(`Automação stdout: ${data}`);
-    event.reply('automation-output', { type: 'stdout', data: data.toString() });
-  });
-  automationProcess.stderr.on('data', (data) => {
-    console.error(`Automação stderr: ${data}`);
-    event.reply('automation-output', { type: 'stderr', data: data.toString() });
-  });
-  automationProcess.on('close', (code) => {
-    console.log(`Processo de automação encerrado com código ${code}`);
-    // Para o monitoramento de comandos
-    if (commandWatcher) {
-      commandWatcher.close();
-    }
-    automationProcess = null;
-    event.reply('automation-status', { status: 'stopped', code: code });
-  });
-  event.reply('automation-status', { status: 'started' });
+  // Inicia a automação através do módulo browser_automation.js
+  event.sender.send('automation-output', { type: 'info', data: 'Iniciando automação no navegador embutido...' });
 });
+
 ipcMain.on('stop-automation', (event) => {
-  if (automationProcess) {
-    automationProcess.kill();
-    automationProcess = null;
-    event.reply('automation-status', { status: 'stopped' });
-  } else {
-    event.reply('automation-status', { status: 'not-running' });
-  }
+  console.log('[main.js] IPC stop-automation recebido, redirecionando para o módulo de automação.');
+  event.sender.send('automation-output', { type: 'info', data: 'Parando automação...' });
 });
+
 ipcMain.on('pause-automation', (event) => {
-  if (automationProcess) {
-    if (!automationPaused) {
-      automationProcess.stdin.write('pause\n');
-      automationPaused = true;
-      event.reply('automation-status', { status: 'paused' });
-    } else {
-      automationProcess.stdin.write('resume\n');
-      automationPaused = false;
-      event.reply('automation-status', { status: 'resumed' });
-    }
-  } else {
-    event.reply('automation-status', { status: 'not-running' });
-  }
+  console.log('[main.js] IPC pause-automation recebido, redirecionando para o módulo de automação.');
+  event.sender.send('automation-output', { type: 'info', data: 'Pausando automação...' });
+});
+
+ipcMain.on('resume-automation', (event) => {
+  console.log('[main.js] IPC resume-automation recebido, redirecionando para o módulo de automação.');
+  event.sender.send('automation-output', { type: 'info', data: 'Retomando automação...' });
 });
 
 // Manipuladores para o navegador embutido

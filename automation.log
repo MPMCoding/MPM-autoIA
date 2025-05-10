@@ -1,3 +1,657 @@
 2025-04-10 18:21:11,590 - INFO - Chrome iniciado em modo de depuração na porta 9222
 2025-04-26 12:41:49,082 - INFO - Chrome iniciado em modo de depuração na porta 9222
 2025-04-26 12:42:14,713 - INFO - Chrome iniciado em modo de depuração na porta 9222
+2025-04-26 21:13:01,062 - INFO - ====== WebDriver manager ======
+2025-04-26 21:13:02,187 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:13:02,286 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:13:02,355 - INFO - There is no [win64] chromedriver "135.0.7049.114" for browser google-chrome "135.0.7049" in cache
+2025-04-26 21:13:02,356 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:13:02,525 - INFO - WebDriver version 135.0.7049.114 selected
+2025-04-26 21:13:02,530 - INFO - Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/135.0.7049.114/win32/chromedriver-win32.zip
+2025-04-26 21:13:02,531 - INFO - About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/135.0.7049.114/win32/chromedriver-win32.zip
+2025-04-26 21:13:02,721 - INFO - Driver downloading response is 200
+2025-04-26 21:13:03,189 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:13:04,140 - INFO - Driver has been saved in cache [C:\Users\mpmco\.wdm\drivers\chromedriver\win64\135.0.7049.114]
+2025-04-26 21:14:07,948 - WARNING - Falha ao usar ChromeDriverManager: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00C6D363+60275]
+	GetHandleVerifier [0x00C6D3A4+60340]
+	(No symbol) [0x00AA056E]
+	(No symbol) [0x00A942AA]
+	(No symbol) [0x00AD8D16]
+	(No symbol) [0x00ACF5EF]
+	(No symbol) [0x00ACF426]
+	(No symbol) [0x00B18D78]
+	(No symbol) [0x00B1873A]
+	(No symbol) [0x00B0CE86]
+	(No symbol) [0x00ADC623]
+	(No symbol) [0x00ADD474]
+	GetHandleVerifier [0x00EB8FE3+2467827]
+	GetHandleVerifier [0x00EB45E6+2448886]
+	GetHandleVerifier [0x00ECF80C+2560028]
+	GetHandleVerifier [0x00C83DF5+153093]
+	GetHandleVerifier [0x00C8A3BD+179149]
+	GetHandleVerifier [0x00C74BB8+91080]
+	GetHandleVerifier [0x00C74D60+91504]
+	GetHandleVerifier [0x00C5FA10+4640]
+	BaseThreadInitThunk [0x76417BA9+25]
+	RtlInitializeExceptionChain [0x7771C2EB+107]
+	RtlClearBits [0x7771C26F+191]
+
+2025-04-26 21:15:11,777 - ERROR - Erro ao configurar o driver: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00007FF786FFEFA5+77893]
+	GetHandleVerifier [0x00007FF786FFF000+77984]
+	(No symbol) [0x00007FF786DC8FEC]
+	(No symbol) [0x00007FF786DB9D11]
+	(No symbol) [0x00007FF786E0BEF2]
+	(No symbol) [0x00007FF786E0110E]
+	(No symbol) [0x00007FF786E54F48]
+	(No symbol) [0x00007FF786E54520]
+	(No symbol) [0x00007FF786E46F03]
+	(No symbol) [0x00007FF786E10328]
+	(No symbol) [0x00007FF786E11093]
+	GetHandleVerifier [0x00007FF7872B7B6D+2931725]
+	GetHandleVerifier [0x00007FF7872B2132+2908626]
+	GetHandleVerifier [0x00007FF7872D00F3+3031443]
+	GetHandleVerifier [0x00007FF7870191EA+184970]
+	GetHandleVerifier [0x00007FF78702086F+215311]
+	GetHandleVerifier [0x00007FF787006EC4+110436]
+	GetHandleVerifier [0x00007FF787007072+110866]
+	GetHandleVerifier [0x00007FF786FED479+5401]
+	BaseThreadInitThunk [0x00007FFE1A63259D+29]
+	RtlUserThreadStart [0x00007FFE1C74AF38+40]
+
+2025-04-26 21:15:11,777 - ERROR - Detalhes do erro:
+2025-04-26 21:15:11,784 - ERROR - Traceback (most recent call last):
+  File "C:\Projetos\MpAutoIA\MPM-autoIA\mpm_autoia_interface_embedded.py", line 78, in setup_driver
+    self.driver = webdriver.Chrome(service=service, options=chrome_options)
+                  ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 45, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        browser_name=DesiredCapabilities.CHROME["browserName"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        keep_alive=keep_alive,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 66, in __init__
+    super().__init__(command_executor=executor, options=options)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 250, in __init__
+    self.start_session(capabilities)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 342, in start_session
+    response = self.execute(Command.NEW_SESSION, caps)["value"]
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 429, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00C6D363+60275]
+	GetHandleVerifier [0x00C6D3A4+60340]
+	(No symbol) [0x00AA056E]
+	(No symbol) [0x00A942AA]
+	(No symbol) [0x00AD8D16]
+	(No symbol) [0x00ACF5EF]
+	(No symbol) [0x00ACF426]
+	(No symbol) [0x00B18D78]
+	(No symbol) [0x00B1873A]
+	(No symbol) [0x00B0CE86]
+	(No symbol) [0x00ADC623]
+	(No symbol) [0x00ADD474]
+	GetHandleVerifier [0x00EB8FE3+2467827]
+	GetHandleVerifier [0x00EB45E6+2448886]
+	GetHandleVerifier [0x00ECF80C+2560028]
+	GetHandleVerifier [0x00C83DF5+153093]
+	GetHandleVerifier [0x00C8A3BD+179149]
+	GetHandleVerifier [0x00C74BB8+91080]
+	GetHandleVerifier [0x00C74D60+91504]
+	GetHandleVerifier [0x00C5FA10+4640]
+	BaseThreadInitThunk [0x76417BA9+25]
+	RtlInitializeExceptionChain [0x7771C2EB+107]
+	RtlClearBits [0x7771C26F+191]
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Projetos\MpAutoIA\MPM-autoIA\mpm_autoia_interface_embedded.py", line 82, in setup_driver
+    self.driver = webdriver.Chrome(options=chrome_options)
+                  ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 45, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        browser_name=DesiredCapabilities.CHROME["browserName"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        keep_alive=keep_alive,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 66, in __init__
+    super().__init__(command_executor=executor, options=options)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 250, in __init__
+    self.start_session(capabilities)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 342, in start_session
+    response = self.execute(Command.NEW_SESSION, caps)["value"]
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 429, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00007FF786FFEFA5+77893]
+	GetHandleVerifier [0x00007FF786FFF000+77984]
+	(No symbol) [0x00007FF786DC8FEC]
+	(No symbol) [0x00007FF786DB9D11]
+	(No symbol) [0x00007FF786E0BEF2]
+	(No symbol) [0x00007FF786E0110E]
+	(No symbol) [0x00007FF786E54F48]
+	(No symbol) [0x00007FF786E54520]
+	(No symbol) [0x00007FF786E46F03]
+	(No symbol) [0x00007FF786E10328]
+	(No symbol) [0x00007FF786E11093]
+	GetHandleVerifier [0x00007FF7872B7B6D+2931725]
+	GetHandleVerifier [0x00007FF7872B2132+2908626]
+	GetHandleVerifier [0x00007FF7872D00F3+3031443]
+	GetHandleVerifier [0x00007FF7870191EA+184970]
+	GetHandleVerifier [0x00007FF78702086F+215311]
+	GetHandleVerifier [0x00007FF787006EC4+110436]
+	GetHandleVerifier [0x00007FF787007072+110866]
+	GetHandleVerifier [0x00007FF786FED479+5401]
+	BaseThreadInitThunk [0x00007FFE1A63259D+29]
+	RtlUserThreadStart [0x00007FFE1C74AF38+40]
+
+
+2025-04-26 21:15:11,784 - ERROR - 
+================================================================================
+2025-04-26 21:15:11,784 - ERROR - INSTRUÇÕES PARA RESOLVER O PROBLEMA DE CONEXÃO:
+2025-04-26 21:15:11,784 - ERROR - 1. Certifique-se de que o navegador embutido está aberto e funcionando
+2025-04-26 21:15:11,785 - ERROR - 2. Verifique se você já está autenticado na página que deseja automatizar
+2025-04-26 21:15:11,785 - ERROR - 3. Instale as dependências necessárias:
+2025-04-26 21:15:11,785 - ERROR -    pip install webdriver-manager selenium --upgrade
+2025-04-26 21:15:11,785 - ERROR - ================================================================================
+2025-04-26 21:20:56,967 - INFO - Porta de depuração lida do arquivo: 9222
+2025-04-26 21:20:56,967 - INFO - Tentando conectar ao navegador embutido em: 127.0.0.1:9222
+2025-04-26 21:20:57,335 - INFO - ====== WebDriver manager ======
+2025-04-26 21:20:58,188 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:20:58,272 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:20:58,408 - INFO - Driver [C:\Users\mpmco\.wdm\drivers\chromedriver\win64\135.0.7049.114\chromedriver-win32/chromedriver.exe] found in cache
+2025-04-26 21:22:02,092 - WARNING - Falha ao usar ChromeDriverManager: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00C6D363+60275]
+	GetHandleVerifier [0x00C6D3A4+60340]
+	(No symbol) [0x00AA056E]
+	(No symbol) [0x00A942AA]
+	(No symbol) [0x00AD8D16]
+	(No symbol) [0x00ACF5EF]
+	(No symbol) [0x00ACF426]
+	(No symbol) [0x00B18D78]
+	(No symbol) [0x00B1873A]
+	(No symbol) [0x00B0CE86]
+	(No symbol) [0x00ADC623]
+	(No symbol) [0x00ADD474]
+	GetHandleVerifier [0x00EB8FE3+2467827]
+	GetHandleVerifier [0x00EB45E6+2448886]
+	GetHandleVerifier [0x00ECF80C+2560028]
+	GetHandleVerifier [0x00C83DF5+153093]
+	GetHandleVerifier [0x00C8A3BD+179149]
+	GetHandleVerifier [0x00C74BB8+91080]
+	GetHandleVerifier [0x00C74D60+91504]
+	GetHandleVerifier [0x00C5FA10+4640]
+	BaseThreadInitThunk [0x76417BA9+25]
+	RtlInitializeExceptionChain [0x7771C2EB+107]
+	RtlClearBits [0x7771C26F+191]
+
+2025-04-26 21:23:05,892 - ERROR - Erro ao configurar o driver: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00007FF786FFEFA5+77893]
+	GetHandleVerifier [0x00007FF786FFF000+77984]
+	(No symbol) [0x00007FF786DC8FEC]
+	(No symbol) [0x00007FF786DB9D11]
+	(No symbol) [0x00007FF786E0BEF2]
+	(No symbol) [0x00007FF786E0110E]
+	(No symbol) [0x00007FF786E54F48]
+	(No symbol) [0x00007FF786E54520]
+	(No symbol) [0x00007FF786E46F03]
+	(No symbol) [0x00007FF786E10328]
+	(No symbol) [0x00007FF786E11093]
+	GetHandleVerifier [0x00007FF7872B7B6D+2931725]
+	GetHandleVerifier [0x00007FF7872B2132+2908626]
+	GetHandleVerifier [0x00007FF7872D00F3+3031443]
+	GetHandleVerifier [0x00007FF7870191EA+184970]
+	GetHandleVerifier [0x00007FF78702086F+215311]
+	GetHandleVerifier [0x00007FF787006EC4+110436]
+	GetHandleVerifier [0x00007FF787007072+110866]
+	GetHandleVerifier [0x00007FF786FED479+5401]
+	BaseThreadInitThunk [0x00007FFE1A63259D+29]
+	RtlUserThreadStart [0x00007FFE1C74AF38+40]
+
+2025-04-26 21:23:05,892 - ERROR - Detalhes do erro:
+2025-04-26 21:23:05,899 - ERROR - Traceback (most recent call last):
+  File "C:\Projetos\MpAutoIA\MPM-autoIA\mpm_autoia_interface_embedded.py", line 98, in setup_driver
+    self.driver = webdriver.Chrome(service=service, options=chrome_options)
+                  ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 45, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        browser_name=DesiredCapabilities.CHROME["browserName"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        keep_alive=keep_alive,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 66, in __init__
+    super().__init__(command_executor=executor, options=options)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 250, in __init__
+    self.start_session(capabilities)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 342, in start_session
+    response = self.execute(Command.NEW_SESSION, caps)["value"]
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 429, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00C6D363+60275]
+	GetHandleVerifier [0x00C6D3A4+60340]
+	(No symbol) [0x00AA056E]
+	(No symbol) [0x00A942AA]
+	(No symbol) [0x00AD8D16]
+	(No symbol) [0x00ACF5EF]
+	(No symbol) [0x00ACF426]
+	(No symbol) [0x00B18D78]
+	(No symbol) [0x00B1873A]
+	(No symbol) [0x00B0CE86]
+	(No symbol) [0x00ADC623]
+	(No symbol) [0x00ADD474]
+	GetHandleVerifier [0x00EB8FE3+2467827]
+	GetHandleVerifier [0x00EB45E6+2448886]
+	GetHandleVerifier [0x00ECF80C+2560028]
+	GetHandleVerifier [0x00C83DF5+153093]
+	GetHandleVerifier [0x00C8A3BD+179149]
+	GetHandleVerifier [0x00C74BB8+91080]
+	GetHandleVerifier [0x00C74D60+91504]
+	GetHandleVerifier [0x00C5FA10+4640]
+	BaseThreadInitThunk [0x76417BA9+25]
+	RtlInitializeExceptionChain [0x7771C2EB+107]
+	RtlClearBits [0x7771C26F+191]
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Projetos\MpAutoIA\MPM-autoIA\mpm_autoia_interface_embedded.py", line 103, in setup_driver
+    self.driver = webdriver.Chrome(options=chrome_options)
+                  ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 45, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        browser_name=DesiredCapabilities.CHROME["browserName"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        keep_alive=keep_alive,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 66, in __init__
+    super().__init__(command_executor=executor, options=options)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 250, in __init__
+    self.start_session(capabilities)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 342, in start_session
+    response = self.execute(Command.NEW_SESSION, caps)["value"]
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 429, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\mpmco\AppData\Local\Programs\Python\Python313\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00007FF786FFEFA5+77893]
+	GetHandleVerifier [0x00007FF786FFF000+77984]
+	(No symbol) [0x00007FF786DC8FEC]
+	(No symbol) [0x00007FF786DB9D11]
+	(No symbol) [0x00007FF786E0BEF2]
+	(No symbol) [0x00007FF786E0110E]
+	(No symbol) [0x00007FF786E54F48]
+	(No symbol) [0x00007FF786E54520]
+	(No symbol) [0x00007FF786E46F03]
+	(No symbol) [0x00007FF786E10328]
+	(No symbol) [0x00007FF786E11093]
+	GetHandleVerifier [0x00007FF7872B7B6D+2931725]
+	GetHandleVerifier [0x00007FF7872B2132+2908626]
+	GetHandleVerifier [0x00007FF7872D00F3+3031443]
+	GetHandleVerifier [0x00007FF7870191EA+184970]
+	GetHandleVerifier [0x00007FF78702086F+215311]
+	GetHandleVerifier [0x00007FF787006EC4+110436]
+	GetHandleVerifier [0x00007FF787007072+110866]
+	GetHandleVerifier [0x00007FF786FED479+5401]
+	BaseThreadInitThunk [0x00007FFE1A63259D+29]
+	RtlUserThreadStart [0x00007FFE1C74AF38+40]
+
+
+2025-04-26 21:23:05,900 - ERROR - 
+================================================================================
+2025-04-26 21:23:05,900 - ERROR - INSTRUÇÕES PARA RESOLVER O PROBLEMA DE CONEXÃO:
+2025-04-26 21:23:05,900 - ERROR - 1. Certifique-se de que o navegador embutido está aberto e funcionando
+2025-04-26 21:23:05,900 - ERROR - 2. Verifique se você já está autenticado na página que deseja automatizar
+2025-04-26 21:23:05,900 - ERROR - 3. Instale as dependências necessárias:
+2025-04-26 21:23:05,900 - ERROR -    pip install webdriver-manager selenium --upgrade
+2025-04-26 21:23:05,900 - ERROR - 4. Verifique se o arquivo debug_port.txt foi criado na pasta do aplicativo
+2025-04-26 21:23:05,900 - ERROR - ================================================================================
+2025-04-26 21:29:05,729 - INFO - Porta de depuração lida do arquivo: 9222
+2025-04-26 21:29:06,738 - WARNING - A porta 9222 não parece estar aberta. Aguardando até 10 segundos...
+2025-04-26 21:29:26,840 - ERROR - A porta 9222 não está disponível após 10 segundos
+2025-04-26 21:29:26,840 - ERROR - Erro ao configurar o driver: Não foi possível conectar à porta de depuração 9222
+2025-04-26 21:29:26,840 - ERROR - Detalhes do erro:
+2025-04-26 21:29:26,845 - ERROR - Traceback (most recent call last):
+  File "C:\Projetos\MpAutoIA\MPM-autoIA\mpm_autoia_interface_embedded.py", line 104, in setup_driver
+    raise Exception(f"Não foi possível conectar à porta de depuração {debug_port}")
+Exception: Não foi possível conectar à porta de depuração 9222
+
+2025-04-26 21:29:26,845 - ERROR - 
+================================================================================
+2025-04-26 21:29:26,845 - ERROR - INSTRUÇÕES PARA RESOLVER O PROBLEMA DE CONEXÃO:
+2025-04-26 21:29:26,845 - ERROR - 1. Certifique-se de que o navegador embutido está aberto e funcionando
+2025-04-26 21:29:26,845 - ERROR - 2. Verifique se você já está autenticado na página que deseja automatizar
+2025-04-26 21:29:26,845 - ERROR - 3. Instale as dependências necessárias:
+2025-04-26 21:29:26,845 - ERROR -    pip install webdriver-manager selenium --upgrade
+2025-04-26 21:29:26,845 - ERROR - 4. Verifique se o arquivo debug_port.txt foi criado na pasta do aplicativo
+2025-04-26 21:29:26,845 - ERROR - 5. Reinicie a aplicação para garantir que a depuração remota seja ativada corretamente
+2025-04-26 21:29:26,845 - ERROR - ================================================================================
+2025-04-26 21:33:48,458 - INFO - ====== WebDriver manager ======
+2025-04-26 21:33:49,292 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:33:49,371 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:33:49,490 - INFO - Driver [C:\Users\mpmco\.wdm\drivers\chromedriver\win64\135.0.7049.114\chromedriver-win32/chromedriver.exe] found in cache
+2025-04-26 21:33:50,675 - INFO - Driver do Chrome inicializado com sucesso
+2025-04-26 21:33:50,677 - INFO - Navegando para: https://www.google.com/
+2025-04-26 21:34:02,061 - ERROR - Erro ao processar quiz: ('Connection aborted.', ConnectionResetError(10054, 'Foi forçado o cancelamento de uma conexão existente pelo host remoto', None, 10054, None))
+2025-04-26 21:34:11,146 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002514AF0D310>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/6918fab0f3142fb793aedf29f076e52a
+2025-04-26 21:34:15,222 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002514AF0DF90>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/6918fab0f3142fb793aedf29f076e52a
+2025-04-26 21:34:19,310 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002514AF28510>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/6918fab0f3142fb793aedf29f076e52a
+2025-04-26 21:34:23,415 - INFO - Driver do Chrome fechado
+2025-04-26 21:39:21,009 - INFO - Código JavaScript salvo em C:\Projetos\MpAutoIA\MPM-autoIA\temp_automation.js
+2025-04-26 21:39:21,010 - INFO - Comando enviado para o Electron: {'action': 'execute_js', 'file': 'C:\\Projetos\\MpAutoIA\\MPM-autoIA\\temp_automation.js', 'timestamp': 1745714361.0097632}
+2025-04-26 21:39:21,111 - INFO - Resultado recebido: {'success': True, 'data': 'Navegação iniciada para https://www.google.com/', 'timestamp': 1745714361.0097632}
+2025-04-26 21:39:21,112 - INFO - Resultado da navegação: Navegação iniciada para https://www.google.com/
+2025-04-26 21:39:31,114 - INFO - Código JavaScript salvo em C:\Projetos\MpAutoIA\MPM-autoIA\temp_automation.js
+2025-04-26 21:39:31,115 - INFO - Comando enviado para o Electron: {'action': 'execute_js', 'file': 'C:\\Projetos\\MpAutoIA\\MPM-autoIA\\temp_automation.js', 'timestamp': 1745714371.1150973}
+2025-04-26 21:39:31,216 - INFO - Resultado recebido: {'success': False, 'error': 'Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.', 'timestamp': 1745714371.1150973}
+2025-04-26 21:39:31,217 - INFO - Verificação da página: None
+2025-04-26 21:39:31,218 - INFO - Código JavaScript salvo em C:\Projetos\MpAutoIA\MPM-autoIA\temp_automation.js
+2025-04-26 21:39:31,220 - INFO - Comando enviado para o Electron: {'action': 'execute_js', 'file': 'C:\\Projetos\\MpAutoIA\\MPM-autoIA\\temp_automation.js', 'timestamp': 1745714371.2191648}
+2025-04-26 21:39:31,321 - INFO - Resultado recebido: {'success': False, 'error': 'Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.', 'timestamp': 1745714371.2191648}
+2025-04-26 21:39:31,321 - INFO - Resultado do processamento: None
+2025-04-26 21:40:42,192 - INFO - Código JavaScript salvo em C:\Projetos\MpAutoIA\MPM-autoIA\temp_automation.js
+2025-04-26 21:40:42,193 - INFO - Comando enviado para o Electron: {'action': 'execute_js', 'file': 'C:\\Projetos\\MpAutoIA\\MPM-autoIA\\temp_automation.js', 'timestamp': 1745714442.193225}
+2025-04-26 21:40:42,295 - INFO - Resultado recebido: {'success': True, 'data': 'Navegação iniciada para https://www.avaeduc.com.br/mod/quiz/attempt.php?attempt=3138748&page=9', 'timestamp': 1745714442.193225}
+2025-04-26 21:40:42,295 - INFO - Resultado da navegação: Navegação iniciada para https://www.avaeduc.com.br/mod/quiz/attempt.php?attempt=3138748&page=9
+2025-04-26 21:40:52,297 - INFO - Código JavaScript salvo em C:\Projetos\MpAutoIA\MPM-autoIA\temp_automation.js
+2025-04-26 21:40:52,298 - INFO - Comando enviado para o Electron: {'action': 'execute_js', 'file': 'C:\\Projetos\\MpAutoIA\\MPM-autoIA\\temp_automation.js', 'timestamp': 1745714452.2975352}
+2025-04-26 21:40:52,399 - INFO - Resultado recebido: {'success': False, 'error': 'Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.', 'timestamp': 1745714452.2975352}
+2025-04-26 21:40:52,399 - INFO - Verificação da página: None
+2025-04-26 21:40:52,400 - INFO - Código JavaScript salvo em C:\Projetos\MpAutoIA\MPM-autoIA\temp_automation.js
+2025-04-26 21:40:52,402 - INFO - Comando enviado para o Electron: {'action': 'execute_js', 'file': 'C:\\Projetos\\MpAutoIA\\MPM-autoIA\\temp_automation.js', 'timestamp': 1745714452.4008193}
+2025-04-26 21:40:52,503 - INFO - Resultado recebido: {'success': False, 'error': 'Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.', 'timestamp': 1745714452.4008193}
+2025-04-26 21:40:52,504 - INFO - Resultado do processamento: None
+2025-04-26 21:45:36,982 - INFO - Porta de depuração lida do arquivo: 9222
+2025-04-26 21:45:36,982 - INFO - ====== WebDriver manager ======
+2025-04-26 21:45:37,883 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:45:37,960 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:45:38,022 - INFO - Driver [C:\Users\mpmco\.wdm\drivers\chromedriver\win64\135.0.7049.114\chromedriver-win32/chromedriver.exe] found in cache
+2025-04-26 21:46:41,789 - WARNING - Falha ao usar ChromeDriverManager com debuggerAddress: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00C6D363+60275]
+	GetHandleVerifier [0x00C6D3A4+60340]
+	(No symbol) [0x00AA056E]
+	(No symbol) [0x00A942AA]
+	(No symbol) [0x00AD8D16]
+	(No symbol) [0x00ACF5EF]
+	(No symbol) [0x00ACF426]
+	(No symbol) [0x00B18D78]
+	(No symbol) [0x00B1873A]
+	(No symbol) [0x00B0CE86]
+	(No symbol) [0x00ADC623]
+	(No symbol) [0x00ADD474]
+	GetHandleVerifier [0x00EB8FE3+2467827]
+	GetHandleVerifier [0x00EB45E6+2448886]
+	GetHandleVerifier [0x00ECF80C+2560028]
+	GetHandleVerifier [0x00C83DF5+153093]
+	GetHandleVerifier [0x00C8A3BD+179149]
+	GetHandleVerifier [0x00C74BB8+91080]
+	GetHandleVerifier [0x00C74D60+91504]
+	GetHandleVerifier [0x00C5FA10+4640]
+	BaseThreadInitThunk [0x76417BA9+25]
+	RtlInitializeExceptionChain [0x7771C2EB+107]
+	RtlClearBits [0x7771C26F+191]
+
+2025-04-26 21:47:45,579 - ERROR - Falha também no método direto com debuggerAddress: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00007FF786FFEFA5+77893]
+	GetHandleVerifier [0x00007FF786FFF000+77984]
+	(No symbol) [0x00007FF786DC8FEC]
+	(No symbol) [0x00007FF786DB9D11]
+	(No symbol) [0x00007FF786E0BEF2]
+	(No symbol) [0x00007FF786E0110E]
+	(No symbol) [0x00007FF786E54F48]
+	(No symbol) [0x00007FF786E54520]
+	(No symbol) [0x00007FF786E46F03]
+	(No symbol) [0x00007FF786E10328]
+	(No symbol) [0x00007FF786E11093]
+	GetHandleVerifier [0x00007FF7872B7B6D+2931725]
+	GetHandleVerifier [0x00007FF7872B2132+2908626]
+	GetHandleVerifier [0x00007FF7872D00F3+3031443]
+	GetHandleVerifier [0x00007FF7870191EA+184970]
+	GetHandleVerifier [0x00007FF78702086F+215311]
+	GetHandleVerifier [0x00007FF787006EC4+110436]
+	GetHandleVerifier [0x00007FF787007072+110866]
+	GetHandleVerifier [0x00007FF786FED479+5401]
+	BaseThreadInitThunk [0x00007FFE1A63259D+29]
+	RtlUserThreadStart [0x00007FFE1C74AF38+40]
+
+2025-04-26 21:47:45,580 - INFO - Tentando abrir uma nova instância do Chrome como fallback
+2025-04-26 21:47:45,580 - INFO - ====== WebDriver manager ======
+2025-04-26 21:47:46,407 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:47:46,474 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:47:46,548 - INFO - Driver [C:\Users\mpmco\.wdm\drivers\chromedriver\win64\135.0.7049.114\chromedriver-win32/chromedriver.exe] found in cache
+2025-04-26 21:47:47,682 - INFO - Driver do Chrome inicializado com sucesso (nova instância)
+2025-04-26 21:47:47,682 - INFO - Navegando para: https://www.google.com/
+2025-04-26 21:47:48,926 - ERROR - Nenhuma pergunta encontrada com os seletores disponíveis
+2025-04-26 21:47:48,935 - INFO - Possíveis perguntas encontradas via JavaScript: 27
+2025-04-26 21:47:48,987 - WARNING - Nenhuma opção encontrada com os seletores disponíveis
+2025-04-26 21:47:48,994 - INFO - Possíveis opções encontradas via JavaScript: 0
+2025-04-26 21:47:49,055 - WARNING - Botão de próxima página não encontrado
+2025-04-26 21:47:56,422 - INFO - Driver do Chrome fechado
+2025-04-26 21:49:24,188 - INFO - Porta de depuração lida do arquivo: 9222
+2025-04-26 21:49:24,189 - INFO - ====== WebDriver manager ======
+2025-04-26 21:49:25,040 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:49:25,134 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:49:25,213 - INFO - Driver [C:\Users\mpmco\.wdm\drivers\chromedriver\win64\135.0.7049.114\chromedriver-win32/chromedriver.exe] found in cache
+2025-04-26 21:50:28,747 - WARNING - Falha ao usar ChromeDriverManager com debuggerAddress: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00C6D363+60275]
+	GetHandleVerifier [0x00C6D3A4+60340]
+	(No symbol) [0x00AA056E]
+	(No symbol) [0x00A942AA]
+	(No symbol) [0x00AD8D16]
+	(No symbol) [0x00ACF5EF]
+	(No symbol) [0x00ACF426]
+	(No symbol) [0x00B18D78]
+	(No symbol) [0x00B1873A]
+	(No symbol) [0x00B0CE86]
+	(No symbol) [0x00ADC623]
+	(No symbol) [0x00ADD474]
+	GetHandleVerifier [0x00EB8FE3+2467827]
+	GetHandleVerifier [0x00EB45E6+2448886]
+	GetHandleVerifier [0x00ECF80C+2560028]
+	GetHandleVerifier [0x00C83DF5+153093]
+	GetHandleVerifier [0x00C8A3BD+179149]
+	GetHandleVerifier [0x00C74BB8+91080]
+	GetHandleVerifier [0x00C74D60+91504]
+	GetHandleVerifier [0x00C5FA10+4640]
+	BaseThreadInitThunk [0x76417BA9+25]
+	RtlInitializeExceptionChain [0x7771C2EB+107]
+	RtlClearBits [0x7771C26F+191]
+
+2025-04-26 21:51:32,651 - ERROR - Falha também no método direto com debuggerAddress: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00007FF786FFEFA5+77893]
+	GetHandleVerifier [0x00007FF786FFF000+77984]
+	(No symbol) [0x00007FF786DC8FEC]
+	(No symbol) [0x00007FF786DB9D11]
+	(No symbol) [0x00007FF786E0BEF2]
+	(No symbol) [0x00007FF786E0110E]
+	(No symbol) [0x00007FF786E54F48]
+	(No symbol) [0x00007FF786E54520]
+	(No symbol) [0x00007FF786E46F03]
+	(No symbol) [0x00007FF786E10328]
+	(No symbol) [0x00007FF786E11093]
+	GetHandleVerifier [0x00007FF7872B7B6D+2931725]
+	GetHandleVerifier [0x00007FF7872B2132+2908626]
+	GetHandleVerifier [0x00007FF7872D00F3+3031443]
+	GetHandleVerifier [0x00007FF7870191EA+184970]
+	GetHandleVerifier [0x00007FF78702086F+215311]
+	GetHandleVerifier [0x00007FF787006EC4+110436]
+	GetHandleVerifier [0x00007FF787007072+110866]
+	GetHandleVerifier [0x00007FF786FED479+5401]
+	BaseThreadInitThunk [0x00007FFE1A63259D+29]
+	RtlUserThreadStart [0x00007FFE1C74AF38+40]
+
+2025-04-26 21:51:32,651 - INFO - Tentando abrir uma nova instância do Chrome como fallback
+2025-04-26 21:51:32,651 - INFO - ====== WebDriver manager ======
+2025-04-26 21:51:33,468 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:51:33,547 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 21:51:33,614 - INFO - Driver [C:\Users\mpmco\.wdm\drivers\chromedriver\win64\135.0.7049.114\chromedriver-win32/chromedriver.exe] found in cache
+2025-04-26 21:51:34,768 - INFO - Driver do Chrome inicializado com sucesso (nova instância)
+2025-04-26 21:51:34,768 - INFO - Navegando para: https://www.avaeduc.com.br/mod/quiz/attempt.php?attempt=3138727&page=1
+2025-04-26 21:51:37,120 - ERROR - Nenhuma pergunta encontrada com os seletores disponíveis
+2025-04-26 21:51:37,127 - INFO - Possíveis perguntas encontradas via JavaScript: 5
+2025-04-26 21:51:37,182 - WARNING - Nenhuma opção encontrada com os seletores disponíveis
+2025-04-26 21:51:37,188 - INFO - Possíveis opções encontradas via JavaScript: 0
+2025-04-26 21:51:37,256 - WARNING - Botão de próxima página não encontrado
+2025-04-26 21:51:44,476 - INFO - Driver do Chrome fechado
+2025-04-26 22:00:30,688 - INFO - Porta de depuração lida do arquivo: 9222
+2025-04-26 22:00:30,688 - INFO - ====== WebDriver manager ======
+2025-04-26 22:00:31,634 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 22:00:31,749 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 22:00:31,814 - INFO - Driver [C:\Users\mpmco\.wdm\drivers\chromedriver\win64\135.0.7049.114\chromedriver-win32/chromedriver.exe] found in cache
+2025-04-26 22:01:35,400 - WARNING - Falha ao usar ChromeDriverManager com debuggerAddress: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00C6D363+60275]
+	GetHandleVerifier [0x00C6D3A4+60340]
+	(No symbol) [0x00AA056E]
+	(No symbol) [0x00A942AA]
+	(No symbol) [0x00AD8D16]
+	(No symbol) [0x00ACF5EF]
+	(No symbol) [0x00ACF426]
+	(No symbol) [0x00B18D78]
+	(No symbol) [0x00B1873A]
+	(No symbol) [0x00B0CE86]
+	(No symbol) [0x00ADC623]
+	(No symbol) [0x00ADD474]
+	GetHandleVerifier [0x00EB8FE3+2467827]
+	GetHandleVerifier [0x00EB45E6+2448886]
+	GetHandleVerifier [0x00ECF80C+2560028]
+	GetHandleVerifier [0x00C83DF5+153093]
+	GetHandleVerifier [0x00C8A3BD+179149]
+	GetHandleVerifier [0x00C74BB8+91080]
+	GetHandleVerifier [0x00C74D60+91504]
+	GetHandleVerifier [0x00C5FA10+4640]
+	BaseThreadInitThunk [0x76417BA9+25]
+	RtlInitializeExceptionChain [0x7771C2EB+107]
+	RtlClearBits [0x7771C26F+191]
+
+2025-04-26 22:02:39,268 - ERROR - Falha também no método direto com debuggerAddress: Message: session not created: cannot connect to chrome at 127.0.0.1:9222
+from chrome not reachable
+Stacktrace:
+	GetHandleVerifier [0x00007FF786FFEFA5+77893]
+	GetHandleVerifier [0x00007FF786FFF000+77984]
+	(No symbol) [0x00007FF786DC8FEC]
+	(No symbol) [0x00007FF786DB9D11]
+	(No symbol) [0x00007FF786E0BEF2]
+	(No symbol) [0x00007FF786E0110E]
+	(No symbol) [0x00007FF786E54F48]
+	(No symbol) [0x00007FF786E54520]
+	(No symbol) [0x00007FF786E46F03]
+	(No symbol) [0x00007FF786E10328]
+	(No symbol) [0x00007FF786E11093]
+	GetHandleVerifier [0x00007FF7872B7B6D+2931725]
+	GetHandleVerifier [0x00007FF7872B2132+2908626]
+	GetHandleVerifier [0x00007FF7872D00F3+3031443]
+	GetHandleVerifier [0x00007FF7870191EA+184970]
+	GetHandleVerifier [0x00007FF78702086F+215311]
+	GetHandleVerifier [0x00007FF787006EC4+110436]
+	GetHandleVerifier [0x00007FF787007072+110866]
+	GetHandleVerifier [0x00007FF786FED479+5401]
+	BaseThreadInitThunk [0x00007FFE1A63259D+29]
+	RtlUserThreadStart [0x00007FFE1C74AF38+40]
+
+2025-04-26 22:02:39,268 - INFO - Tentando abrir uma nova instância do Chrome como fallback
+2025-04-26 22:02:39,268 - INFO - ====== WebDriver manager ======
+2025-04-26 22:02:40,205 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 22:02:40,297 - INFO - Get LATEST chromedriver version for google-chrome
+2025-04-26 22:02:40,356 - INFO - Driver [C:\Users\mpmco\.wdm\drivers\chromedriver\win64\135.0.7049.114\chromedriver-win32/chromedriver.exe] found in cache
+2025-04-26 22:02:41,523 - INFO - Driver do Chrome inicializado com sucesso (nova instância)
+2025-04-26 22:02:41,524 - INFO - Navegando para: https://www.avaeduc.com.br/mod/quiz/attempt.php?attempt=3138727&page=1
+2025-04-26 22:02:44,006 - ERROR - Nenhuma pergunta encontrada com os seletores disponíveis
+2025-04-26 22:02:44,014 - INFO - Possíveis perguntas encontradas via JavaScript: 5
+2025-04-26 22:02:44,067 - WARNING - Nenhuma opção encontrada com os seletores disponíveis
+2025-04-26 22:02:44,075 - INFO - Possíveis opções encontradas via JavaScript: 0
+2025-04-26 22:02:44,137 - WARNING - Botão de próxima página não encontrado
+2025-04-26 22:02:51,328 - INFO - Driver do Chrome fechado
+2025-04-26 22:12:40,225 - INFO - === Iniciando Automação Robusta no Navegador Embutido ===
+2025-04-26 22:12:40,226 - INFO - URL: https://www.avaeduc.com.br/mod/quiz/attempt.php?attempt=3138727&page=1
+2025-04-26 22:12:40,226 - INFO - Seletor de perguntas: .qtext
+2025-04-26 22:12:40,226 - INFO - Seletor de opções: input[type='radio']
+2025-04-26 22:12:40,226 - INFO - Seletor de botão próxima: input[value='Próxima página']
+2025-04-26 22:12:40,227 - INFO - Arquivo removido: C:\Projetos\MpAutoIA\MPM-autoIA\temp_automation.js
+2025-04-26 22:12:40,228 - INFO - Código JavaScript salvo em C:\Projetos\MpAutoIA\MPM-autoIA\temp_automation.js (tentativa 1/3)
+2025-04-26 22:12:40,231 - INFO - Comando enviado para o Electron: ID=1
+2025-04-26 22:12:40,332 - INFO - Resultado recebido para comando ID=1
+2025-04-26 22:12:40,332 - WARNING - Erro na execução do JavaScript: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+2025-04-26 22:12:40,332 - WARNING - Timeout ao aguardar resultado do Electron (tentativa 1/3)
+2025-04-26 22:12:40,333 - INFO - Comando para abrir DevTools enviado
+2025-04-26 22:12:41,335 - INFO - Código JavaScript salvo em C:\Projetos\MpAutoIA\MPM-autoIA\temp_automation.js (tentativa 2/3)
+2025-04-26 22:12:41,337 - INFO - Comando enviado para o Electron: ID=2
+2025-04-26 22:12:41,439 - INFO - Resultado recebido para comando ID=2
+2025-04-26 22:12:41,439 - WARNING - Erro na execução do JavaScript: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+2025-04-26 22:12:41,439 - WARNING - Timeout ao aguardar resultado do Electron (tentativa 2/3)
+2025-04-26 22:12:41,441 - INFO - Código JavaScript salvo em C:\Projetos\MpAutoIA\MPM-autoIA\temp_automation.js (tentativa 3/3)
+2025-04-26 22:12:41,444 - INFO - Comando enviado para o Electron: ID=3
+2025-04-26 22:12:41,545 - INFO - Resultado recebido para comando ID=3
+2025-04-26 22:12:41,546 - WARNING - Erro na execução do JavaScript: Error: Script failed to execute, this normally means an error was thrown. Check the renderer console for the error.
+2025-04-26 22:12:41,546 - WARNING - Timeout ao aguardar resultado do Electron (tentativa 3/3)
+2025-04-26 22:12:41,546 - ERROR - Falha após 3 tentativas de executar JavaScript
+2025-04-26 22:12:41,546 - ERROR - Não foi possível obter a URL atual. O navegador embutido está funcionando?
+2025-04-26 22:12:41,546 - ERROR - === Automação falhou ===
