@@ -1,1354 +1,1358 @@
+
 <!DOCTYPE html>
-<html lang="pt-BR">
+
+<html  dir="ltr" lang="pt-br" xml:lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MPM AutoIA - Assistente de Aprendizagem</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f5ff;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .primary-blue {
-            background-color: #1a56db;
-        }
-        .secondary-blue {
-            background-color: #3b82f6;
-        }
-        .light-blue {
-            background-color: #e1effe;
-        }
-        .btn-primary {
-            background-color: #1a56db;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        .btn-primary:hover {
-            background-color: #1e429f;
-        }
-        .btn-secondary {
-            background-color: #3b82f6;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        .btn-secondary:hover {
-            background-color: #2563eb;
-        }
-        .card {
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .nav-item {
-            cursor: pointer;
-            padding: 0.75rem 1rem;
-            border-radius: 0.375rem;
-            transition: all 0.2s;
-        }
-        .nav-item:hover {
-            background-color: #e1effe;
-        }
-        .nav-item.active {
-            background-color: #1a56db;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <!-- Mockup Navigation - not visible in the final product, just for demonstration -->
-    <div class="bg-white shadow-md p-4 sticky top-0 z-50">
-        <div class="container mx-auto">
-            <h1 class="text-xl font-bold text-center text-gray-800 mb-4">MPM AutoIA - Mockup de Interface</h1>
-            <div class="flex flex-wrap justify-center gap-2">
-                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('login')">Login</button>
-                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('dashboard')">Dashboard</button>
-                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('resumos')">Resumos</button>
-                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('pesquisa')">Pesquisa</button>
-                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('perguntas')">Perguntas Salvas</button>
-                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('professor')">Guia do Professor</button>
-                <button class="nav-button px-3 py-2 bg-gray-200 rounded hover:bg-gray-300" onclick="showTab('admin')">Admin</button>
-            </div>
-        </div>
-    </div>
+    <title>U3 - Avaliação da Unidade</title>
+    <link rel="shortcut icon" href="https://cm-kls-content.s3.amazonaws.com/LOGOS_MARCAS/MARCAS/favicon-16x16.png" />    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="moodle, U3 - Avaliação da Unidade" />
+<link rel="stylesheet" type="text/css" href="https://www.avaeduc.com.br/theme/yui_combo.php?rollup/3.17.2/yui-moodlesimple-min.css" /><script id="firstthemesheet" type="text/css">/** Required in order to fix style inclusion problems in IE with YUI **/</script><link rel="stylesheet" type="text/css" href="https://www.avaeduc.com.br/theme/styles.php/kroton/1748089321/all" />
+<link rel="stylesheet" type="text/css" href="https://www.avaeduc.com.br/blocks/accessibility/userstyles.php?instance_id=45" />
+<link rel="stylesheet" type="text/css" href="https://www.avaeduc.com.br/theme/kroton/style/fonts.css" />
+<link rel="stylesheet" type="text/css" href="https://www.avaeduc.com.br/blocks/myrating/css/style.css" />
+<link rel="stylesheet" type="text/css" href="https://www.avaeduc.com.br/local/aesalibs/javascript/fancybox-3.5.6/dist/jquery.fancybox.min.css" />
+<link rel="stylesheet" type="text/css" href="https://www.avaeduc.com.br/blocks/catalogbooks/styles/banner.css" />
+<link rel="stylesheet" type="text/css" href="https://www.avaeduc.com.br/local/aesalibs/javascript/colorbox/colorbox.css" />
+<script type="text/javascript">
+//<![CDATA[
+var M = {}; M.yui = {};
+M.pageloadstarttime = new Date();
+M.cfg = {"wwwroot":"https:\/\/www.avaeduc.com.br","sesskey":"9sxOitI3pv","loadingicon":"https:\/\/www.avaeduc.com.br\/theme\/image.php\/kroton\/core\/1748089321\/i\/loading_small","themerev":"1748089321","slasharguments":1,"theme":"kroton","jsrev":"1748089321","admin":"admin","svgicons":true};var yui1ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin')}};
+var yui2ConfigFn = function(me) {var parts=me.name.replace(/^moodle-/,'').split('-'),component=parts.shift(),module=parts[0],min='-min';if(/-(skin|core)$/.test(me.name)){parts.pop();me.type='css';min=''}
+if(module){var filename=parts.join('-');me.path=component+'/'+module+'/'+filename+min+'.'+me.type}else{me.path=component+'/'+component+'.'+me.type}};
+YUI_config = {"debug":false,"base":"https:\/\/www.avaeduc.com.br\/lib\/yuilib\/3.17.2\/","comboBase":"https:\/\/www.avaeduc.com.br\/theme\/yui_combo.php?","combine":true,"filter":null,"insertBefore":"firstthemesheet","groups":{"yui2":{"base":"https:\/\/www.avaeduc.com.br\/lib\/yuilib\/2in3\/2.9.0\/build\/","comboBase":"https:\/\/www.avaeduc.com.br\/theme\/yui_combo.php?","combine":true,"ext":false,"root":"2in3\/2.9.0\/build\/","patterns":{"yui2-":{"group":"yui2","configFn":yui1ConfigFn}}},"moodle":{"name":"moodle","base":"https:\/\/www.avaeduc.com.br\/theme\/yui_combo.php?m\/1748089321\/","combine":true,"comboBase":"https:\/\/www.avaeduc.com.br\/theme\/yui_combo.php?","ext":false,"root":"m\/1748089321\/","patterns":{"moodle-":{"group":"moodle","configFn":yui2ConfigFn}},"filter":null,"modules":{"moodle-core-checknet":{"requires":["base-base","moodle-core-notification-alert","io-base"]},"moodle-core-dragdrop":{"requires":["base","node","io","dom","dd","event-key","event-focus","moodle-core-notification"]},"moodle-core-languninstallconfirm":{"requires":["base","node","moodle-core-notification-confirm","moodle-core-notification-alert"]},"moodle-core-chooserdialogue":{"requires":["base","panel","moodle-core-notification"]},"moodle-core-notification":{"requires":["moodle-core-notification-dialogue","moodle-core-notification-alert","moodle-core-notification-confirm","moodle-core-notification-exception","moodle-core-notification-ajaxexception"]},"moodle-core-notification-dialogue":{"requires":["base","node","panel","escape","event-key","dd-plugin","moodle-core-widget-focusafterclose","moodle-core-lockscroll"]},"moodle-core-notification-alert":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-notification-confirm":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-notification-exception":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-notification-ajaxexception":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-tooltip":{"requires":["base","node","io-base","moodle-core-notification-dialogue","json-parse","widget-position","widget-position-align","event-outside","cache-base"]},"moodle-core-formchangechecker":{"requires":["base","event-focus","moodle-core-event"]},"moodle-core-formautosubmit":{"requires":["base","event-key"]},"moodle-core-maintenancemodetimer":{"requires":["base","node"]},"moodle-core-handlebars":{"condition":{"trigger":"handlebars","when":"after"}},"moodle-core-blocks":{"requires":["base","node","io","dom","dd","dd-scroll","moodle-core-dragdrop","moodle-core-notification"]},"moodle-core-lockscroll":{"requires":["plugin","base-build"]},"moodle-core-dock":{"requires":["base","node","event-custom","event-mouseenter","event-resize","escape","moodle-core-dock-loader","moodle-core-event"]},"moodle-core-dock-loader":{"requires":["escape"]},"moodle-core-actionmenu":{"requires":["base","event","node-event-simulate"]},"moodle-core-event":{"requires":["event-custom"]},"moodle-core-popuphelp":{"requires":["moodle-core-tooltip"]},"moodle-core_availability-form":{"requires":["base","node","event","event-delegate","panel","moodle-core-notification-dialogue","json"]},"moodle-backup-confirmcancel":{"requires":["node","node-event-simulate","moodle-core-notification-confirm"]},"moodle-backup-backupselectall":{"requires":["node","event","node-event-simulate","anim"]},"moodle-calendar-info":{"requires":["base","node","event-mouseenter","event-key","overlay","moodle-calendar-info-skin"]},"moodle-course-dragdrop":{"requires":["base","node","io","dom","dd","dd-scroll","moodle-core-dragdrop","moodle-core-notification","moodle-course-coursebase","moodle-course-util"]},"moodle-course-modchooser":{"requires":["moodle-core-chooserdialogue","moodle-course-coursebase"]},"moodle-course-toolboxes":{"requires":["node","base","event-key","node","io","moodle-course-coursebase","moodle-course-util"]},"moodle-course-categoryexpander":{"requires":["node","event-key"]},"moodle-course-util":{"requires":["node"],"use":["moodle-course-util-base"],"submodules":{"moodle-course-util-base":{},"moodle-course-util-section":{"requires":["node","moodle-course-util-base"]},"moodle-course-util-cm":{"requires":["node","moodle-course-util-base"]}}},"moodle-course-management":{"requires":["base","node","io-base","moodle-core-notification-exception","json-parse","dd-constrain","dd-proxy","dd-drop","dd-delegate","node-event-delegate"]},"moodle-course-formatchooser":{"requires":["base","node","node-event-simulate"]},"moodle-form-dateselector":{"requires":["base","node","overlay","calendar"]},"moodle-form-passwordunmask":{"requires":[]},"moodle-form-showadvanced":{"requires":["node","base","selector-css3"]},"moodle-form-shortforms":{"requires":["node","base","selector-css3","moodle-core-event"]},"moodle-question-chooser":{"requires":["moodle-core-chooserdialogue"]},"moodle-question-qbankmanager":{"requires":["node","selector-css3"]},"moodle-question-preview":{"requires":["base","dom","event-delegate","event-key","core_question_engine"]},"moodle-question-searchform":{"requires":["base","node"]},"moodle-availability_completion-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_date-form":{"requires":["base","node","event","io","moodle-core_availability-form"]},"moodle-availability_grade-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_group-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_grouping-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_presential-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_profile-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-qtype_ddimageortext-form":{"requires":["moodle-qtype_ddimageortext-dd","form_filepicker"]},"moodle-qtype_ddimageortext-dd":{"requires":["node","dd","dd-drop","dd-constrain"]},"moodle-qtype_ddmarker-form":{"requires":["moodle-qtype_ddmarker-dd","form_filepicker","graphics","escape"]},"moodle-qtype_ddmarker-dd":{"requires":["node","event-resize","dd","dd-drop","dd-constrain","graphics"]},"moodle-qtype_ddwtos-dd":{"requires":["node","dd","dd-drop","dd-constrain"]},"moodle-mod_assign-history":{"requires":["node","transition"]},"moodle-mod_customcert-rearrange":{"requires":["dd-delegate","dd-drag"]},"moodle-mod_forum-subscriptiontoggle":{"requires":["base-base","io-base"]},"moodle-mod_quiz-dragdrop":{"requires":["base","node","io","dom","dd","dd-scroll","moodle-core-dragdrop","moodle-core-notification","moodle-mod_quiz-quizbase","moodle-mod_quiz-util-base","moodle-mod_quiz-util-page","moodle-mod_quiz-util-slot","moodle-course-util"]},"moodle-mod_quiz-quizquestionbank":{"requires":["base","event","node","io","io-form","yui-later","moodle-question-qbankmanager","moodle-core-notification-dialogue"]},"moodle-mod_quiz-quizbase":{"requires":["base","node"]},"moodle-mod_quiz-modform":{"requires":["base","node","event"]},"moodle-mod_quiz-repaginate":{"requires":["base","event","node","io","moodle-core-notification-dialogue"]},"moodle-mod_quiz-toolboxes":{"requires":["base","node","event","event-key","io","moodle-mod_quiz-quizbase","moodle-mod_quiz-util-slot","moodle-core-notification-ajaxexception"]},"moodle-mod_quiz-autosave":{"requires":["base","node","event","event-valuechange","node-event-delegate","io-form"]},"moodle-mod_quiz-questionchooser":{"requires":["moodle-core-chooserdialogue","moodle-mod_quiz-util","querystring-parse"]},"moodle-mod_quiz-util":{"requires":["node","moodle-core-actionmenu"],"use":["moodle-mod_quiz-util-base"],"submodules":{"moodle-mod_quiz-util-base":{},"moodle-mod_quiz-util-slot":{"requires":["node","moodle-mod_quiz-util-base"]},"moodle-mod_quiz-util-page":{"requires":["node","moodle-mod_quiz-util-base"]}}},"moodle-mod_quiz-randomquestion":{"requires":["base","event","node","io","moodle-core-notification-dialogue"]},"moodle-message_airnotifier-toolboxes":{"requires":["base","node","io"]},"moodle-block_messageteacher-form":{"requires":["base","io","io-form","node","json","moodle-core-notification"]},"moodle-filter_glossary-autolinker":{"requires":["base","node","io-base","json-parse","event-delegate","overlay","moodle-core-event","moodle-core-notification-alert","moodle-core-notification-exception","moodle-core-notification-ajaxexception"]},"moodle-filter_mathjaxloader-loader":{"requires":["moodle-core-event"]},"moodle-editor_atto-editor":{"requires":["node","transition","io","overlay","escape","event","event-simulate","event-custom","node-event-html5","node-event-simulate","yui-throttle","moodle-core-notification-dialogue","moodle-core-notification-confirm","moodle-editor_atto-rangy","handlebars","timers","querystring-stringify"]},"moodle-editor_atto-plugin":{"requires":["node","base","escape","event","event-outside","handlebars","event-custom","timers","moodle-editor_atto-menu"]},"moodle-editor_atto-menu":{"requires":["moodle-core-notification-dialogue","node","event","event-custom"]},"moodle-editor_atto-rangy":{"requires":[]},"moodle-report_eventlist-eventfilter":{"requires":["base","event","node","node-event-delegate","datatable","autocomplete","autocomplete-filters"]},"moodle-report_loglive-fetchlogs":{"requires":["base","event","node","io","node-event-delegate"]},"moodle-gradereport_grader-gradereporttable":{"requires":["base","node","event","handlebars","overlay","event-hover"]},"moodle-gradereport_history-userselector":{"requires":["escape","event-delegate","event-key","handlebars","io-base","json-parse","moodle-core-notification-dialogue"]},"moodle-tool_capability-search":{"requires":["base","node"]},"moodle-tool_lp-dragdrop-reorder":{"requires":["moodle-core-dragdrop"]},"moodle-tool_monitor-dropdown":{"requires":["base","event","node"]},"moodle-assignfeedback_editpdf-editor":{"requires":["base","event","node","io","graphics","json","event-move","event-resize","transition","querystring-stringify-simple","moodle-core-notification-dialog","moodle-core-notification-exception","moodle-core-notification-ajaxexception"]},"moodle-atto_accessibilitychecker-button":{"requires":["color-base","moodle-editor_atto-plugin"]},"moodle-atto_accessibilityhelper-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_align-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_bold-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_charmap-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_clear-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_collapse-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_emoticon-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_equation-button":{"requires":["moodle-editor_atto-plugin","moodle-core-event","io","event-valuechange","tabview","array-extras"]},"moodle-atto_html-button":{"requires":["moodle-editor_atto-plugin","event-valuechange"]},"moodle-atto_image-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_indent-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_italic-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_link-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_managefiles-usedfiles":{"requires":["node","escape"]},"moodle-atto_managefiles-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_media-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_noautolink-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_orderedlist-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_rtl-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_strike-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_subscript-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_superscript-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_table-button":{"requires":["moodle-editor_atto-plugin","moodle-editor_atto-menu","event","event-valuechange"]},"moodle-atto_title-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_underline-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_undo-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_unorderedlist-button":{"requires":["moodle-editor_atto-plugin"]}}},"gallery":{"name":"gallery","base":"https:\/\/www.avaeduc.com.br\/lib\/yuilib\/gallery\/","combine":true,"comboBase":"https:\/\/www.avaeduc.com.br\/theme\/yui_combo.php?","ext":false,"root":"gallery\/1748089321\/","patterns":{"gallery-":{"group":"gallery"}}}},"modules":{"core_filepicker":{"name":"core_filepicker","fullpath":"https:\/\/www.avaeduc.com.br\/lib\/javascript.php\/1748089321\/repository\/filepicker.js","requires":["base","node","node-event-simulate","json","async-queue","io-base","io-upload-iframe","io-form","yui2-treeview","panel","cookie","datatable","datatable-sort","resize-plugin","dd-plugin","escape","moodle-core_filepicker"]},"core_comment":{"name":"core_comment","fullpath":"https:\/\/www.avaeduc.com.br\/lib\/javascript.php\/1748089321\/comment\/comment.js","requires":["base","io-base","node","json","yui2-animation","overlay"]},"mathjax":{"name":"mathjax","fullpath":"https:\/\/cdn.mathjax.org\/mathjax\/2.7-latest\/MathJax.js?delayStartupUntil=configured"},"core_question_flags":{"name":"core_question_flags","fullpath":"https:\/\/www.avaeduc.com.br\/lib\/javascript.php\/1748089321\/question\/flags.js","requires":["base","dom","event-delegate","io-base"]},"core_question_engine":{"name":"core_question_engine","fullpath":"https:\/\/www.avaeduc.com.br\/lib\/javascript.php\/1748089321\/question\/qengine.js","requires":["node","event"]},"mod_quiz":{"name":"mod_quiz","fullpath":"https:\/\/www.avaeduc.com.br\/lib\/javascript.php\/1748089321\/mod\/quiz\/module.js","requires":["base","dom","event-delegate","event-key","core_question_engine","moodle-core-formchangechecker"]},"block_digitaltest":{"name":"block_digitaltest","fullpath":"https:\/\/www.avaeduc.com.br\/lib\/javascript.php\/1748089321\/blocks\/digitaltest\/view\/digitaltest.js","requires":["base","node","stylesheet"]},"block_accessibility":{"name":"block_accessibility","fullpath":"https:\/\/www.avaeduc.com.br\/lib\/javascript.php\/1748089321\/blocks\/accessibility\/module.js","requires":["base","node","stylesheet"]},"local_avaeduc_api":{"name":"local_avaeduc_api","fullpath":"https:\/\/www.avaeduc.com.br\/lib\/javascript.php\/1748089321\/local\/avaeduc_api\/script.js","requires":["base","node","stylesheet"]},"local_notification_course_tracks":{"name":"local_notification_course_tracks","fullpath":"https:\/\/www.avaeduc.com.br\/lib\/javascript.php\/1748089321\/local\/notification_course_tracks\/modules.js","requires":["base","node","stylesheet"]},"local_completion_api":{"name":"local_completion_api","fullpath":"https:\/\/www.avaeduc.com.br\/lib\/javascript.php\/1748089321\/local\/completion_api\/completion_api.js","requires":["base","node","stylesheet"]}}};
+M.yui.loader = {modules: {}};
 
-    <!-- Tela de Login -->
-    <div id="login" class="tab-content active p-4">
-        <div class="container mx-auto max-w-lg">
-            <div class="bg-white rounded-lg shadow-lg p-8 mt-10">
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-robot text-blue-600 text-4xl"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-800 mt-4">MPM AutoIA</h2>
-                    <p class="text-gray-600">Seu assistente de aprendizagem inteligente</p>
-                </div>
-                
-                <form>
-                    <div class="mb-6">
-                        <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Email</label>
-                        <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none" placeholder="seu@email.com">
-                    </div>
-                    
-                    <div class="mb-6">
-                        <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">Senha</label>
-                        <input type="password" id="password" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none" placeholder="••••••••">
-                        <div class="flex justify-end mt-2">
-                            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Esqueceu a senha?</a>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <button type="button" class="w-full btn-primary py-3" onclick="showTab('dashboard')">Entrar</button>
-                    </div>
-                    
-                    <div class="text-center">
-                        <p class="text-sm text-gray-600">Ainda não tem uma conta? <a href="#" class="text-blue-600 hover:text-blue-800">Cadastre-se</a></p>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+//]]>
+</script>
 
-    <!-- Dashboard Principal -->
-    <div id="dashboard" class="tab-content p-4">
-        <div class="container mx-auto">
-            <div class="flex flex-col md:flex-row">
-                <!-- Sidebar de navegação -->
-                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-robot text-blue-600 text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
-                            <p class="text-xs text-gray-600">Assistente AVA</p>
-                        </div>
-                    </div>
-                    
-                    <nav>
-                        <ul>
-                            <li class="nav-item active mb-2 flex items-center">
-                                <i class="fas fa-home mr-3"></i>
-                                <span>Dashboard</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('resumos')">
-                                <i class="fas fa-file-alt mr-3"></i>
-                                <span>Resumos</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('pesquisa')">
-                                <i class="fas fa-search mr-3"></i>
-                                <span>Pesquisar</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('perguntas')">
-                                <i class="fas fa-question-circle mr-3"></i>
-                                <span>Perguntas Salvas</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('professor')">
-                                <i class="fas fa-chalkboard-teacher mr-3"></i>
-                                <span>Guia do Professor</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('admin')">
-                                <i class="fas fa-cog mr-3"></i>
-                                <span>Administração</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
-                                <i class="fas fa-sign-out-alt mr-3"></i>
-                                <span>Sair</span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                
-                <!-- Conteúdo principal -->
-                <div class="flex-1">
-                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4">Bem-vindo(a), Estudante!</h2>
-                        <p class="text-gray-700 mb-6">Utilize o MPM AutoIA para ajudar nos seus estudos e manter-se atualizado com suas atividades.</p>
-                        
-                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-info-circle text-blue-500"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-blue-700">
-                                        Você tem <span class="font-bold">3 atividades</span> pendentes esta semana.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <button class="btn-primary flex-1 flex items-center justify-center" onclick="showTab('resumos')">
-                                <i class="fas fa-file-alt mr-2"></i> Ver Resumos de Tópicos
-                            </button>
-                            <button class="btn-secondary flex-1 flex items-center justify-center" onclick="showTab('perguntas')">
-                                <i class="fas fa-question-circle mr-2"></i> Praticar com Perguntas
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Estatísticas rápidas -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div class="bg-white shadow-md rounded-lg p-6">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-check text-green-600"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h3 class="text-gray-500 text-sm">Atividades Concluídas</h3>
-                                    <p class="text-2xl font-bold text-gray-800">12</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white shadow-md rounded-lg p-6">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-clock text-yellow-600"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h3 class="text-gray-500 text-sm">Pendentes</h3>
-                                    <p class="text-2xl font-bold text-gray-800">3</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white shadow-md rounded-lg p-6">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-star text-blue-600"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h3 class="text-gray-500 text-sm">Média</h3>
-                                    <p class="text-2xl font-bold text-gray-800">8.5</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Últimas atividades -->
-                    <div class="bg-white shadow-md rounded-lg p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Atividades Recentes</h3>
-                        
-                        <div class="border-b pb-4 mb-4">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="font-semibold text-blue-600">Fundamentos de Python</h4>
-                                    <p class="text-sm text-gray-600">Módulo 2: Estruturas de Controle</p>
-                                </div>
-                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">Concluído</span>
-                            </div>
-                            <p class="text-sm text-gray-700 mt-2">Nota: 9.5/10</p>
-                        </div>
-                        
-                        <div class="border-b pb-4 mb-4">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="font-semibold text-blue-600">Banco de Dados SQL</h4>
-                                    <p class="text-sm text-gray-600">Módulo 1: Introdução a Bancos Relacionais</p>
-                                </div>
-                                <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded">Pendente</span>
-                            </div>
-                            <p class="text-sm text-gray-700 mt-2">Prazo: 25/05/2023</p>
-                        </div>
-                        
-                        <div>
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="font-semibold text-blue-600">Algoritmos e Estruturas de Dados</h4>
-                                    <p class="text-sm text-gray-600">Módulo 3: Complexidade de Algoritmos</p>
-                                </div>
-                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">Concluído</span>
-                            </div>
-                            <p class="text-sm text-gray-700 mt-2">Nota: 8.0/10</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<meta name="robots" content="noindex" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/pitagorasampli/cookie-police-bar@v1.0.0/dist/index.js"></script>
 
-    <!-- Área de Resumos -->
-    <div id="resumos" class="tab-content p-4">
-        <div class="container mx-auto">
-            <div class="flex flex-col md:flex-row">
-                <!-- Sidebar de navegação (repetida para cada tela) -->
-                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-robot text-blue-600 text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
-                            <p class="text-xs text-gray-600">Assistente AVA</p>
-                        </div>
-                    </div>
-                    
-                    <nav>
-                        <ul>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('dashboard')">
-                                <i class="fas fa-home mr-3"></i>
-                                <span>Dashboard</span>
-                            </li>
-                            <li class="nav-item active mb-2 flex items-center">
-                                <i class="fas fa-file-alt mr-3"></i>
-                                <span>Resumos</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('pesquisa')">
-                                <i class="fas fa-search mr-3"></i>
-                                <span>Pesquisar</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('perguntas')">
-                                <i class="fas fa-question-circle mr-3"></i>
-                                <span>Perguntas Salvas</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('professor')">
-                                <i class="fas fa-chalkboard-teacher mr-3"></i>
-                                <span>Guia do Professor</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('admin')">
-                                <i class="fas fa-cog mr-3"></i>
-                                <span>Administração</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
-                                <i class="fas fa-sign-out-alt mr-3"></i>
-                                <span>Sair</span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                
-                <!-- Conteúdo principal -->
-                <div class="flex-1">
-                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4">Resumos de Tópicos</h2>
-                        <p class="text-gray-700 mb-6">Veja resumos gerados automaticamente dos seus conteúdos do AVA para facilitar seus estudos.</p>
-                        
-                        <!-- Filtros -->
-                        <div class="flex flex-wrap gap-4 mb-6">
-                            <div class="flex-1">
-                                <label for="disciplina" class="block text-gray-700 text-sm font-semibold mb-2">Disciplina</label>
-                                <select id="disciplina" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none">
-                                    <option value="todas">Todas as Disciplinas</option>
-                                    <option value="python">Fundamentos de Python</option>
-                                    <option value="sql">Banco de Dados SQL</option>
-                                    <option value="algoritmos">Algoritmos e Estruturas de Dados</option>
-                                </select>
-                            </div>
-                            <div class="flex-1">
-                                <label for="modulo" class="block text-gray-700 text-sm font-semibold mb-2">Módulo</label>
-                                <select id="modulo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none">
-                                    <option value="todos">Todos os Módulos</option>
-                                    <option value="mod1">Módulo 1</option>
-                                    <option value="mod2">Módulo 2</option>
-                                    <option value="mod3">Módulo 3</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Lista de resumos -->
-                    <div class="card">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-bold text-blue-600">Fundamentos de Python</h3>
-                            <span class="text-sm text-gray-500">Atualizado: 10/05/2023</span>
-                        </div>
-                        <h4 class="font-semibold text-gray-800 mb-2">Módulo 2: Estruturas de Controle</h4>
-                        <div class="border-l-4 border-blue-500 pl-4 py-1 mb-4">
-                            <p class="text-sm text-gray-700">
-                                Este módulo aborda os principais conceitos de estruturas de controle em Python, incluindo:
-                            </p>
-                        </div>
-                        <ul class="list-disc list-inside text-gray-700 text-sm mb-4 pl-4">
-                            <li>Estruturas condicionais (if, elif, else)</li>
-                            <li>Loops com while e for</li>
-                            <li>Compreensão de listas</li>
-                            <li>Controles de fluxo: break, continue, pass</li>
-                            <li>Operadores lógicos e relacionais</li>
-                        </ul>
-                        <div class="flex justify-between">
-                            <button class="btn-primary text-sm">Ver Resumo Completo</button>
-                            <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-4 py-2 rounded">Exportar PDF</button>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-bold text-blue-600">Banco de Dados SQL</h3>
-                            <span class="text-sm text-gray-500">Atualizado: 05/05/2023</span>
-                        </div>
-                        <h4 class="font-semibold text-gray-800 mb-2">Módulo 1: Introdução a Bancos Relacionais</h4>
-                        <div class="border-l-4 border-blue-500 pl-4 py-1 mb-4">
-                            <p class="text-sm text-gray-700">
-                                Este módulo apresenta os conceitos fundamentais de bancos de dados relacionais e SQL:
-                            </p>
-                        </div>
-                        <ul class="list-disc list-inside text-gray-700 text-sm mb-4 pl-4">
-                            <li>Conceitos de Banco de Dados Relacional</li>
-                            <li>Estrutura SQL: Tabelas, Colunas, Registros</li>
-                            <li>Chaves primárias e estrangeiras</li>
-                            <li>Consultas básicas SELECT</li>
-                            <li>Operações INSERT, UPDATE e DELETE</li>
-                        </ul>
-                        <div class="flex justify-between">
-                            <button class="btn-primary text-sm">Ver Resumo Completo</button>
-                            <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-4 py-2 rounded">Exportar PDF</button>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-bold text-blue-600">Algoritmos e Estruturas de Dados</h3>
-                            <span class="text-sm text-gray-500">Atualizado: 01/05/2023</span>
-                        </div>
-                        <h4 class="font-semibold text-gray-800 mb-2">Módulo 3: Complexidade de Algoritmos</h4>
-                        <div class="border-l-4 border-blue-500 pl-4 py-1 mb-4">
-                            <p class="text-sm text-gray-700">
-                                Este módulo explora a análise de complexidade algorítmica e eficiência:
-                            </p>
-                        </div>
-                        <ul class="list-disc list-inside text-gray-700 text-sm mb-4 pl-4">
-                            <li>Notação Big O, Theta e Omega</li>
-                            <li>Análise de algoritmos de ordenação</li>
-                            <li>Complexidade de tempo e espaço</li>
-                            <li>Algoritmos de busca e sua eficiência</li>
-                            <li>Técnicas de otimização</li>
-                        </ul>
-                        <div class="flex justify-between">
-                            <button class="btn-primary text-sm">Ver Resumo Completo</button>
-                            <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-4 py-2 rounded">Exportar PDF</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-96049412-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-    <!-- Área de Pesquisa -->
-    <div id="pesquisa" class="tab-content p-4">
-        <div class="container mx-auto">
-            <div class="flex flex-col md:flex-row">
-                <!-- Sidebar de navegação (repetida para cada tela) -->
-                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-robot text-blue-600 text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
-                            <p class="text-xs text-gray-600">Assistente AVA</p>
-                        </div>
-                    </div>
-                    
-                    <nav>
-                        <ul>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('dashboard')">
-                                <i class="fas fa-home mr-3"></i>
-                                <span>Dashboard</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('resumos')">
-                                <i class="fas fa-file-alt mr-3"></i>
-                                <span>Resumos</span>
-                            </li>
-                            <li class="nav-item active mb-2 flex items-center">
-                                <i class="fas fa-search mr-3"></i>
-                                <span>Pesquisar</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('perguntas')">
-                                <i class="fas fa-question-circle mr-3"></i>
-                                <span>Perguntas Salvas</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('professor')">
-                                <i class="fas fa-chalkboard-teacher mr-3"></i>
-                                <span>Guia do Professor</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('admin')">
-                                <i class="fas fa-cog mr-3"></i>
-                                <span>Administração</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
-                                <i class="fas fa-sign-out-alt mr-3"></i>
-                                <span>Sair</span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                
-                <!-- Conteúdo principal -->
-                <div class="flex-1">
-                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4">Pesquisa Inteligente</h2>
-                        <p class="text-gray-700 mb-6">Pesquise conceitos, tire dúvidas e encontre conteúdos rapidamente em todo seu material de estudo.</p>
-                        
-                        <!-- Campo de pesquisa -->
-                        <div class="relative mb-6">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <i class="fas fa-search text-gray-400"></i>
-                            </div>
-                            <input type="text" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500" placeholder="O que você quer aprender hoje? Ex: 'Como funciona herança em Python?'" required>
-                            <button type="submit" class="absolute right-2.5 bottom-2.5 btn-primary px-4 py-2 text-sm">Pesquisar</button>
-                        </div>
-                        
-                        <!-- Filtros avançados -->
-                        <div class="bg-gray-50 p-4 rounded-lg mb-6">
-                            <h3 class="font-semibold text-gray-700 mb-3">Filtros Avançados</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <label for="tipo-conteudo" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Conteúdo</label>
-                                    <select id="tipo-conteudo" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
-                                        <option value="todos">Todos</option>
-                                        <option value="artigos">Artigos</option>
-                                        <option value="videos">Vídeos</option>
-                                        <option value="exercicios">Exercícios</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="disciplina-pesquisa" class="block text-sm font-medium text-gray-700 mb-1">Disciplina</label>
-                                    <select id="disciplina-pesquisa" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
-                                        <option value="todas">Todas</option>
-                                        <option value="python">Python</option>
-                                        <option value="sql">SQL</option>
-                                        <option value="algoritmos">Algoritmos</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="data" class="block text-sm font-medium text-gray-700 mb-1">Data</label>
-                                    <select id="data" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
-                                        <option value="qualquer">Qualquer data</option>
-                                        <option value="semana">Última semana</option>
-                                        <option value="mes">Último mês</option>
-                                        <option value="ano">Último ano</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Resultados da pesquisa -->
-                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Resultados para "herança em Python"</h3>
-                        
-                        <!-- Resultado 1 -->
-                        <div class="border-b pb-4 mb-4">
-                            <h4 class="font-semibold text-blue-600 mb-1">Fundamentos de Python: Herança e Polimorfismo</h4>
-                            <p class="text-sm text-gray-600 mb-2">Módulo 4 - Programação Orientada a Objetos</p>
-                            <p class="text-sm text-gray-700 mb-3">
-                                A herança em Python permite que uma classe (subclasse) herde atributos e métodos de outra classe (superclasse). Isso promove o reuso de código e estabelece uma relação "é um" entre as classes...
-                            </p>
-                            <div class="flex gap-2">
-                                <button class="text-sm text-blue-600 hover:text-blue-800">Ver conteúdo completo</button>
-                                <button class="text-sm text-gray-600 hover:text-gray-800">Salvar para depois</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Resultado 2 -->
-                        <div class="border-b pb-4 mb-4">
-                            <h4 class="font-semibold text-blue-600 mb-1">Exercício Prático: Implementando Herança em Python</h4>
-                            <p class="text-sm text-gray-600 mb-2">Laboratório Prático - Python Avançado</p>
-                            <p class="text-sm text-gray-700 mb-3">
-                                Neste exercício, você vai criar uma hierarquia de classes utilizando herança para modelar diferentes tipos de veículos. A classe base Vehicle terá propriedades comuns como...
-                            </p>
-                            <div class="flex gap-2">
-                                <button class="text-sm text-blue-600 hover:text-blue-800">Ver conteúdo completo</button>
-                                <button class="text-sm text-gray-600 hover:text-gray-800">Salvar para depois</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Resultado 3 -->
-                        <div>
-                            <h4 class="font-semibold text-blue-600 mb-1">Vídeo: Herança Múltipla em Python</h4>
-                            <p class="text-sm text-gray-600 mb-2">Mídia Complementar - Tópicos Avançados</p>
-                            <p class="text-sm text-gray-700 mb-3">
-                                Este vídeo explora o conceito de herança múltipla em Python, uma característica que permite que uma classe herde de mais de uma superclasse. São abordados os desafios e o método de resolução...
-                            </p>
-                            <div class="flex gap-2">
-                                <button class="text-sm text-blue-600 hover:text-blue-800">Assistir vídeo</button>
-                                <button class="text-sm text-gray-600 hover:text-gray-800">Salvar para depois</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Perguntas relacionadas -->
-                    <div class="bg-white shadow-md rounded-lg p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Perguntas Frequentes Relacionadas</h3>
-                        
-                        <div class="space-y-4">
-                            <div class="border-l-4 border-blue-500 pl-4 py-2">
-                                <h4 class="font-semibold text-gray-800">Qual a diferença entre herança e composição em Python?</h4>
-                                <p class="text-sm text-gray-700 mt-2">
-                                    Herança estabelece uma relação "é um" onde uma subclasse herda características da superclasse. Composição estabelece uma relação "tem um" onde uma classe contém instâncias de outras classes como atributos...
-                                </p>
-                            </div>
-                            
-                            <div class="border-l-4 border-blue-500 pl-4 py-2">
-                                <h4 class="font-semibold text-gray-800">Como funciona a sobrescrita de métodos em Python?</h4>
-                                <p class="text-sm text-gray-700 mt-2">
-                                    A sobrescrita de métodos permite que uma subclasse forneça uma implementação específica de um método já definido na superclasse. Para acessar o método da superclasse, usa-se super()...
-                                </p>
-                            </div>
-                            
-                            <div class="border-l-4 border-blue-500 pl-4 py-2">
-                                <h4 class="font-semibold text-gray-800">Python suporta herança múltipla?</h4>
-                                <p class="text-sm text-gray-700 mt-2">
-                                    Sim, Python suporta herança múltipla, permitindo que uma classe herde de várias superclasses. A ordem de resolução de métodos (MRO) determina qual método será chamado em caso de conflito...
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  gtag('config', 'UA-96049412-3');
+</script>
 
-    <!-- Perguntas Salvas -->
-    <div id="perguntas" class="tab-content p-4">
-        <div class="container mx-auto">
-            <div class="flex flex-col md:flex-row">
-                <!-- Sidebar de navegação (repetida para cada tela) -->
-                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-robot text-blue-600 text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
-                            <p class="text-xs text-gray-600">Assistente AVA</p>
-                        </div>
-                    </div>
-                    
-                    <nav>
-                        <ul>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('dashboard')">
-                                <i class="fas fa-home mr-3"></i>
-                                <span>Dashboard</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('resumos')">
-                                <i class="fas fa-file-alt mr-3"></i>
-                                <span>Resumos</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('pesquisa')">
-                                <i class="fas fa-search mr-3"></i>
-                                <span>Pesquisar</span>
-                            </li>
-                            <li class="nav-item active mb-2 flex items-center">
-                                <i class="fas fa-question-circle mr-3"></i>
-                                <span>Perguntas Salvas</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('professor')">
-                                <i class="fas fa-chalkboard-teacher mr-3"></i>
-                                <span>Guia do Professor</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('admin')">
-                                <i class="fas fa-cog mr-3"></i>
-                                <span>Administração</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
-                                <i class="fas fa-sign-out-alt mr-3"></i>
-                                <span>Sair</span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                
-                <!-- Conteúdo principal -->
-                <div class="flex-1">
-                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4">Perguntas Salvas</h2>
-                        <p class="text-gray-700 mb-6">Revise e pratique com perguntas salvas de suas disciplinas para reforçar seu aprendizado.</p>
-                        
-                        <!-- Filtros -->
-                        <div class="flex flex-wrap gap-4 mb-6">
-                            <div class="flex-1">
-                                <label for="disciplina-perguntas" class="block text-gray-700 text-sm font-semibold mb-2">Disciplina</label>
-                                <select id="disciplina-perguntas" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none">
-                                    <option value="todas">Todas as Disciplinas</option>
-                                    <option value="python">Fundamentos de Python</option>
-                                    <option value="sql">Banco de Dados SQL</option>
-                                    <option value="algoritmos">Algoritmos e Estruturas de Dados</option>
-                                </select>
-                            </div>
-                            <div class="flex-1">
-                                <label for="dificuldade" class="block text-gray-700 text-sm font-semibold mb-2">Dificuldade</label>
-                                <select id="dificuldade" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none">
-                                    <option value="todas">Todas</option>
-                                    <option value="facil">Fácil</option>
-                                    <option value="medio">Médio</option>
-                                    <option value="dificil">Difícil</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <!-- Modo de estudo -->
-                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-lightbulb text-blue-500"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <h3 class="text-sm font-medium text-blue-800">Modo de Estudo</h3>
-                                    <div class="mt-2 text-sm text-blue-700">
-                                        <p>Pratique com perguntas automaticamente ou crie seu próprio quiz personalizado.</p>
-                                    </div>
-                                    <div class="mt-3">
-                                        <button class="btn-primary text-sm">Iniciar Quiz Aleatório</button>
-                                        <button class="ml-3 bg-white text-blue-600 border border-blue-500 hover:bg-blue-50 text-sm px-4 py-2 rounded">Criar Quiz Personalizado</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Lista de perguntas salvas -->
-                    <div class="bg-white shadow-md rounded-lg p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Suas Perguntas Salvas</h3>
-                        
-                        <!-- Pergunta 1 -->
-                        <div class="card mb-4">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Python</span>
-                                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-2">Fácil</span>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button class="text-gray-500 hover:text-gray-700">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="text-gray-500 hover:text-gray-700">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <h4 class="font-semibold text-gray-800 mb-2">Qual é a diferença entre listas e tuplas em Python?</h4>
-                            <div class="pl-4 border-l-2 border-gray-200 mb-3">
-                                <p class="text-sm text-gray-700">
-                                    As listas são mutáveis (podem ser modificadas após a criação) e são definidas com colchetes [ ]. Tuplas são imutáveis (não podem ser alteradas após a criação) e são definidas com parênteses ( ).
-                                </p>
-                            </div>
-                            <div class="flex space-x-3">
-                                <button class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
-                                    <i class="fas fa-eye mr-1"></i> Ver Resposta Completa
-                                </button>
-                                <button class="text-sm text-gray-600 hover:text-gray-800 flex items-center">
-                                    <i class="fas fa-plus mr-1"></i> Adicionar ao Quiz
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Pergunta 2 -->
-                        <div class="card mb-4">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">SQL</span>
-                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-2">Médio</span>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button class="text-gray-500 hover:text-gray-700">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="text-gray-500 hover:text-gray-700">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <h4 class="font-semibold text-gray-800 mb-2">Explique a diferença entre INNER JOIN e LEFT JOIN em SQL.</h4>
-                            <div class="pl-4 border-l-2 border-gray-200 mb-3">
-                                <p class="text-sm text-gray-700">
-                                    INNER JOIN retorna registros que têm valores correspondentes em ambas as tabelas. LEFT JOIN retorna todos os registros da tabela à esquerda e os registros correspondentes da tabela à direita (ou NULL se não houver correspondência).
-                                </p>
-                            </div>
-                            <div class="flex space-x-3">
-                                <button class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
-                                    <i class="fas fa-eye mr-1"></i> Ver Resposta Completa
-                                </button>
-                                <button class="text-sm text-gray-600 hover:text-gray-800 flex items-center">
-                                    <i class="fas fa-plus mr-1"></i> Adicionar ao Quiz
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Pergunta 3 -->
-                        <div class="card mb-4">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Algoritmos</span>
-                                    <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-2">Difícil</span>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button class="text-gray-500 hover:text-gray-700">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="text-gray-500 hover:text-gray-700">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <h4 class="font-semibold text-gray-800 mb-2">Descreva o algoritmo de ordenação QuickSort e sua complexidade de tempo.</h4>
-                            <div class="pl-4 border-l-2 border-gray-200 mb-3">
-                                <p class="text-sm text-gray-700">
-                                    QuickSort é um algoritmo de divisão e conquista que seleciona um elemento como pivô e particiona o array ao redor do pivô. Sua complexidade de tempo média é O(n log n), mas no pior caso pode ser O(n²) quando o pivô escolhido é sempre o maior ou menor elemento.
-                                </p>
-                            </div>
-                            <div class="flex space-x-3">
-                                <button class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
-                                    <i class="fas fa-eye mr-1"></i> Ver Resposta Completa
-                                </button>
-                                <button class="text-sm text-gray-600 hover:text-gray-800 flex items-center">
-                                    <i class="fas fa-plus mr-1"></i> Adicionar ao Quiz
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Adicionar nova pergunta -->
-                        <div class="mt-6 text-center">
-                            <button class="btn-primary flex items-center justify-center mx-auto">
-                                <i class="fas fa-plus mr-2"></i> Adicionar Nova Pergunta
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Hotjar Tracking Code for https://www.avaeduc.com.br-->
+<script>
+ (function(h,o,t,j,a,r){
+ h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+ h._hjSettings={hjid:2051296,hjsv:6};
+ a=o.getElementsByTagName('head')[0];
+ r=o.createElement('script');r.async=1;
+ r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+ a.appendChild(r);
+ })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
 
-    <!-- Guia do Professor -->
-    <div id="professor" class="tab-content p-4">
-        <div class="container mx-auto">
-            <div class="flex flex-col md:flex-row">
-                <!-- Sidebar de navegação (repetida para cada tela) -->
-                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-robot text-blue-600 text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
-                            <p class="text-xs text-gray-600">Assistente AVA</p>
-                        </div>
-                    </div>
-                    
-                    <nav>
-                        <ul>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('dashboard')">
-                                <i class="fas fa-home mr-3"></i>
-                                <span>Dashboard</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('resumos')">
-                                <i class="fas fa-file-alt mr-3"></i>
-                                <span>Resumos</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('pesquisa')">
-                                <i class="fas fa-search mr-3"></i>
-                                <span>Pesquisar</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('perguntas')">
-                                <i class="fas fa-question-circle mr-3"></i>
-                                <span>Perguntas Salvas</span>
-                            </li>
-                            <li class="nav-item active mb-2 flex items-center">
-                                <i class="fas fa-chalkboard-teacher mr-3"></i>
-                                <span>Guia do Professor</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('admin')">
-                                <i class="fas fa-cog mr-3"></i>
-                                <span>Administração</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
-                                <i class="fas fa-sign-out-alt mr-3"></i>
-                                <span>Sair</span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                
-                <!-- Conteúdo principal -->
-                <div class="flex-1">
-                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4">Guia do Professor</h2>
-                        <p class="text-gray-700 mb-6">Recursos avançados para aprofundar conhecimentos e preparar materiais didáticos de alta qualidade.</p>
-                        
-                        <!-- Seleção de tópico -->
-                        <div class="mb-6">
-                            <label for="topico" class="block text-gray-700 text-sm font-semibold mb-2">Selecione um tópico para aprofundar</label>
-                            <select id="topico" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none">
-                                <option value="">-- Selecione um tópico --</option>
-                                <option value="python-poo">Python - Programação Orientada a Objetos</option>
-                                <option value="sql-indices">SQL - Otimização com Índices</option>
-                                <option value="algoritmos-grafos">Algoritmos - Teoria dos Grafos</option>
-                                <option value="web-api">Desenvolvimento Web - APIs RESTful</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Conteúdo detalhado do tópico -->
-                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-lg font-bold text-blue-600">Python - Programação Orientada a Objetos</h3>
-                            <div class="flex space-x-2">
-                                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-3 py-1 rounded flex items-center">
-                                    <i class="fas fa-download mr-1"></i> PDF
-                                </button>
-                                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-3 py-1 rounded flex items-center">
-                                    <i class="fas fa-share-alt mr-1"></i> Compartilhar
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Abas de conteúdo -->
-                        <div class="border-b border-gray-200 mb-6">
-                            <ul class="flex flex-wrap -mb-px">
-                                <li class="mr-2">
-                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-blue-600 border-b-2 border-blue-600 rounded-t-lg active">
-                                        Conceitos Avançados
-                                    </a>
-                                </li>
-                                <li class="mr-2">
-                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
-                                        Materiais Didáticos
-                                    </a>
-                                </li>
-                                <li class="mr-2">
-                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
-                                        Exercícios Modelo
-                                    </a>
-                                </li>
-                                <li class="mr-2">
-                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
-                                        Bibliografia
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <!-- Conteúdo da aba ativa -->
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-3">Encapsulamento Avançado em Python</h4>
-                            <p class="text-gray-700 text-sm mb-4">
-                                Embora Python não possua modificadores de acesso como private, protected e public como em outras linguagens orientadas a objetos, ele oferece convenções e mecanismos para implementar encapsulamento. Este guia explora técnicas avançadas de encapsulamento em Python.
-                            </p>
-                            
-                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                <h5 class="font-semibold text-gray-800 mb-2">Convenções de Nome</h5>
-                                <ul class="list-disc list-inside text-sm text-gray-700 space-y-2">
-                                    <li><strong>_nome</strong>: Atributo/método protegido (convenção) - não deve ser acessado diretamente fora da classe ou subclasses</li>
-                                    <li><strong>__nome</strong>: Atributo/método "privado" - sofre name mangling para dificultar acesso externo</li>
-                                    <li><strong>__nome__</strong>: Métodos especiais/dunder - métodos mágicos do Python</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                <h5 class="font-semibold text-gray-800 mb-2">Properties e Descritores</h5>
-                                <p class="text-sm text-gray-700 mb-3">
-                                    Properties permitem definir métodos especiais que atuam como atributos, possibilitando controle sobre acesso, modificação e deleção:
-                                </p>
-                                <div class="bg-gray-800 text-gray-100 p-3 rounded text-sm font-mono mb-2">
-<pre>class Pessoa:
-    def __init__(self, nome):
-        self._nome = nome
-        
-    @property
-    def nome(self):
-        return self._nome
-        
-    @nome.setter
-    def nome(self, valor):
-        if not isinstance(valor, str):
-            raise TypeError("Nome deve ser string")
-        self._nome = valor</pre>
-                                </div>
-                            </div>
-                            
-                            <h4 class="font-semibold text-gray-800 mb-3 mt-6">Herança Múltipla e MRO (Method Resolution Order)</h4>
-                            <p class="text-gray-700 text-sm mb-4">
-                                Python suporta herança múltipla, permitindo que uma classe herde de várias superclasses. Isso introduz complexidades como o problema do diamante, que é resolvido pelo algoritmo C3 de linearização para determinar a Method Resolution Order (MRO).
-                            </p>
-                            
-                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                <h5 class="font-semibold text-gray-800 mb-2">Exemplo de MRO</h5>
-                                <div class="bg-gray-800 text-gray-100 p-3 rounded text-sm font-mono mb-2">
-<pre>class A:
-    def metodo(self):
-        return "A"
 
-class B(A):
-    def metodo(self):
-        return "B"
+<style type="text/css">
+cookie-police-bar .cookie-police-bar.wrapper {
+    z-index: 3147483640;
+}
+   .block_mygrades_container_link { display:none; }
+  #pde-wrapper .ui-select-container .btn.btn-default .text-muted {
+    color: #55595c !important;
+    font-size: 1rem;
+}
+span.ng-binding.ng-scope {
+    font-size: 14px;
+}
+@media screen and (max-width: 460px) {
+    #side-menu-itens li[id^="teacher_portal"] a:before {
+        left: -1rem;
+        top: 0.3rem;
+    }
+}
+@media screen and (min-width: 960px) {
+  .activity_date_batch-grid .form_activities .activities_list {
+    columns: 2;
+  }
+}
+@media screen and (min-width: 1366px) {
+  .activity_date_batch-grid .form_activities .activities_list {
+    columns: 3;
+  }
+}
 
-class C(A):
-    def metodo(self):
-        return "C"
 
-class D(B, C):
-    pass
+webcomponent-chatbot {
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  right: 180px;
+  z-index: 1042;
+}
+@media screen and (max-width: 460px) {
+  webcomponent-chatbot {
+    right: 0;
+  }
+}
+</style>
 
-# A ordem MRO será: D -> B -> C -> A -> object
-print(D.__mro__)
-# Ao chamar metodo() em uma instância de D, 
-# a versão de B será executada devido à MRO</pre>
-                                </div>
-                            </div>
-                            
-                            <h4 class="font-semibold text-gray-800 mb-3 mt-6">Metaclasses</h4>
-                            <p class="text-gray-700 text-sm mb-4">
-                                Metaclasses são "classes de classes" - permitem personalizar a criação e comportamento de classes. Isso possibilita implementar padrões avançados como singletons, registros automáticos, e validação de estrutura de classe.
-                            </p>
-                            
-                            <div class="mt-6">
-                                <button class="btn-primary">Explorar Tópico Completo</button>
-                                <button class="ml-4 bg-white text-blue-600 border border-blue-500 hover:bg-blue-50 px-4 py-2 rounded">Gerar Material Didático</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Materiais relacionados -->
-                    <div class="bg-white shadow-md rounded-lg p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Materiais Relacionados</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="border rounded-lg p-4">
-                                <div class="flex items-center mb-3">
-                                    <i class="fas fa-book text-blue-600 mr-3"></i>
-                                    <h4 class="font-semibold text-gray-800">Design Patterns em Python</h4>
-                                </div>
-                                <p class="text-sm text-gray-700 mb-3">
-                                    Implementação dos principais padrões de projeto na linguagem Python, com exemplos práticos e explicações detalhadas.
-                                </p>
-                                <button class="text-sm text-blue-600 hover:text-blue-800">Ver material</button>
-                            </div>
-                            
-                            <div class="border rounded-lg p-4">
-                                <div class="flex items-center mb-3">
-                                    <i class="fas fa-video text-blue-600 mr-3"></i>
-                                    <h4 class="font-semibold text-gray-800">Webinar: POO Avançado</h4>
-                                </div>
-                                <p class="text-sm text-gray-700 mb-3">
-                                    Gravação do webinar ministrado pelo Prof. Dr. Carlos Silva sobre conceitos avançados de POO com Python.
-                                </p>
-                                <button class="text-sm text-blue-600 hover:text-blue-800">Assistir</button>
-                            </div>
-                            
-                            <div class="border rounded-lg p-4">
-                                <div class="flex items-center mb-3">
-                                    <i class="fas fa-code text-blue-600 mr-3"></i>
-                                    <h4 class="font-semibold text-gray-800">Repositório de Exemplos</h4>
-                                </div>
-                                <p class="text-sm text-gray-700 mb-3">
-                                    Coleção de código-fonte com exemplos práticos de aplicação dos conceitos apresentados no curso.
-                                </p>
-                                <button class="text-sm text-blue-600 hover:text-blue-800">Acessar repositório</button>
-                            </div>
-                            
-                            <div class="border rounded-lg p-4">
-                                <div class="flex items-center mb-3">
-                                    <i class="fas fa-tasks text-blue-600 mr-3"></i>
-                                    <h4 class="font-semibold text-gray-800">Exercícios Avaliativos</h4>
-                                </div>
-                                <p class="text-sm text-gray-700 mb-3">
-                                    Banco de questões para avaliação de conhecimentos sobre POO com Python, incluindo gabarito comentado.
-                                </p>
-                                <button class="text-sm text-blue-600 hover:text-blue-800">Baixar exercícios</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Painel de Administração -->
-    <div id="admin" class="tab-content p-4">
-        <div class="container mx-auto">
-            <div class="flex flex-col md:flex-row">
-                <!-- Sidebar de navegação (repetida para cada tela) -->
-                <div class="md:w-64 bg-white shadow-md rounded-lg p-4 md:mr-6 mb-4 md:mb-0">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-robot text-blue-600 text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h2 class="font-bold text-gray-800">MPM AutoIA</h2>
-                            <p class="text-xs text-gray-600">Assistente AVA</p>
-                        </div>
-                    </div>
-                    
-                    <nav>
-                        <ul>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('dashboard')">
-                                <i class="fas fa-home mr-3"></i>
-                                <span>Dashboard</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('resumos')">
-                                <i class="fas fa-file-alt mr-3"></i>
-                                <span>Resumos</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('pesquisa')">
-                                <i class="fas fa-search mr-3"></i>
-                                <span>Pesquisar</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('perguntas')">
-                                <i class="fas fa-question-circle mr-3"></i>
-                                <span>Perguntas Salvas</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center" onclick="showTab('professor')">
-                                <i class="fas fa-chalkboard-teacher mr-3"></i>
-                                <span>Guia do Professor</span>
-                            </li>
-                            <li class="nav-item active mb-2 flex items-center text-gray-800">
-                                <i class="fas fa-cog mr-3"></i>
-                                <span>Administração</span>
-                            </li>
-                            <li class="nav-item mb-2 flex items-center text-gray-600" onclick="showTab('login')">
-                                <i class="fas fa-sign-out-alt mr-3"></i>
-                                <span>Sair</span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                
-                <!-- Conteúdo principal -->
-                <div class="flex-1">
-                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4">Painel de Administração</h2>
-                        <p class="text-gray-700 mb-6">Configure e gerencie o sistema MPM AutoIA, incluindo integração N8N com Supabase e controle de acesso.</p>
-                        
-                        <!-- Abas de configuração -->
-                        <div class="border-b border-gray-200 mb-6">
-                            <ul class="flex flex-wrap -mb-px">
-                                <li class="mr-2">
-                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-blue-600 border-b-2 border-blue-600 rounded-t-lg active">
-                                        Configurações
-                                    </a>
-                                </li>
-                                <li class="mr-2">
-                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
-                                        Usuários
-                                    </a>
-                                </li>
-                                <li class="mr-2">
-                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
-                                        Integrações
-                                    </a>
-                                </li>
-                                <li class="mr-2">
-                                    <a href="#" class="inline-block py-2 px-4 text-sm font-medium text-center text-gray-500 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300">
-                                        Logs
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <!-- Integração N8N e Supabase -->
-                    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Integração N8N com Supabase</h3>
-                        
-                        <!-- Status da integração -->
-                        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-check-circle text-green-500"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-green-700">
-                                        Integração N8N e Supabase está <span class="font-bold">ativa e funcionando</span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Configurações N8N -->
-                        <div class="mb-6">
-                            <h4 class="font-semibold text-gray-800 mb-3">Configuração N8N</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label for="n8n_url" class="block text-sm font-medium text-gray-700 mb-1">URL do N8N</label>
-                                    <input type="text" id="n8n_url" value="https://n8n.example.com" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
-                                </div>
-                                <div>
-                                    <label for="n8n_token" class="block text-sm font-medium text-gray-700 mb-1">Token de API</label>
-                                    <input type="password" id="n8n_token" value="●●●●●●●●●●●●●●●●" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
-                                </div>
-                            </div>
-                            
-                            <div class="bg-gray-50 p-4 rounded mb-4">
-                                <h5 class="font-medium text-gray-800 mb-2 text-sm">Fluxos de Trabalho Configurados</h5>
-                                <ul class="text-sm text-gray-700 space-y-2">
-                                    <li class="flex justify-between">
-                                        <span>Geração de Resumos AVA</span>
-                                        <span class="text-green-600">Ativo</span>
-                                    </li>
-                                    <li class="flex justify-between">
-                                        <span>Indexação de Conteúdo para Pesquisa</span>
-                                        <span class="text-green-600">Ativo</span>
-                                    </li>
-                                    <li class="flex justify-between">
-                                        <span>Backup Automático de Dados</span>
-                                        <span class="text-green-600">Ativo</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            
-                            <div class="flex">
-                                <button class="btn-primary text-sm">Testar Conexão</button>
-                                <button class="ml-3 bg-white text-blue-600 border border-blue-500 hover:bg-blue-50 text-sm px-4 py-2 rounded">Configurar Fluxos</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Configurações Supabase -->
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-3">Configuração Supabase</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label for="supabase_url" class="block text-sm font-medium text-gray-700 mb-1">URL do Supabase</label>
-                                    <input type="text" id="supabase_url" value="https://xyzabcdef.supabase.co" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
-                                </div>
-                                <div>
-                                    <label for="supabase_key" class="block text-sm font-medium text-gray-700 mb-1">Chave de API</label>
-                                    <input type="password" id="supabase_key" value="●●●●●●●●●●●●●●●●" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none text-sm">
-                                </div>
-                            </div>
-                            
-                            <div class="bg-gray-50 p-4 rounded mb-4">
-                                <h5 class="font-medium text-gray-800 mb-2 text-sm">Tabelas Configuradas</h5>
-                                <ul class="text-sm text-gray-700 space-y-2">
-                                    <li class="flex justify-between">
-                                        <span>users</span>
-                                        <span class="text-green-600">OK</span>
-                                    </li>
-                                    <li class="flex justify-between">
-                                        <span>content_summaries</span>
-                                        <span class="text-green-600">OK</span>
-                                    </li>
-                                    <li class="flex justify-between">
-                                        <span>saved_questions</span>
-                                        <span class="text-green-600">OK</span>
-                                    </li>
-                                    <li class="flex justify-between">
-                                        <span>search_index</span>
-                                        <span class="text-green-600">OK</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            
-                            <div class="flex">
-                                <button class="btn-primary text-sm">Testar Conexão</button>
-                                <button class="ml-3 bg-white text-blue-600 border border-blue-500 hover:bg-blue-50 text-sm px-4 py-2 rounded">Gerenciar Banco</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Controle de Acesso -->
-                    <div class="bg-white shadow-md rounded-lg p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Controle de Acesso</h3>
-                        
-                        <div class="mb-6">
-                            <h4 class="font-semibold text-gray-800 mb-3">Níveis de Permissão</h4>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full bg-white text-sm">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="py-2 px-4 text-left">Função</th>
-                                            <th class="py-2 px-4 text-left">Descrição</th>
-                                            <th class="py-2 px-4 text-left">Permissões</th>
-                                            <th class="py-2 px-4 text-left">Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200">
-                                        <tr>
-                                            <td class="py-2 px-4">Administrador</td>
-                                            <td class="py-2 px-4">Acesso completo ao sistema</td>
-                                            <td class="py-2 px-4">
-                                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">Todas</span>
-                                            </td>
-                                            <td class="py-2 px-4">
-                                                <button class="text-blue-600 hover:text-blue-800">Editar</button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="py-2 px-4">Professor</td>
-                                            <td class="py-2 px-4">Gerencia conteúdos e alunos</td>
-                                            <td class="py-2 px-4">
-                                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded mr-1">Criar</span>
-                                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded mr-1">Editar</span>
-                                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">Visualizar</span>
-                                            </td>
-                                            <td class="py-2 px-4">
-                                                <button class="text-blue-600 hover:text-blue-800">Editar</button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="py-2 px-4">Aluno</td>
-                                            <td class="py-2 px-4">Acesso a conteúdos de aprendizagem</td>
-                                            <td class="py-2 px-4">
-                                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">Visualizar</span>
-                                            </td>
-                                            <td class="py-2 px-4">
-                                                <button class="text-blue-600 hover:text-blue-800">Editar</button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="py-2 px-4">Convidado</td>
-                                            <td class="py-2 px-4">Acesso limitado a conteúdos públicos</td>
-                                            <td class="py-2 px-4">
-                                                <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded">Restrito</span>
-                                            </td>
-                                            <td class="py-2 px-4">
-                                                <button class="text-blue-600 hover:text-blue-800">Editar</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="flex justify-between">
-                            <button class="btn-primary text-sm">Adicionar Nova Função</button>
-                            <button class="bg-white text-blue-600 border border-blue-500 hover:bg-blue-50 text-sm px-4 py-2 rounded">Configurar Permissões</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<script>
+let chatbot_allow = [ '/$', '/course/view.php*' ];
+let l = location.pathname + location.search;
+let chatbot_allowed = false;
+chatbot_allow.forEach( pattern => {
+  if ( l.match( pattern ) ) {
+    chatbot_allowed = true;
+  }
+} );
+
+
+if ( chatbot_allowed && false) {
+   localStorage['persist:auth'] = localStorage['avaeduc_token']
+    window.addEventListener( 'load', function () {
+
+    let u='https://chatbot.avaeduc.com.br/direflowBundle.js';
+    let a=document.getElementsByTagName('head')[0];
+    let r=document.createElement('script');
+    r.async=1; r.src=u; a.appendChild(r);
+    let b=document.getElementsByTagName('body')[0];
+    let c=document.createElement('webcomponent-chatbot');
+    b.appendChild(c);
+    
+    c.addEventListener('click', function() {
+      localStorage['persist:auth'] = localStorage['avaeduc_token']
+    })
+
+  } );
+}
+</script>
+    
 
     <script>
-        // Função para mostrar abas
-        function showTab(tabId) {
-            // Oculta todas as abas
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Mostra a aba selecionada
-            document.getElementById(tabId).classList.add('active');
-            
-            // Atualiza botões de navegação
-            document.querySelectorAll('.nav-button').forEach(button => {
-                if (button.getAttribute('onclick') === `showTab('${tabId}')`) {
-                    button.classList.add('bg-gray-300');
-                    button.classList.remove('bg-gray-200');
-                } else {
-                    button.classList.remove('bg-gray-300');
-                    button.classList.add('bg-gray-200');
-                }
-            });
+        var ua = navigator.userAgent.toLowerCase(); 
+        if (ua.indexOf('safari') != -1) { 
+            if (ua.indexOf('chrome') > -1) {
+                document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+            } else {
+                document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
+            }
         }
     </script>
+    <script charset='UTF-8'>
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        };
+        window['adrum-start-time'] = new Date().getTime();
+        window['adrum-config'] = {
+            userEventInfo: {
+                PageView: function (context) {
+                    return {
+                        userData: {
+                            'pageTitle': document.title,
+                            'ID Usuário': '1525595',
+                            'Page ID': getParameterByName('id'),
+                            'username': 'a4ae7362102f01e920d0',
+                            'shortname': 'AMI_ALGOR_DADOS',
+                            'model': 'AMI',
+                            'role': 'Estudante'
+                        }
+                    }
+                }
+            }
+        };
+        
+        (function (config) {
+            config.appKey = 'AD-AAB-AAK-NWF';
+            config.adrumExtUrlHttp = 'http://cdn.appdynamics.com';
+            config.adrumExtUrlHttps = 'https://cdn.appdynamics.com';
+            config.beaconUrlHttp = 'http://col.eum-appdynamics.com';
+            config.beaconUrlHttps = 'https://col.eum-appdynamics.com';
+            config.xd = {
+                enable: true
+            };
+        })(window['adrum-config'] || (window['adrum-config'] = {}));
+        if ('https:' === document.location.protocol) {
+            document.write(unescape('%3Cscript') +
+                " src='https://cdn.appdynamics.com/adrum/adrum-4.4.1.154.js' " +
+                " type='text/javascript' charset='UTF-8'" +
+                unescape('%3E%3C/script%3E'));
+        } else {
+            document.write(unescape('%3Cscript') +
+                " src='http://cdn.appdynamics.com/adrum/adrum-4.4.1.154.js' " +
+                " type='text/javascript' charset='UTF-8'" +
+                unescape('%3E%3C/script%3E'));
+        }
+    </script>
+
+                              <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="T4SAN-XXJDB-425MW-YM3N9-3LLCJ",function(){function e(){if(!o){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,i.parentNode.appendChild(e),o=!0}}function t(e){o=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(i.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",i.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"T4SAN-XXJDB-425MW-YM3N9-3LLCJ";var i=document.currentScript||document.getElementsByTagName("script")[0],o=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!o)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),i.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="facdhtauhppqajqacqm2yaaaabude4q7-f-0d29dbe08-clienttons-s.akamaihd.net",i="false"=="true"?2:1,o={"ak.v":"39","ak.cp":"1497309","ak.ai":parseInt("943543",10),"ak.ol":"0","ak.cr":39,"ak.ipv":6,"ak.proto":"h2","ak.rid":"18a3f3ba","ak.r":41809,"ak.a2":n,"ak.m":"dscb","ak.n":"essl","ak.bpcip":"2804:33cc:143b:df00::","ak.cport":62307,"ak.gh":"23.45.15.180","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"","ak.t":"1748136479","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==nl566MA3PHn5A+EYR4aL09mS29aEjIjiD4aRGeWtTeksAk30mDlu/Q4K37K03jbksFVmaQBcuRNKGC8+pUH2jn7EjCjOTAQbRGzDeulqXd8uicMxLg6ky42N1lPt3VTWF3i+7n2+t6lKcrLiam06Pz0TbvBT/6AJuaHEMhxYM2nLdZjDTzb0heuew7on8yQB54qbMRohUYi4Fy5WDFZ6Ft+W4Ba+sfEjhct7zf2DDsDWpUYCxQaALtcls3g3xMuGQ8PMh1WN4hgOFqkD14U2mY+aAsdiWghwpt6d3ePyYnybbyGDO0VXuut+2v8p2WBoGwOCP7Hq09RccEbpgrQDm8toC59F3zFZGjJXZC6x4G/tPBlpXrRDwanglqQ95gIUwo0sRFTPUvzPDhoAd+jqC7U/ygc12T/x+WNBfKoOp0M=","ak.pv":"106","ak.dpoabenc":"","ak.tf":i};if(""!==t)o["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))o["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(o)},rv:function(){var e=["ak.bpcip","ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:o,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+
+<body  id="page-mod-quiz-attempt" class="format-cards_topics  path-mod path-mod-quiz safari dir-ltr lang-pt_br yui-skin-sam yui3-skin-sam www-avaeduc-com-br pagelayout-incourse course-4713 context-341391 cmid-296215 category-4 is_others">
+    
+    <div>
+    <a class="sr-only sr-only-focusable" href="#maincontent">Ir para o conteúdo principal</a>
+</div><script type="text/javascript" src="https://www.avaeduc.com.br/theme/yui_combo.php?rollup/3.17.2/yui-moodlesimple-min.js&amp;rollup/1748089321/mcore-min.js"></script><script type="text/javascript" src="https://www.avaeduc.com.br/lib/javascript.php/1748089321/lib/javascript-static.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/theme/javascript.php/kroton/1748089321/head"></script>
+<script type="text/javascript">
+//<![CDATA[
+document.body.className += ' jsenabled';
+//]]>
+</script>
+
+
+    <script
+      src="https://unpkg.com/@grafana/faro-web-sdk@^1.0.0/dist/bundle/faro-web-sdk.iife.js"
+      onload="if (window.init) window.init();"
+    ></script>
+    <script
+      src="https://unpkg.com/@grafana/faro-web-tracing@^1.0.0/dist/bundle/faro-web-tracing.iife.js"
+      onload="if (window.addTracing) window.addTracing();"
+    ></script>
+    
+    <div id="kroton-header-wrapper">
+            <section  id="top-bar-area">
+        <aside id="block-region-top-bar" class="block-region" data-blockregion="top-bar" data-droptarget="1"><aside id="inst45"
+     class=" block block_accessibility  card m-b-1"
+     role="complementary"
+     data-block="accessibility"
+        aria-label="Acessibilidade"
+>
+
+    <div class="card-block">
+
+
+
+        <div class="card-text content">
+            <div id="accessibility_controls" class="content"><div id="anchors-acessibility" class=""><ul id="block_accessibility_textresize" class="button_row"><li class="access-button content pull-left"><a id="acessibility_link_id" class="acessibility link anchor content" href="#page-content">[ 1 ] Ir para o conteúdo</a></li><li class="access-button pull-left"><a id="acessibility_link_id" class="acessibility link anchor menu" href="#side-menu">[ 2 ] Ir para o menu</a></li></ul><div id="bar-acessibility" class=""><ul id="block_accessibility_textresize" class="button_row"><li class="access-button" style="display:none;" aria-hidden="true"><a title="Diminuir o tamanho do texto" id="block_accessibility_dec" href="https://www.avaeduc.com.br/blocks/accessibility/changesize.php?redirect=https%3A%2F%2Fwww.avaeduc.com.br%2Fmod%2Fquiz%2Fattempt.php%3Fattempt%3D8403913%26page%3D4&amp;op=dec"><span>A <b>-</b></span> Diminuir fonte</a></li><li class="access-button"><a id="acessibility_link_id" class="acessibility link" href="/mod/page/view.php?id=1"><i class="material-icons"  aria-hidden="true">&#xE914;</i>Sobre a acessibilidade</a></li><li class="access-button nocontraste" id="block_accessibility_changecolour"><a id="block_accessibility_colour4" href="https://www.avaeduc.com.br/blocks/accessibility/changecolour.php?redirect=https%3A%2F%2Fwww.avaeduc.com.br%2Fmod%2Fquiz%2Fattempt.php%3Fattempt%3D8403913%26page%3D4&amp;scheme=4" style="display:block" class="block_accessibility_button"><i class="material-icons" aria-hidden="true" id="block_accessibility_colour4">&#xE427;</i>Alto-contraste</a></li><li class="access-button contraste" id="block_accessibility_changecolour"><a id="block_accessibility_colour1" href="https://www.avaeduc.com.br/blocks/accessibility/changecolour.php?redirect=https%3A%2F%2Fwww.avaeduc.com.br%2Fmod%2Fquiz%2Fattempt.php%3Fattempt%3D8403913%26page%3D4&amp;scheme=1" style="display:none" class="block_accessibility_button"><i class="material-icons" aria-hidden="true" id="block_accessibility_colour1">&#xE427;</i>Baixo-contraste</a></li><li class="access-button"><a title="Aumentar o tamanho do texto" id="block_accessibility_inc" href="https://www.avaeduc.com.br/blocks/accessibility/changesize.php?redirect=https%3A%2F%2Fwww.avaeduc.com.br%2Fmod%2Fquiz%2Fattempt.php%3Fattempt%3D8403913%26page%3D4&amp;op=inc"><span id="block_accessibility_inc">A +</span> Aumentar fonte</a></li><li class="access-button"><a id="block_accessibility_reset" title="Redefinir tamanho do texto (limpa definição salva)" href="https://www.avaeduc.com.br/blocks/accessibility/changesize.php?redirect=https%3A%2F%2Fwww.avaeduc.com.br%2Fmod%2Fquiz%2Fattempt.php%3Fattempt%3D8403913%26page%3D4&amp;op=reset" class="disabled"><span id="block_accessibility_reset">A <b>-</b></span> Diminuir fonte</a></li><li class="access-button" style="display:none;" aria-hidden="true"><a title="Salvar definição" id="block_accessibility_save" href="https://www.avaeduc.com.br/blocks/accessibility/database.php?redirect=https%3A%2F%2Fwww.avaeduc.com.br%2Fmod%2Fquiz%2Fattempt.php%3Fattempt%3D8403913%26page%3D4&amp;op=save&amp;size=1&amp;scheme=1">&nbsp</a></li></ul><div id="block_accessibility_message" class="clearfix"></div></div><span id="loader-icon"></span>
+            <div class="footer"></div>
+            
+        </div>
+
+    </div>
+
+</aside></aside>
+        </section>
+        
+        <header id="kroton-header" role="banner" 
+            class="navbar navbar-full navbar-light bg-faded navbar-static-top moodle-has-zindex">
+    
+            <div class="container-fluid navbar-nav">
+               
+    
+                <!-- brand_link -->
+                <div id="kroton-header-brand">
+                    <a href="https://www.avaeduc.com.br" class="navbar-brand">
+                        <img src="https://www.avaeduc.com.br/theme/kroton/pix/logos/anhanguera/anhanguera.svg" class="LogoDesk" alt="KLS">
+                        <img src="https://www.avaeduc.com.br/theme/kroton/pix/logos/anhanguera/anhanguera.svg" class="LogoMobile" alt="KLS">
+                        <img src="https://www.avaeduc.com.br/theme/kroton/pix/logos/anhanguera/anhanguera.svg" class="LogoMobileSmall" alt="KLS">
+                    </a>
+                </div>
+                <!-- //brand_link -->
+    
+                <!-- User Itens -->
+                <div id="kroton-header-user-itens">
+    
+                    <!-- search_box -->
+                    <!-- <div id="search_box_kroton"><span class="icon-search lupaHeader" tabindex="0" aria-label="Deseja fazer uma busca?" aria-expanded="false"></span><div class="searchLittle" ></div></div> -->
+    
+                    <!-- navbar_plugin_output -->
+                    <div class="popover-region collapsed popover-region-notifications"
+    id="nav-notification-popover-container" data-userid="1525595"
+    data-region="popover-region">
+    <div class="popover-region-toggle nav-link"
+        data-region="popover-region-toggle"
+        aria-role="button"
+        aria-controls="popover-region-container-683272202357d6832722003ad910"
+        aria-haspopup="true"
+        aria-label="Mostrar janela de notificações sem as novas notificações"
+        tabindex="0">
+                <!--div aria-hidden="true"><img class="icon smallicon" alt=" Alternar menu de notificações " title=" Alternar menu de notificações " src="https://www.avaeduc.com.br/theme/image.php/kroton/core/1748089321/i/notifications"/></div>-->
+        <span class="icon-alert" onclick="insertDateClickNotification();"></span>
+        <div class="count-container hidden" aria-hidden="true" data-region="count-container"></div>
+
+    </div>
+    <div 
+        id="popover-region-container-683272202357d6832722003ad910"
+        class="popover-region-container"
+        data-region="popover-region-container"
+        aria-expanded="false"
+        aria-hidden="true"
+        aria-label="Janela de notificação"
+        role="region">
+        <div class="popover-region-header-container">
+            <h3 class="popover-region-header-text" data-region="popover-region-header-text">Notificações</h3>
+            <div class="popover-region-header-actions" data-region="popover-region-header-actions">        <div class="hover-tooltip-container">
+                    <a class="mark-all-read-button"
+                    href="#"
+                    title="Marcar tudo como lido"
+                    data-action="mark-all-read"
+                    role="button">
+                    <!--<span class="normal-icon"><span class="icon-check"></span><img class="icon smallicon" alt=" Marcar tudo como lido " title=" Marcar tudo como lido " src="https://www.avaeduc.com.br/theme/image.php/kroton/core/1748089321/t/markasread"/></span>-->
+                    <span class="normal-icon"><span class="icon-check"></span></span>
+                    <span class="loading-icon"><img class="icon smallicon" alt=" Carregando " title=" Carregando " src="https://www.avaeduc.com.br/theme/image.php/kroton/core/1748089321/y/loading"/></span>
+                </a>
+
+    <div class="hover-tooltip">
+        Marcar tudo como lido
+    </div>
+</div>
+        <div class="hover-tooltip-container">
+                    <a href="https://www.avaeduc.com.br/message/notificationpreferences.php?userid=1525595"
+                    title="Preferências de notificação">
+                    <img class="icon smallicon" alt=" Preferências de notificação " title=" Preferências de notificação " src="https://www.avaeduc.com.br/theme/image.php/kroton/core/1748089321/i/settings"/>
+                </a>
+
+    <div class="hover-tooltip">
+        Preferências de notificação
+    </div>
+</div>
+</div>
+        </div>
+
+       
+        <div class="popover-region-content-container"  data-mcs-theme="inset-2-dark"  data-region="popover-region-content-container">
+            <div class="popover-region-content" data-region="popover-region-content">
+                        <div class="all-notifications"
+            data-region="all-notifications"
+            role="list"
+            aria-busy="false"
+            aria-atomic="false"
+            aria-relevant="additions"></div>
+        <div class="empty-message" tabindex="0" data-region="empty-message">Você não tem nenhuma notificação</div>
+
+            </div>
+            <span class="loading-icon"><img class="icon smallicon" alt=" Carregando " title=" Carregando " src="https://www.avaeduc.com.br/theme/image.php/kroton/core/1748089321/y/loading"/></span>
+        </div>
+        
+                <a class="see-all-link"
+                    href="https://www.avaeduc.com.br/message/output/popup/notifications.php">
+                    <div class="popover-region-footer-container">
+                        <div class="popover-region-seeall-text">Mostrar todos</div>
+                    </div>
+                </a>
+    </div>
+</div>
+    
+                    <!-- user_menu/usermenu-info -->
+       
+                    <div class="usermenu user-info  open-close-flip" id="usermenu-info" tabindex="0" aria-label="ERICPEREIRA DOS SANTOS Entrar no menu perfil"><div class="picture" aria-hidden="true"><img aria-label="Foto do aluno: ERIC PEREIRA DOS SANTOS" title="Foto do aluno: ERIC PEREIRA DOS SANTOS" id="previewing" width="35" heigth="35" class="imguser userpicture" src="https://www.avaeduc.com.br/theme/kroton/pix/user-avatar-grey.gif" alt="Foto do aluno: ERIC PEREIRA DOS SANTOS" /></div><div class="login_user" aria-hidden="true"><div class="fullname">ERIC PEREIRA DOS SANTOS</div><div class="username">a4ae7362102f01e920d0</div></div></div>
+                    
+                    <nav class="nav navbar-nav hidden-md-down">
+                        <!-- page_heading_menu -->
+                        
+                    </nav>
+    
+                    <!-- menu collapse -->
+                    <a href="javascript:void(0);" id="tk_menu_collapse" data-tk-menu-collapse-show="false">
+                        <span class="icon-bars"></span>
+                    </a>
+    
+                </div>
+                <!-- //User Itens -->
+                
+            </div>
+    
+        </header>
+        <section  id="top-search-area" class="lupa">
+            <aside id="block-region-search-bar" class="block-region" data-blockregion="search-bar" data-droptarget="1"></aside>
+        </section>
+    </div>
+    <!-- page-wrapper -->
+    <div id="page-wrapper">
+
+<!-- Topic 0 -->
+<div class="topic0">
+    <div id="ct-header">
+<a href="#" class="ct-accessibility-link">Início menu superior</a>
+        <img src="https://www.avaeduc.com.br/course/format/cards_topics/pix/sample.jpg" class="ct-logo" alt="Algoritmos e Estrutura de Dados" title="Algoritmos e Estrutura de Dados">
+    <h2>Algoritmos e Estrutura de Dados</h2>
+    <div id="ct-menu-topic0">
+        <ul>
+                                    
+                <li>
+                    
+                        <div class="ct-menu-item-topico0">
+                            <a href="https://www.avaeduc.com.br/mod/pde/view.php?id=296140">
+                                <i id='296140' required='2' completion='icon-new_releases' completion_rules='icon-check_circle' class='icon-book format_list_topics_default'></i>                                <span>Plano de Ensino</span>
+                            </a>
+                        </div>
+
+                                    </li>
+                        
+                <li>
+                    
+                        <div class="ct-menu-item-topico0">
+                            <a href="https://www.avaeduc.com.br/mod/url/view.php?id=296141">
+                                <i id='296141'  class='icon-book format_list_topics_default'></i>                                <span>MANUAL</span>
+                            </a>
+                        </div>
+
+                                    </li>
+                    </ul>
+    </div>
+</div>
+</div>
+<!-- //Topic 0 -->
+
+<!-- Main Content -->
+<div id="maincontainer" class="ctgrid-container-fluid">
+    <div id="ctcontainer" class="ctgrid-row">
+
+        <!-- Barra progresso/Menu -->
+        <div id="ctsidebar-container" data-sidebar-show="true" class="ctgrid-col-sm-12 ctgrid-col-md-4 ctgrid-col-lg-3">
+            <div class="menucardstopics">
+                    <div class="div_performance">
+        
+        <h3 id="ct-titleprogressbar" aria-label="Meu Desempenho">
+            Meu Desempenho            <span class="icomoon icon-arrow_drop_down"></span>
+        </h3>
+        
+        <div id="ctprogress-wrapper" data-progress-show="false">
+            <div class="divprogresscourse">
+                <span class="descprogressbarcourse">Andamento Geral</span>
+                <div id="id_progressbarcourse" 
+                    aria-label="Barra de progresso, andamento geral 0%" tabindex="0">
+                    <div id="filledbarcourse" class="filledbar course" style="width:0px"></div>
+                </div>
+                <span class="percentdesccourse" id="progressbarcourse_label" >%</span>
+            </div>
+
+            <div class="divprogresscourse">
+                <span class="descprogressbarcourse">Andamento do Tópico</span>
+                <div id="id_progressbarcourse" 
+                    aria-label="Barra de progresso, andamento do tópico 0%" tabindex="0">
+                    <div id="filledbartopic" class="filledbar topic" style="width:0px"></div>
+                </div>
+                <span class="percentdesccourse" id="progressbartopic_label">%</span>
+            </div>
+        </div>
+        
+        <hr>
+        
+    </div>
+
+
+
+                
+    <h3 class="ctmenu-title">
+        Menu        <span class="icomoon icon-arrow_drop_down"></span>
+    </h3>
+
+<a href="#" class="ct-accessibility-link">Início menu principal</a>
+
+<!-- CTMenu -->
+<div id="ctmenu" class="open">
+    <ul class="timeline">
+                                                    <!-- CTMenu Item -->
+                <li>
+
+                                                                         <div class="timeline-status">
+                            <i id="75137" class="material-icons inactive">&nbsp;</i>
+                            </div>
+                            
+                        
+                            <div class="timeline-item">
+                                <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75137">Livro Didático</a>
+                            </div>
+
+                        
+                    
+                </li>
+                <!-- //CTMenu Item -->
+                                                                <!-- CTMenu Item -->
+                <li>
+
+                    
+                                                     <div class="timeline-status">
+                            <i id="751387513975140" class="material-icons inactive">&nbsp;</i>
+                            </div>
+                            
+                        <div class="timeline-item group " data-ct-groupname="Unidade de Ensino 1">
+                            <a href="#" aria-expanded="false">
+                                Unidade de Ensino 1                                <span class="timeline-arrow-container">
+                                                                            <span class="icomoon icon-chevron-down"></span>
+                                                                    </span>
+                            </a>
+                        </div>
+
+                        <div class="timeline-menu" >
+                            <ul>
+                                                                                                                                    
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75138">U1 - Seção 1</a>
+                                        </li>
+                                    
+                                                                                                        
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75139">U1 - Seção 2</a>
+                                        </li>
+                                    
+                                                                                                        
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75140">U1 - Seção 3</a>
+                                        </li>
+                                    
+                                                                                        </ul>
+                        </div>
+
+                    
+                </li>
+                <!-- //CTMenu Item -->
+                                                                <!-- CTMenu Item -->
+                <li>
+
+                    
+                                                     <div class="timeline-status">
+                            <i id="751417514275143" class="material-icons inactive">&nbsp;</i>
+                            </div>
+                            
+                        <div class="timeline-item group " data-ct-groupname="Unidade de Ensino 2">
+                            <a href="#" aria-expanded="false">
+                                Unidade de Ensino 2                                <span class="timeline-arrow-container">
+                                                                            <span class="icomoon icon-chevron-down"></span>
+                                                                    </span>
+                            </a>
+                        </div>
+
+                        <div class="timeline-menu" >
+                            <ul>
+                                                                                                                                    
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75141">U2 - Seção 1</a>
+                                        </li>
+                                    
+                                                                                                        
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75142">U2 - Seção 2</a>
+                                        </li>
+                                    
+                                                                                                        
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75143">U2 - Seção 3</a>
+                                        </li>
+                                    
+                                                                                        </ul>
+                        </div>
+
+                    
+                </li>
+                <!-- //CTMenu Item -->
+                                                                <!-- CTMenu Item -->
+                <li>
+
+                    
+                                                     <div class="timeline-status">
+                            <i id="751447514575146" class="material-icons inactive">&nbsp;</i>
+                            </div>
+                            
+                        <div class="timeline-item group open" data-ct-groupname="Unidade de Ensino 3">
+                            <a href="#" aria-expanded="true">
+                                Unidade de Ensino 3                                <span class="timeline-arrow-container">
+                                                                            <span class="icomoon icon-chevron-up"></span>
+                                                                    </span>
+                            </a>
+                        </div>
+
+                        <div class="timeline-menu" style="display: block;">
+                            <ul>
+                                                                                                                                    
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75144">U3 - Seção 1</a>
+                                        </li>
+                                    
+                                                                                                        
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75145">U3 - Seção 2</a>
+                                        </li>
+                                    
+                                                                                                        
+                                                                            <li class="active">
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75146"
+                                                aria-label="U3 - Seção 3 Item ativo">
+                                                U3 - Seção 3                                            </a>
+                                        </li>
+                                    
+                                                                                        </ul>
+                        </div>
+
+                    
+                </li>
+                <!-- //CTMenu Item -->
+                                                                <!-- CTMenu Item -->
+                <li>
+
+                    
+                                                     <div class="timeline-status">
+                            <i id="751477514875149" class="material-icons inactive">&nbsp;</i>
+                            </div>
+                            
+                        <div class="timeline-item group " data-ct-groupname="Unidade de Ensino 4">
+                            <a href="#" aria-expanded="false">
+                                Unidade de Ensino 4                                <span class="timeline-arrow-container">
+                                                                            <span class="icomoon icon-chevron-down"></span>
+                                                                    </span>
+                            </a>
+                        </div>
+
+                        <div class="timeline-menu" >
+                            <ul>
+                                                                                                                                    
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75147">U4 - Seção 1</a>
+                                        </li>
+                                    
+                                                                                                        
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75148">U4 - Seção 2</a>
+                                        </li>
+                                    
+                                                                                                        
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75149">U4 - Seção 3</a>
+                                        </li>
+                                    
+                                                                                        </ul>
+                        </div>
+
+                    
+                </li>
+                <!-- //CTMenu Item -->
+                                                                <!-- CTMenu Item -->
+                <li>
+
+                    
+                                                     <div class="timeline-status">
+                            <i id="75150" class="material-icons inactive">&nbsp;</i>
+                            </div>
+                            
+                        <div class="timeline-item group " data-ct-groupname="Aula Prática">
+                            <a href="#" aria-expanded="false">
+                                Aula Prática                                <span class="timeline-arrow-container">
+                                                                            <span class="icomoon icon-chevron-down"></span>
+                                                                    </span>
+                            </a>
+                        </div>
+
+                        <div class="timeline-menu" >
+                            <ul>
+                                                                                                                                    
+                                                                            <li>
+                                            <a href="https://www.avaeduc.com.br/course/view.php?id=4713&topic=75150">Aulas Práticas</a>
+                                        </li>
+                                    
+                                                                                        </ul>
+                        </div>
+
+                    
+                </li>
+                <!-- //CTMenu Item -->
+                            <li>
+            <div class="timeline-status">
+                <i class="material-icons last">&nbsp;</i>
+            </div>
+        </li>
+
+    </ul>
+    <!-- //CTMenu -->
+
+</div>
+
+<!-- CTMenu Backgrop -->
+<div id="ctmenu-backdrop"></div>
+<!-- //CTMenu Backgrop -->
+
+<a href="#" class="ct-accessibility-link">Fim menu principal</a>
+            </div>
+        </div>
+        <!-- //Barra progresso/Menu -->
+
+        <!-- Main Topics Incourse -->
+        <div id="ct-main-topics" class="ctgrid-col-sm-12 ctgrid-col-md-8 ctgrid-col-lg-9">
+        
+            <!-- Sidebar Control -->
+            <div id="ctsidebar-control" class="animated bounce">
+                <span class="icomoon icon-caret-left"></span>
+                <div id="ctsidebar-tooltip" class="ct-tooltip2 right" role="tooltip">
+                    <div class="ct-tooltip2-arrow"></div>
+                    <div class="ct-tooltip2-inner">
+                        Ocultar/Mostrar Menu Lateral
+                    </div>
+                </div>
+            </div>
+            <!-- //Sidebar Control -->
+
+            <a href="#" id="irconteudo" class="ct-accessibility-link">Início conteúdo principal</a>
+
+
+                <!-- breadcrumb -->
+                <div id="theme-kroton-breadcrumb"
+                    >
+                    <div class="clearfix w-100 pull-xs-left" id="page-navbar"><div class="breadcrumb-nav"><nav role="navigation">
+    <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="https://www.avaeduc.com.br/" >Página inicial</a></li>
+                <li class="breadcrumb-item">Meus cursos</li>
+                <li class="breadcrumb-item"><a href="https://www.avaeduc.com.br/course/view.php?id=4713" title="Algoritmos e Estrutura de Dados">Algoritmos e Estrutura de Dados</a></li>
+                <li class="breadcrumb-item">U3 - Seção 3</li>
+                <li class="breadcrumb-item"><a href="https://www.avaeduc.com.br/mod/quiz/view.php?id=296215" title="Questionário">U3 - Avaliação da Unidade</a></li>
+    </ol>
+</nav></div></div>
+                </div>
+                <!-- //breadcrumb -->
+            
+            
+            <!-- Topic Title -->
+            <div class="ct-section-active-topic">
+
+                <h2 tabindex="-1">U3 - Avaliação da Unidade</h2>
+
+                <!-- region-ct-navigation -->
+                <div id="region-ct-navigation">
+                    <aside id="block-region-ct-navigation" class="block-region" data-blockregion="ct-navigation" data-droptarget="1"></aside>
+                </div>
+                <!-- //region-ct-navigation -->
+
+            </div>
+            <!-- Topic Title -->
+
+            <!-- region-ct-knowmore-->
+                <div id="region-ct-knowmore">
+                    <aside id="block-region-ct-knowmore" class="block-region" data-blockregion="ct-knowmore" data-droptarget="1"></aside>
+                </div>
+            <!-- //region-ct-knowmore-->
+
+            <!-- Content -->
+            <span class="notifications" id="user-notifications"></span>
+            <div role="main"><span id="maincontent"></span><p tabindex="0" title="&lt;strong&gt;Dica:&lt;/strong&gt; Para navegar entre as questões utilize a tecla tab e para navegar entre as opções da questão utilize as setas."><strong>Dica:</strong> Para navegar entre as questões utilize a tecla tab e para navegar entre as opções da questão utilize as setas.</p><form action="https://www.avaeduc.com.br/mod/quiz/processattempt.php" method="post" enctype="multipart/form-data" accept-charset="utf-8" id="responseform1"><div><div id="q5" class="que multichoice deferredfeedback notyetanswered"><div class="info"><h3 class="no" tabindex="0" title="Questão 5">Questão <span class="qno">5</span></h3><div class="state" tabindex="0" title="Ainda não respondida">Ainda não respondida</div><div class="grade" tabindex="0" title="Vale 1,00 ponto(s).">Vale 1,00 ponto(s).</div><div class="questionflag editable" aria-atomic="true" aria-relevant="text" aria-live="assertive"><input type="hidden" name="q8329186:5_:flagged" value="0" /><input type="checkbox" id="q8329186:5_:flaggedcheckbox" name="q8329186:5_:flagged" value="1" /><input type="hidden" value="qaid=39189674&amp;qubaid=8329186&amp;qid=292705&amp;slot=5&amp;checksum=70a6fe8a44cce38b19147bf4896ae93a&amp;sesskey=9sxOitI3pv&amp;newstate=" class="questionflagpostdata" /><label id="q8329186:5_:flaggedlabel" for="q8329186:5_:flaggedcheckbox"><img src="https://www.avaeduc.com.br/theme/image.php/kroton/core/1748089321/i/unflagged" alt="Não marcada" id="q8329186:5_:flaggedimg" /></label>
+</div></div><div class="content"><div class="formulation clearfix"><h4 class="accesshide">Texto da questão</h4><input type="hidden" name="q8329186:5_:sequencecheck" value="1" /><div class="qtext" tabindex="0" title="A função dupla tende a espalhar melhor pelos índices da tabela como vantagem sobre a função linear. Ao aplicar a função dupla, se o índice estiver ocupado, é aplicado uma segunda Função de Espalhamento para obter um número X. Esse número X é adicionado ao índice gerado pela primeira Função de Espalhamento para produzir um novo índice da tabela. Caso o novo índice também esteja ocupado, continua-se somando X ao índice da tabela, até ser encontrada uma posição vazia. Segundo Celes, Cerqueira, Rangel (2004), neste caso para o primeiro cálculo é utilizada a função h(k) = k mod N, onde h é a função, k é a chave e N é o número de posições da tabela. Caso haja uma colisão, inicialmente calculamos h2(k), que pode ser definida como h2(k) = 1 + ( k mod (N-1) ). Em seguida é calculada a função re-hashing como sendo: rh(i,k) = ( i + h2(k) ) mod N, sendo i o índice gerado.  Na tabela abaixo apresentam-se índices e seus respectivos elementos. Para demonstrar a inserção do elemento 42 na Tabela utilizando a Função de Espalhamento Duplo, deve-se utilizar os seguintes passos: I - A Função de Espalhamento executa a segunda função de incremento o índice, com a função 1 + (k mod (N-1)), resultando em 7 o resto da divisão.II - É executada a função re-hash com a soma dos índices gerados nos dois cálculos, do 1º passo (2) e 2º passo (7), dividindo pelo número de posições da tabela (9), resultando no índice de 1 (um).III - É realizado a divisão do elemento (42) pelo número de posições na tabela (8), resultando no resto (mod) na divisão o índice 2 (dois), porém a posição com o índice 2 (dois) já está ocupada, gerando uma colisão.IV - Como a posição 1 esta posição está vazia, o elemento 42 é adicionado nela. Assinale a opção que representa a ordem CORRETA dos argumentos a serem utilizados na inserção do elemento:"><p style="text-align: justify;">A função dupla tende a espalhar melhor pelos índices da tabela como vantagem sobre a função linear. Ao aplicar a função dupla, se o índice estiver ocupado, é aplicado uma segunda Função de Espalhamento para obter um número X. Esse número X é adicionado ao índice gerado pela primeira Função de Espalhamento para produzir um novo índice da tabela. Caso o novo índice também esteja ocupado, continua-se somando X ao índice da tabela, até ser encontrada uma posição vazia.</p><p style="text-align: justify;"> </p><p style="text-align: justify;">Segundo Celes, Cerqueira, Rangel (2004), neste caso para o primeiro cálculo é utilizada a função h(k) = k mod N, onde h é a função, k é a chave e N é o número de posições da tabela. Caso haja uma colisão, inicialmente calculamos h2(k), que pode ser definida como h2(k) = 1 + ( k mod (N-1) ). Em seguida é calculada a função re-hashing como sendo: rh(i,k) = ( i + h2(k) ) mod N, sendo i o índice gerado. </p><p style="text-align: justify;"> </p><p style="text-align: justify;">Na tabela abaixo apresentam-se índices e seus respectivos elementos.</p><p style="text-align: justify;"> </p><p style="text-align: justify;"><img src="http://studiare-assets.s3-sa-east-1.amazonaws.com/uploads/cf43e541-db72-47b7-9954-d9b9c16928a2/q21.jpg" alt="q23" width="360px"></p><p style="text-align: justify;">Para demonstrar a inserção do elemento 42 na Tabela utilizando a Função de Espalhamento Duplo, deve-se utilizar os seguintes passos:</p><p style="text-align: justify;"> </p><p style="text-align: justify;">I - A Função de Espalhamento executa a segunda função de incremento o índice, com a função 1 + (k mod (N-1)), resultando em 7 o resto da divisão.</p><p style="text-align: justify;">II - É executada a função re-hash com a soma dos índices gerados nos dois cálculos, do 1º passo (2) e 2º passo (7), dividindo pelo número de posições da tabela (9), resultando no índice de 1 (um).</p><p style="text-align: justify;">III - É realizado a divisão do elemento (42) pelo número de posições na tabela (8), resultando no resto (mod) na divisão o índice 2 (dois), porém a posição com o índice 2 (dois) já está ocupada, gerando uma colisão.</p><p style="text-align: justify;">IV - Como a posição 1 esta posição está vazia, o elemento 42 é adicionado nela.</p><p style="text-align: justify;"> </p><p style="text-align: justify;">Assinale a opção que representa a ordem CORRETA dos argumentos a serem utilizados na inserção do elemento:</p></div><div class="ablock"><div class="prompt" tabindex="0" title="Escolha uma opção:">Escolha uma:</div><div class="answer"><div class="r0"><input type="radio" name="q8329186:5_answer" value="0" id="q8329186:5_answer0" /><label for="q8329186:5_answer0" class="m-l-1">a. <p style="text-align: justify;">III &ndash; I &ndash;&nbsp;II &ndash; IV</label> </div>
+<div class="r1"><input type="radio" name="q8329186:5_answer" value="1" id="q8329186:5_answer1" /><label for="q8329186:5_answer1" class="m-l-1">b. <p style="text-align: justify;">II &ndash; I &ndash;&nbsp;III &ndash; IV</label> </div>
+<div class="r0"><input type="radio" name="q8329186:5_answer" value="2" id="q8329186:5_answer2" /><label for="q8329186:5_answer2" class="m-l-1">c. <p style="text-align: justify;">III &ndash; II &ndash;&nbsp;I &ndash; IV</label> </div>
+<div class="r1"><input type="radio" name="q8329186:5_answer" value="3" id="q8329186:5_answer3" /><label for="q8329186:5_answer3" class="m-l-1">d. <p style="text-align: justify;">IV &ndash; I &ndash;&nbsp;II &ndash;&nbsp;III</label> </div>
+<div class="r0"><input type="radio" name="q8329186:5_answer" value="4" id="q8329186:5_answer4" /><label for="q8329186:5_answer4" class="m-l-1">e. <p style="text-align: justify;">III &ndash; I &ndash;&nbsp;IV &ndash; II</label> </div>
+</div></div></div></div></div><div class="submitbtns"><input type="submit" name="previous" value="Página anterior" class="mod_quiz-prev-nav btn btn-secondary" /><input type="submit" name="next" value="Finalizar tentativa ..." class="mod_quiz-next-nav btn btn-primary" /></div><input type="hidden" aria-hidden="true" name="attempt" value="8403913" /><input type="hidden" aria-hidden="true" name="thispage" value="4" id="followingpage" /><input type="hidden" aria-hidden="true" name="nextpage" value="-1" /><input type="hidden" aria-hidden="true" name="timeup" value="0" id="timeup" /><input type="hidden" aria-hidden="true" name="sesskey" value="9sxOitI3pv" /><input type="hidden" aria-hidden="true" name="scrollpos" value="" id="scrollpos" /><input type="hidden" name="slots" value="5" /></div></form><div id="connection-error" style="display: none;" role="alert"><p>Conexão de rede perdida. (Salvamento automático falhou). Anote quaisquer respostas registradas nesta página nos últimos minutos e tente conectar-se novamente. Quando a conexão for restabelecida, suas respostas devem ser salvas e esta mensagem irá desaparecer.</p>
+</div><div id="connection-ok" style="display: none;" role="alert"><p>Conexão de rede restaurada. Você pode continuar com segurança.</p>
+</div></div>
+            
+            <!-- //Content -->
+
+            <!-- region-ct-myrating -->
+            <div id="region-ct-myrating">
+                <aside id="block-region-ct-myrating" class="block-region" data-blockregion="ct-myrating" data-droptarget="1"></aside>
+            </div>
+            <!-- //region-ct-myrating -->
+
+            <!-- region-ct-myannotation -->
+            <div id="region-ct-myannotation" style='clear:both'>
+                <aside id="block-region-ct-myannotation" class="block-region" data-blockregion="ct-myannotation" data-droptarget="1"></aside>
+            </div>
+            <!-- //region-ct-myannotation -->
+
+            <a href="#" class="ct-accessibility-link">Fim conteúdo principal</a>
+
+        </div>
+        <!-- //Main Topics Incourse -->
+
+    </div>
+</div>
+<!-- //Main Content -->
+
+        <!-- navigations -->
+        
+        <div id="side-menu">
+            <span class="inicioMenu" tabindex="0" aria-label="inicio menu"></span>
+        	<ul id="side-menu-itens">
+                    <li id="side-menu-profile">
+                        <a href="javascript:void(0);"
+                            class="side-menu-item open-close-flip">
+                            <span class="icon-user"></span>
+                            <div>Perfil</div>
+                        </a>
+                    </li>
+                    <li  id="my_mails_13_sidemenu">
+                            <a href="/local/mail/view.php?t=inbox"
+                                class="side-menu-item"
+                                
+                                data-uk-menu="my_mails_13">
+                            <span class=" icon-envelope-o"></span>
+                            <div>Minhas Mensagens</div>
+                        </a>
+                    </li>
+                    <li  id="kmypoints_19_sidemenu">
+                            <a href="javascript:void(0);"
+                                class="side-menu-item open-close-flip"
+                                data-uk-menu="kmypoints_19">
+                            <span class="icon-ac_unit"></span>
+                            <div>Meus Pontos</div>
+                        </a>
+                    </li>
+                    <li  id="class_evaluation_24_sidemenu">
+                            <a href="javascript:void(0);"
+                                class="side-menu-item open-close-flip"
+                                data-uk-menu="class_evaluation_24">
+                            <span class="icon-event_available"></span>
+                            <div>Avaliação de aula</div>
+                        </a>
+                    </li>
+                    <li  id="course_contacts_30_sidemenu">
+                            <a href="javascript:void(0);"
+                                class="side-menu-item open-close-flip"
+                                data-uk-menu="course_contacts_30">
+                            <span class="icon-contact"></span>
+                            <div>Contatos do curso</div>
+                        </a>
+                    </li>
+                    <li  id="digitaltest_36_sidemenu">
+                            <a href="javascript:void(0);"
+                                class="side-menu-item open-close-flip"
+                                data-uk-menu="digitaltest_36">
+                            <span class="icon-ac_unit"></span>
+                            <div>Prova digital</div>
+                        </a>
+                    </li>
+        	</ul>
+            <span class="fimMenu" tabindex="0" aria-label="fim menu"></span>
+        </div>        <div class="flipbox ">
+            <div class="navbar-side" id="navbar-side">
+        
+                <div class="header_profile block_side_menu_content">
+        
+                    <!--<span style="height:1px;display:block;" aria-label="inicio conteudo" tabindex="0" class="inicioConteudo"></span>-->
+        
+                    <div class="navbar-side-item header">
+                        <div class="nav-header-pictures">
+                            <a href="javascript:;" class=" inicioConteudo icon-close open-close-flip"
+                               aria-label="inicio conteudo , botão fechar opções perfil"></a>
+                            <img aria-label="Foto do aluno: ERIC PEREIRA DOS SANTOS" title="Foto do aluno: ERIC PEREIRA DOS SANTOS" id="previewing" width="100" heigth="100" class="profile radius-50-img" src="https://www.avaeduc.com.br/theme/kroton/pix/user-avatar-grey.gif" alt="Foto do aluno: ERIC PEREIRA DOS SANTOS" />
+                        </div>
+                    </div>
+        
+                    <div class="nav-content">
+                        <div class="usermenu user-info " id="usermenu-info" tabindex="0" aria-label="ERICPEREIRA DOS SANTOS Entrar no menu perfil"><div class="login_user" aria-hidden="true"><div class="fullname">ERIC PEREIRA DOS SANTOS</div><div class="username">a4ae7362102f01e920d0</div></div></div>
+                        <div class="div-btn-wrapper">
+                            <a href="https://www.avaeduc.com.br/login/logout.php?sesskey=9sxOitI3pv" class="lnk-logout">
+                                <img src="https://www.avaeduc.com.br/theme/kroton/pix/logout.svg">Sair
+                            </a>
+                            <a href="https://www.avaeduc.com.br/user/edit.php?id=1525595&course=1" class="btn btn-default-kroton">Atualizar Perfil</a>
+                            <div class='recurse_acessibility'>
+                                <hr>
+                                <h3>Acessibilidade</h3>
+                                <input type='checkbox' id='recurse_acessibility_check'>
+                                <span class='recurse_acessibility_label'> Recursos de acessibilidade</span>
+                            </div>
+                        </div>
+        
+                        <div id="blocks_loggedin_home_totalizers" class="sections">
+                            <hr>
+                            <aside id="block-region-h-lg-total" class="block-region" data-blockregion="h-lg-total" data-droptarget="1"></aside>
+                        </div>
+        
+                        <div id="blocks_loggedin_home_brands" class="sections">
+                            
+                        </div>
+                        
+                    </div>
+        
+                    <span style="height:1px;display:block;" aria-label="Fim conteudo" tabindex="0" class="fimConteudo"></span>
+        
+                </div>
+        
+                <div class="sections">
+        
+                        <div class="block_side_menu_content" style="display: none;" data-uk-menu="_fake_0"
+                             id="_fake_0">
+        
+                            <div class="navbar-side-item header menu-content">
+                                <span style="height:1px;display:block;" aria-label="inicio conteudo" tabindex="0" class="inicioConteudo"></span>
+                                <a href="javascript:;" class="block-content icon-close open-close-flip"
+                                   tabindex="0" aria-label="fechar o bloco"></a>
+        
+                                <div class="navbar-side-item-title">
+                                    <h1>&lt;span id=&quot;mod_quiz_navblock_title&quot;&gt;Navegação do questionário&lt;/span&gt;</h1>
+                                </div>
+        
+                            </div>
+        
+                            <a href="#sb-1" class="sr-only sr-only-focusable">Pular &lt;span id=&quot;mod_quiz_navblock_title&quot;&gt;Navegação do questionário&lt;/span&gt;</a>
+
+<aside id="mod_quiz_navblock"
+     class=" block block__fake  card m-b-1"
+     role="navigation"
+     data-block="_fake"
+          aria-labelledby="instance-0-header"
+     >
+
+    <div class="card-block">
+
+
+            <h3 id="instance-0-header" class="card-title"><span id="mod_quiz_navblock_title">Navegação do questionário</span></h3>
+
+        <div class="card-text content">
+            <div id="quiznojswarning">Atenção: esses links não vão salvar as suas respostas. Use o botão 'Próximo' na parte inferior da página.</div><div class="qn_buttons clearfix multipages"><a class="qnbutton answersaved free btn btn-secondary" id="quiznavbutton1" title="Resposta salva" data-quiz-page="0" href="https://www.avaeduc.com.br/mod/quiz/attempt.php?attempt=8403913#"><span class="thispageholder"></span><span class="trafficlight"></span><span class="accesshide">Questão </span>1<span class="accesshide"> <span class="flagstate"></span></span></a><a class="qnbutton answersaved free btn btn-secondary" id="quiznavbutton2" title="Resposta salva" data-quiz-page="1" href="https://www.avaeduc.com.br/mod/quiz/attempt.php?attempt=8403913&amp;page=1#"><span class="thispageholder"></span><span class="trafficlight"></span><span class="accesshide">Questão </span>2<span class="accesshide"> <span class="flagstate"></span></span></a><a class="qnbutton answersaved free btn btn-secondary" id="quiznavbutton3" title="Resposta salva" data-quiz-page="2" href="https://www.avaeduc.com.br/mod/quiz/attempt.php?attempt=8403913&amp;page=2#"><span class="thispageholder"></span><span class="trafficlight"></span><span class="accesshide">Questão </span>3<span class="accesshide"> <span class="flagstate"></span></span></a><a class="qnbutton answersaved free btn btn-secondary" id="quiznavbutton4" title="Resposta salva" data-quiz-page="3" href="https://www.avaeduc.com.br/mod/quiz/attempt.php?attempt=8403913&amp;page=3#"><span class="thispageholder"></span><span class="trafficlight"></span><span class="accesshide">Questão </span>4<span class="accesshide"> <span class="flagstate"></span></span></a><a class="qnbutton notyetanswered free btn btn-secondary thispage" id="quiznavbutton5" title="Ainda não respondida" data-quiz-page="4" href="#"><span class="thispageholder"></span><span class="trafficlight"></span><span class="accesshide">Questão </span>5<span class="accesshide"> Esta página <span class="flagstate"></span></span></a></div><div class="othernav"><a class="endtestlink" href="https://www.avaeduc.com.br/mod/quiz/summary.php?attempt=8403913">Finalizar tentativa ...</a><div id="quiz-timer" role="timer" aria-atomic="true" aria-relevant="text">Tempo restante <span id="quiz-time-left"></span></div></div>
+            <div class="footer"></div>
+            
+        </div>
+
+    </div>
+
+</aside>
+
+  <span id="sb-1"></span>
+                            <span style="height:1px;display:block;" aria-label="Fim conteudo" tabindex="0" class="fimConteudo"></span>
+                        </div>
+                        <div class="block_side_menu_content" style="display: none;" data-uk-menu="kmypoints_19"
+                             id="kmypoints_19">
+        
+                            <div class="navbar-side-item header menu-content">
+                                <span style="height:1px;display:block;" aria-label="inicio conteudo" tabindex="0" class="inicioConteudo"></span>
+                                <a href="javascript:;" class="block-content icon-close open-close-flip"
+                                   tabindex="0" aria-label="fechar o bloco"></a>
+        
+                                <div class="navbar-side-item-title">
+                                    <h1>Meus Pontos</h1>
+                                </div>
+        
+                            </div>
+        
+                            <a href="#sb-6" class="sr-only sr-only-focusable">Pular Meus Pontos</a>
+
+<aside id="inst19"
+     class=" block block_kmypoints  card m-b-1"
+     role="complementary"
+     data-block="kmypoints"
+          aria-labelledby="instance-19-header"
+     >
+
+    <div class="card-block">
+
+
+            <h3 id="instance-19-header" class="card-title">Meus Pontos</h3>
+
+        <div class="card-text content">
+            
+            <div id="kmypoints_19_ondemand_content" courseid="4713">
+                <img src="https://www.avaeduc.com.br/blocks/content_pool/pix/loading.gif" width="205" heith="205" />            
+            </div>
+                
+            <div class="footer"></div>
+            
+        </div>
+
+    </div>
+
+</aside>
+
+  <span id="sb-6"></span>
+                            <span style="height:1px;display:block;" aria-label="Fim conteudo" tabindex="0" class="fimConteudo"></span>
+                        </div>
+                        <div class="block_side_menu_content" style="display: none;" data-uk-menu="class_evaluation_24"
+                             id="class_evaluation_24">
+        
+                            <div class="navbar-side-item header menu-content">
+                                <span style="height:1px;display:block;" aria-label="inicio conteudo" tabindex="0" class="inicioConteudo"></span>
+                                <a href="javascript:;" class="block-content icon-close open-close-flip"
+                                   tabindex="0" aria-label="fechar o bloco"></a>
+        
+                                <div class="navbar-side-item-title">
+                                    <h1>Avaliação de aula</h1>
+                                </div>
+        
+                            </div>
+        
+                            <a href="#sb-10" class="sr-only sr-only-focusable">Pular Avaliação de aula</a>
+
+<aside id="inst24"
+     class=" block block_class_evaluation  card m-b-1"
+     role="complementary"
+     data-block="class_evaluation"
+          aria-labelledby="instance-24-header"
+     >
+
+    <div class="card-block">
+
+
+            <h3 id="instance-24-header" class="card-title">Avaliação de aula</h3>
+
+        <div class="card-text content">
+            
+            <div id="class_evaluation_24_ondemand_content" courseid="4713">
+                <img src="https://www.avaeduc.com.br/blocks/content_pool/pix/loading.gif" width="205" heith="205" />            
+            </div>
+                
+            <div class="footer"></div>
+            
+        </div>
+
+    </div>
+
+</aside>
+
+  <span id="sb-10"></span>
+                            <span style="height:1px;display:block;" aria-label="Fim conteudo" tabindex="0" class="fimConteudo"></span>
+                        </div>
+                        <div class="block_side_menu_content" style="display: none;" data-uk-menu="course_contacts_30"
+                             id="course_contacts_30">
+        
+                            <div class="navbar-side-item header menu-content">
+                                <span style="height:1px;display:block;" aria-label="inicio conteudo" tabindex="0" class="inicioConteudo"></span>
+                                <a href="javascript:;" class="block-content icon-close open-close-flip"
+                                   tabindex="0" aria-label="fechar o bloco"></a>
+        
+                                <div class="navbar-side-item-title">
+                                    <h1>Contatos do curso</h1>
+                                </div>
+        
+                            </div>
+        
+                            <a href="#sb-14" class="sr-only sr-only-focusable">Pular Contatos do curso</a>
+
+<aside id="inst30"
+     class=" block block_course_contacts  card m-b-1"
+     role="complementary"
+     data-block="course_contacts"
+          aria-labelledby="instance-30-header"
+     >
+
+    <div class="card-block">
+
+
+            <h3 id="instance-30-header" class="card-title">Contatos do curso</h3>
+
+        <div class="card-text content">
+            
+            <div id="course_contacts_30_ondemand_content" courseid="4713">
+                <img src="https://www.avaeduc.com.br/blocks/content_pool/pix/loading.gif" width="205" heith="205" />            
+            </div>
+                
+            <div class="footer"></div>
+            
+        </div>
+
+    </div>
+
+</aside>
+
+  <span id="sb-14"></span>
+                            <span style="height:1px;display:block;" aria-label="Fim conteudo" tabindex="0" class="fimConteudo"></span>
+                        </div>
+                        <div class="block_side_menu_content" style="display: none;" data-uk-menu="digitaltest_36"
+                             id="digitaltest_36">
+        
+                            <div class="navbar-side-item header menu-content">
+                                <span style="height:1px;display:block;" aria-label="inicio conteudo" tabindex="0" class="inicioConteudo"></span>
+                                <a href="javascript:;" class="block-content icon-close open-close-flip"
+                                   tabindex="0" aria-label="fechar o bloco"></a>
+        
+                                <div class="navbar-side-item-title">
+                                    <h1>Prova digital</h1>
+                                </div>
+        
+                            </div>
+        
+                            <a href="#sb-16" class="sr-only sr-only-focusable">Pular Prova digital</a>
+
+<aside id="inst36"
+     class=" block block_digitaltest  card m-b-1"
+     role="complementary"
+     data-block="digitaltest"
+          aria-labelledby="instance-36-header"
+     >
+
+    <div class="card-block">
+
+
+            <h3 id="instance-36-header" class="card-title">Prova digital</h3>
+
+        <div class="card-text content">
+            
+            <div id="digitaltest_36_ondemand_content" courseid="4713">
+                <img src="https://www.avaeduc.com.br/blocks/content_pool/pix/loading.gif" width="205" heith="205" />            
+            </div>
+                
+            <div class="footer"></div>
+            
+        </div>
+
+    </div>
+
+</aside>
+
+  <span id="sb-16"></span>
+                            <span style="height:1px;display:block;" aria-label="Fim conteudo" tabindex="0" class="fimConteudo"></span>
+                        </div>
+        
+                </div>
+        
+            </div>
+        
+            <div class="overlay"></div>
+        
+        </div>        <div id="nav-drawer" data-region="drawer" class="hidden-print moodle-has-zindex closed" aria-hidden="true" tabindex="-1">
+            <nav class="list-group">
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=4713" data-key="coursehome">
+                    <div class="m-l-0">
+                            Algoritmos e Estrutura de Dados
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/user/index.php?id=4713" data-key="participants">
+                    <div class="m-l-0">
+                            Participantes
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/badges/view.php?type=2&amp;id=4713" data-key="badgesview">
+                    <div class="m-l-0">
+                            Emblemas
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/grade/report/index.php?id=4713" data-key="grades">
+                    <div class="m-l-0">
+                            Notas
+                    </div>
+                </a>
+            </nav>
+            <nav class="list-group m-t-1">
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/" data-key="home">
+                    <div class="m-l-0">
+                            Página inicial
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/my/" data-key="home">
+                    <div class="m-l-0">
+                            Painel
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/calendar/view.php?view=month" data-key="calendar">
+                    <div class="m-l-0">
+                            Calendário
+                    </div>
+                </a>
+                <div class="list-group-item" data-key="mycourses">
+                    <div class="m-l-0">
+                        Meus cursos
+                    </div>
+                </div>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=4713" data-key="4713">
+                    <div class="m-l-1">
+                            Algoritmos e Estrutura de Dados
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=7136" data-key="7136">
+                    <div class="m-l-1">
+                            Ciências Biológicas
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=8339" data-key="8339">
+                    <div class="m-l-1">
+                            Competências para a Vida
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=4691" data-key="4691">
+                    <div class="m-l-1">
+                            Física Geral
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=7137" data-key="7137">
+                    <div class="m-l-1">
+                            Matemática
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=10136" data-key="10136">
+                    <div class="m-l-1">
+                            Métodos Matemáticos
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=7138" data-key="7138">
+                    <div class="m-l-1">
+                            Português
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=9170" data-key="9170">
+                    <div class="m-l-1">
+                            Privacidade e Proteção de Dados
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=816" data-key="816">
+                    <div class="m-l-1">
+                            Processo Seletivo
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=2221" data-key="2221">
+                    <div class="m-l-1">
+                            Programação em Banco de Dados
+                    </div>
+                </a>
+                <a class="list-group-item list-group-item-action " href="https://www.avaeduc.com.br/course/view.php?id=8949" data-key="8949">
+                    <div class="m-l-1">
+                            Projeto de Extensão - Ciência da Computação I
+                    </div>
+                </a>
+            </nav>
+        </div>
+        <!-- //navigations -->
+
+    </div>
+    <!-- //page-wrapper -->
+    
+    <div style="position: relative; z-index: 999; clear: both;">
+        <footer id="page-footer">
+            <div class="container">
+                &copy; 2018. Todos os direitos reservados.  
+                <a class="back-topo logged" tabindex="0">
+                    <span class='icon-expand_less' aria-hidden='true'></span>
+                </a>
+                <div id="page-footer-debug">
+                    
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    
+<cookie-police-bar /><script type="text/javascript">
+//<![CDATA[
+var require = {
+    baseUrl : 'https://www.avaeduc.com.br/lib/requirejs.php/1748089321/',
+    // We only support AMD modules with an explicit define() statement.
+    enforceDefine: true,
+    skipDataMain: true,
+    waitSeconds : 0,
+
+    paths: {
+        jquery: 'https://www.avaeduc.com.br/lib/javascript.php/1748089321/lib/jquery/jquery-3.1.0.min',
+        jqueryui: 'https://www.avaeduc.com.br/lib/javascript.php/1748089321/lib/jquery/ui-1.12.1/jquery-ui.min',
+        jqueryprivate: 'https://www.avaeduc.com.br/lib/javascript.php/1748089321/lib/requirejs/jquery-private'
+    },
+
+    // Custom jquery config map.
+    map: {
+      // '*' means all modules will get 'jqueryprivate'
+      // for their 'jquery' dependency.
+      '*': { jquery: 'jqueryprivate' },
+
+      // 'jquery-private' wants the real jQuery module
+      // though. If this line was not here, there would
+      // be an unresolvable cyclic dependency.
+      jqueryprivate: { jquery: 'jquery' }
+    }
+};
+
+//]]>
+</script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/lib/javascript.php/1748089321/lib/requirejs/require.min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+require(['core/first'], function() {
+;
+require(["media_videojs/loader"], function(loader) {
+    loader.setUp(function(videojs) {
+        videojs.options.flash.swf = "https://www.avaeduc.com.br/media/player/videojs/videojs/video-js.swf";
+videojs.addLanguage("pt-BR",{
+ "Play": "Tocar",
+ "Pause": "Pausar",
+ "Current Time": "Tempo",
+ "Duration Time": "Duração",
+ "Remaining Time": "Tempo Restante",
+ "Stream Type": "Tipo de Stream",
+ "LIVE": "AO VIVO",
+ "Loaded": "Carregado",
+ "Progress": "Progresso",
+ "Fullscreen": "Tela Cheia",
+ "Non-Fullscreen": "Tela Normal",
+ "Mute": "Mudo",
+ "Unmute": "Habilitar Som",
+ "Playback Rate": "Velocidade",
+ "Subtitles": "Legendas",
+ "subtitles off": "Sem Legendas",
+ "Captions": "Anotações",
+ "captions off": "Sem Anotações",
+ "Chapters": "Capítulos",
+ "You aborted the media playback": "Você parou a execução do vídeo.",
+ "A network error caused the media download to fail part-way.": "Um erro na rede fez o vídeo parar parcialmente.",
+ "The media could not be loaded, either because the server or network failed or because the format is not supported.": "O vídeo não pode ser carregado, ou porque houve um problema com sua rede ou pelo formato do vídeo não ser suportado.",
+ "The media playback was aborted due to a corruption problem or because the media used features your browser did not support.": "A execução foi interrompida por um problema com o vídeo ou por seu navegador não dar suporte ao seu formato.",
+ "No compatible source was found for this media.": "Não foi encontrada fonte de vídeo compatível."
+});
+
+    });
+});;
+function legacy_activity_onclick_handler_1(e) { e.halt(); window.open('https://www.avaeduc.com.br/mod/url/view.php?id=2&redirect=1'); return false; };
+function legacy_activity_onclick_handler_2(e) { e.halt(); window.open('https://www.avaeduc.com.br/mod/url/view.php?id=3&redirect=1'); return false; };
+function legacy_activity_onclick_handler_3(e) { e.halt(); window.open('https://www.avaeduc.com.br/mod/url/view.php?id=4&redirect=1'); return false; };
+function legacy_activity_onclick_handler_4(e) { e.halt(); window.open('https://www.avaeduc.com.br/mod/url/view.php?id=5&redirect=1'); return false; };
+function legacy_activity_onclick_handler_5(e) { e.halt(); window.open('https://www.avaeduc.com.br/mod/url/view.php?id=7&redirect=1'); return false; };
+function legacy_activity_onclick_handler_6(e) { e.halt(); window.open('https://www.avaeduc.com.br/mod/url/view.php?id=6&redirect=1'); return false; };
+
+require(['jquery', 'theme_kroton/notification_popover_controller'], function($, controller) {
+    var container = $('#nav-notification-popover-container');
+    var controller = new controller(container);
+    controller.registerEventListeners();
+    controller.registerListNavigationEventListeners();
+});
+;
+
+require(['theme_boost/loader']);
+require(['theme_boost/drawer'], function(mod) {
+    mod.init();
+});
+;
+require(["core/notification"], function(amd) { amd.init(341391, []); });;
+require(["core/log"], function(amd) { amd.setConfig({"level":"warn"}); });
+});
+//]]>
+</script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/blocks/class_evaluation/modules.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/blocks/mygrades/js/module.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/blocks/course_contacts/module.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/blocks/brands_users/js/brands_users.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/local/notification_course_tracks/modules.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/lib/javascript.php/1748089321/local/eventmonitoring/js/index.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/lib/javascript.php/1748089321/course/format/cards_topics/js/module.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/course/format/cards_topics/format.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dateFormat/1.0/jquery.dateFormat.min.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/blocks/myrating/js/lib.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/local/aesalibs/javascript/fancybox-3.5.6/dist/jquery.fancybox.min.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/blocks/catalogbooks/script.js"></script>
+<script type="text/javascript" src="https://www.avaeduc.com.br/local/aesalibs/javascript/colorbox/jquery.colorbox-min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+M.str = {"moodle":{"lastmodified":"\u00daltima atualiza\u00e7\u00e3o","name":"Nome","error":"Erro","info":"Informa\u00e7\u00e3o","yes":"Sim","no":"N\u00e3o","cancel":"Cancelar","changesmadereallygoaway":"Voc\u00ea fez altera\u00e7\u00f5es. Est\u00e1 certo de que quer sair e abandonar suas altera\u00e7\u00f5es?","morehelp":"Mais ajuda","loadinghelp":"Carregando...","confirm":"Confirmar","areyousure":"Voc\u00ea tem certeza?","closebuttontitle":"Fechar","unknownerror":"Erro desconhecido"},"repository":{"type":"Tipo","size":"Tamanho","invalidjson":"palavra JSON inv\u00e1lida","nofilesattached":"Nenhum arquivo anexado","filepicker":"File picker","logout":"Sair","nofilesavailable":"Nenhum arquivo dispon\u00edvel","norepositoriesavailable":"Desculpe, nenhum dos seus reposit\u00f3rios atuais pode retornar arquivos no formato solicitado.","fileexistsdialogheader":"Arquivo existe","fileexistsdialog_editor":"Um arquivo com este nome j\u00e1 foi anexado ao texto que voc\u00ea est\u00e1 editando.","fileexistsdialog_filemanager":"Um arquivo com este nome j\u00e1 foi anexado","renameto":"Renomear para \"{$a}\"","referencesexist":"H\u00e1 {$a} arquivos pseud\u00f4nimos\/atalhos que usam este arquivo como fonte","select":"Selecione"},"admin":{"confirmdeletecomments":"Voc\u00ea est\u00e1 prestes a excluir coment\u00e1rios, tem certeza?","confirmation":"Confirma\u00e7\u00e3o"},"question":{"flagged":"Marcada"},"quiz":{"functiondisabledbysecuremode":"Esta funcionalidade est\u00e1 desativada neste momento","startattempt":"Iniciar tentativa","timesup":"Acabou o tempo de dura\u00e7\u00e3o!"},"block_mygrades":{"pluginname":"Minhas Notas"},"block_accessibility":{"saved":"Defini\u00e7\u00e3o salva","jsnosave":"Error saving settings","reset":"Setting Cleared","jsnosizereset":"Error resetting text size","jsnocolourreset":"Erro ao redefinir o esquema de cores","jsnosize":"Error changing size","jsnocolour":"Erro ao alterar o esquema de cores","jsnotloggedin":"Error! Please check if you are logged-in to the system or contact your administrator","launchtoolbar":"Launch ATbar"}};
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+var courseid = "4713";var blockConfig = "{}";var ava_inter_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE1MjU1OTUiLCJ1c2VybmFtZSI6ImE0YWU3MzYyMTAyZjAxZTkyMGQwIiwiZmlyc3RuYW1lIjoiRVJJQyIsImxhc3RuYW1lIjoiUEVSRUlSQSBET1MgU0FOVE9TIiwiZnVsbG5hbWUiOiJFUklDIFBFUkVJUkEgRE9TIFNBTlRPUyIsImVtYWlsIjoiZXJpY3BlcmVpcmFzYW50b3NwQGdtYWlsLmNvbSIsInNlbWVzdGVyIjoiMjAyNTEiLCJyb2xlIjpbInN0dWRlbnQiXSwib3JpZ2VtIjoiYXZhLW1vb2RsZSIsImV4cCI6MTc0ODEzNjU0MH0.N2riGwZ3kuNEIxAWyQBIDfsmi8BYROCxmXtUr7q3mm4";var avaeduc_api_url = "https:\/\/api.avaeduc.com.br";var avaeduc_username = "a4ae7362102f01e920d0";var avaeduc_request_time = 1748136480;var eventmonitoringuserid = "1525595";var eventmonitoringurl = null;var eventmonitoringkey = null;var eventmonitoringusername = "a4ae7362102f01e920d0";var eventmonitoringcourseshortname = "AMI_ALGOR_DADOS";var eventmonitoringcmname = "U3 - Avalia\u00e7\u00e3o da Unidade";var eventmonitoringtiming = "30";var eventmonitoringaccesstime = "30";var myrating_url = "https:\/\/c5jazixh08.execute-api.us-east-1.amazonaws.com\/Production";var myrating_apikey = "1z6RBUmDeG7MYVVs63KtM6jSw5N0etc03HQ8T3oJ";var cm_id = 0;var myrating_userid = "1525595";var myrating_subjects = "[{\"id\":\"1\",\"subject\":\"Sugest\\u00e3o\"},{\"id\":\"2\",\"subject\":\"Problema ortogramatical\"},{\"id\":\"3\",\"subject\":\"Problema de conte\\u00fado\"},{\"id\":\"4\",\"subject\":\"Problema de funcionalidade\"},{\"id\":\"5\",\"subject\":\"Elogio\"},{\"id\":\"6\",\"subject\":\"Reclama\\u00e7\\u00e3o\"}]";var myrating_modules = "[\"activityvideo\",\"book\",\"certificate\",\"customcert\",\"feedback\",\"finalproject\",\"forum\",\"pde\",\"quiz\",\"unitygame\",\"url\"]";var userfullname = "ERIC PEREIRA DOS SANTOS";var coursecategory = "Aula Modelo Institucional";var userperfil = "ALUNO";var unidade = "BETIM\/MG";var codunidade = "OLIM-508";var coursecategory = "Aula Modelo Institucional";var userfullname = "ERIC PEREIRA DOS SANTOS";var userlogin = "a4ae7362102f01e920d0";var useremail = "ericpereirasantosp@gmail.com";var coursename = "Algoritmos e Estrutura de Dados";var courseshortname = "AMI_ALGOR_DADOS";var myrating_url = "https:\/\/c5jazixh08.execute-api.us-east-1.amazonaws.com\/Production";var myrating_apikey = "1z6RBUmDeG7MYVVs63KtM6jSw5N0etc03HQ8T3oJ";var cm_id = 0;var myrating_userid = "1525595";var myrating_subjects = "[{\"id\":\"1\",\"subject\":\"Sugest\\u00e3o\"},{\"id\":\"2\",\"subject\":\"Problema ortogramatical\"},{\"id\":\"3\",\"subject\":\"Problema de conte\\u00fado\"},{\"id\":\"4\",\"subject\":\"Problema de funcionalidade\"},{\"id\":\"5\",\"subject\":\"Elogio\"},{\"id\":\"6\",\"subject\":\"Reclama\\u00e7\\u00e3o\"}]";var myrating_modules = "[\"activityvideo\",\"book\",\"certificate\",\"customcert\",\"feedback\",\"finalproject\",\"forum\",\"pde\",\"quiz\",\"unitygame\",\"url\"]";var userfullname = "ERIC PEREIRA DOS SANTOS";var coursecategory = "Aula Modelo Institucional";var userperfil = "ALUNO";var unidade = "BETIM\/MG";var codunidade = "OLIM-508";var coursecategory = "Aula Modelo Institucional";var userfullname = "ERIC PEREIRA DOS SANTOS";var userlogin = "a4ae7362102f01e920d0";var useremail = "ericpereirasantosp@gmail.com";var coursename = "Algoritmos e Estrutura de Dados";var courseshortname = "AMI_ALGOR_DADOS";
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+(function() {block_catalogbooks.set("root", "https:\/\/www.avaeduc.com.br\/blocks\/catalogbooks");
+block_catalogbooks.set("root", "https:\/\/www.avaeduc.com.br\/blocks\/catalogbooks");
+setTimeout("fix_column_widths()", 20);
+Y.use("moodle-filter_mathjaxloader-loader",function() {M.filter_mathjaxloader.configure({"mathjaxconfig":"MathJax.Hub.Config({\r\n    config: [\"Accessible.js\", \"Safe.js\"],\r\n    errorSettings: { message: [\"!\"] },\r\n    skipStartupTypeset: true,\r\n    messageStyle: \"none\"\r\n});","lang":"en"});
+});
+Y.use("moodle-mod_quiz-autosave",function() {M.mod_quiz.autosave.init("60");
+});
+ M.util.js_pending('random6832722003ad91'); Y.use('core_question_flags', function(Y) { M.core_question_flags.init(Y, "https:\/\/www.avaeduc.com.br\/question\/toggleflag.php", [{"src":"https:\/\/www.avaeduc.com.br\/theme\/image.php\/kroton\/core\/1748089321\/i\/unflagged","title":"Marcar quest\u00e3o para refer\u00eancia futura","alt":"N\u00e3o marcada"},{"src":"https:\/\/www.avaeduc.com.br\/theme\/image.php\/kroton\/core\/1748089321\/i\/flagged","title":"Remover marca\u00e7\u00e3o","alt":"Marcada"}], ["Marcar quest\u00e3o","Remover r\u00f3tulo"]);  M.util.js_complete('random6832722003ad91'); });
+ M.util.js_pending('random6832722003ad92'); Y.use('mod_quiz', function(Y) { M.mod_quiz.init_attempt_form(Y);  M.util.js_complete('random6832722003ad92'); });
+ M.util.js_pending('random6832722003ad93'); Y.use('mod_quiz', function(Y) { M.mod_quiz.nav.init(Y);  M.util.js_complete('random6832722003ad93'); });
+ M.util.js_pending('random6832722003ad94'); Y.use('block_digitaltest', function(Y) { M.block_digitaltest.init(Y);  M.util.js_complete('random6832722003ad94'); });
+ M.util.js_pending('random6832722003ad95'); Y.use('block_accessibility', function(Y) { M.block_accessibility.init(Y, false, "45", null, "1");  M.util.js_complete('random6832722003ad95'); });
+ M.util.js_pending('random6832722003ad96'); Y.use('local_avaeduc_api', function(Y) { M.local_avaeduc_api.registerToken(Y);  M.util.js_complete('random6832722003ad96'); });
+ M.util.js_pending('random6832722003ad97'); Y.use('local_notification_course_tracks', function(Y) { notification_course_track(Y);  M.util.js_complete('random6832722003ad97'); });
+ M.util.js_pending('random6832722003ad98'); Y.use('local_completion_api', function(Y) { M.local_completion_api.init(Y, "XCqW7I2ufn5zZmQ2eXGo64YXMGHZxKr51NSarUqk", "https:\/\/0z0bbw4e1g.execute-api.us-east-1.amazonaws.com\/Production\/completion\/getcourseusercompletion", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NDgxMzY0ODAsImV4cCI6MTc0ODE0MDA4MCwiY291cnNlIjp7InVzZXJpZCI6MTUyNTU5NSwiY291cnNlaWQiOjQ3MTMsImJ1Y2tldCI6IjUxNjY0NTU0ODYyMi1jbS10aW1lbG9nIiwicGF0aCI6Imtsc18yMDI1MDFcL2NvbXBsZXRpb25zIn19.q_rw2_ZLdtPxWcH-IHZaXEH8NycfhSamUFSJHPXA1smM8EImUiPggCWziYEwDOFQusBplNOAeha_QD5Uypeb8k7aE0W8NuLY5Wt7XIHcEMxpabL64rzllmeTrcMzFpIKWE0q7qq0W5jzAwi_Gd0A63RVU413Yr92RYfpOjDrxHuT8D7e62d6ATMaXS2ISp2R_95l42Xnl23ckplo4xWFbFrAKGdMKfj9mdkQlp6HJRkGsUMco-3wqFnXnWL2e5ipKqLhN5w8zpAlXr6RU6lH7Faz7OC82vw4Y0p839KSqAKemF0kMPkEwDIxMVgF6EE5PyilSdugKR-7hibMXEKAdA", "format_course", "4713", "1525595", true, 75146, 18447);  M.util.js_complete('random6832722003ad98'); });
+M.util.help_popups.setup(Y);
+Y.use("moodle-core-popuphelp",function() {M.core.init_popuphelp();
+});
+ M.util.js_pending('random6832722003ad911'); Y.on('domready', function() { M.util.js_complete("init");  M.util.js_complete('random6832722003ad911'); });
+})();
+//]]>
+</script>
+
+    <!--<script src="//api.handtalk.me/plugin/latest/handtalk.min.js"></script> <script> var ht = new HT({ token: "0b57808052fa964d2e98c49533f566ba" }); </script>-->
 </body>
 </html>

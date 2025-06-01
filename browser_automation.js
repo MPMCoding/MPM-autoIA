@@ -11,34 +11,38 @@ const GEMINI_API_KEY = "AIzaSyCq2WUCRoMFNC7_qY0uU30lESqvgndCBCU";
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
 // Função para fazer requisições à API do Gemini com suporte a texto e imagens
-async function callGeminiAPI(prompt, imageBase64 = null) {
+async function callGeminiAPI(prompt, imageParts = []) {
   let requestData = {
     contents: [{
       parts: []
     }],
     generationConfig: {
-      temperature: 0.4,
-      topP: 0.8,
-      topK: 40
-    }
+      temperature: 0.00,  // Reduzido para maior precisão
+      topP: 0.1,          // Ajustado para foco
+      topK: 1,           // Reduzido para maior consistência
+      maxOutputTokens: 200,
+    },
+    safetySettings: [
+      {
+        category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+        threshold: "BLOCK_NONE"
+      }
+    ]
   };
 
-  // Adicionar texto ao prompt
   if (prompt) {
-    requestData.contents[0].parts.push({
-      text: prompt
-    });
+    requestData.contents[0].parts.push({ text: prompt });
   }
 
-  // Adicionar imagem ao prompt se fornecida
-  if (imageBase64) {
-    // Adiciona a imagem como parte do conteúdo
-    requestData.contents[0].parts.push({
-      inline_data: {
-        mime_type: "image/jpeg", // Ajuste conforme necessário (image/png, etc.)
-        data: imageBase64
-      }
-    });
+  if (Array.isArray(imageParts)) {
+    for (const img of imageParts) {
+      requestData.contents[0].parts.push({
+        inline_data: {
+          mime_type: img.mime_type || "image/jpeg",
+          data: img.data
+        }
+      });
+    }
   }
 
   // Criar a URL com a chave de API
@@ -86,6 +90,8 @@ async function callGeminiAPI(prompt, imageBase64 = null) {
     req.on('error', (error) => {
       reject(new Error(`Erro na requisição: ${error.message}`));
     });
+
+    console.log("Payload enviado para a Gemini API:", JSON.stringify(requestData, null, 2));
     
     req.write(JSON.stringify(requestData));
     req.end();
@@ -93,6 +99,7 @@ async function callGeminiAPI(prompt, imageBase64 = null) {
 }
 
 // Função para baixar imagem de uma URL e convertê-la para base64
+
 async function downloadImageAsBase64(imageUrl) {
   return new Promise((resolve, reject) => {
     try {
@@ -105,7 +112,68 @@ async function downloadImageAsBase64(imageUrl) {
           return;
         }
         
-        const contentType = res.headers['content-type'];
+        sendOutput('info', `Imagem baixada com sucessoaa: ${imageUrl}`);
+        
+        let contentType = res.headers['content-type'];
+        
+        sendOutput('info', `type: ${contentType}`);
+
+        // Função para detectar tipo MIME baseado na URL
+        function detectMimeTypeFromUrl(url) {
+          const extension = url.split('.').pop().toLowerCase();
+          const mimeTypes = {
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'gif': 'image/gif',
+            'webp': 'image/webp',
+            'bmp': 'image/bmp',
+            'svg': 'image/svg+xml'
+          };
+          return mimeTypes[extension] || 'image/jpeg';
+        }
+        
+        // Função para detectar tipo MIME pelos primeiros bytes
+        function detectMimeTypeFromBuffer(buffer) {
+          const firstBytes = buffer.slice(0, 12);
+          
+          // JPEG
+          if (firstBytes[0] === 0xFF && firstBytes[1] === 0xD8 && firstBytes[2] === 0xFF) {
+            return 'image/jpeg';
+          }
+          // PNG
+          if (firstBytes[0] === 0x89 && firstBytes[1] === 0x50 && firstBytes[2] === 0x4E && firstBytes[3] === 0x47) {
+            return 'image/png';
+          }
+          // GIF
+          if (firstBytes.slice(0, 3).toString() === 'GIF') {
+            return 'image/gif';
+          }
+          // WebP
+          if (firstBytes.slice(0, 4).toString() === 'RIFF' && firstBytes.slice(8, 12).toString() === 'WEBP') {
+            return 'image/webp';
+          }
+          // BMP
+          if (firstBytes[0] === 0x42 && firstBytes[1] === 0x4D) {
+            return 'image/bmp';
+          }
+          
+          return 'image/jpeg'; // fallback
+        }
+        
+        // Validar e limpar contentType
+        if (!contentType || 
+            !contentType.startsWith('image/') || 
+            contentType.includes('binary/octet-stream') ||
+            contentType.includes('application/octet-stream')) {
+          // Tentar detectar pela URL primeiro
+          contentType = detectMimeTypeFromUrl(imageUrl);
+          sendOutput('info', `Content-Type inválido, detectado pela URL: ${contentType}`);
+        } else {
+          // Limpar contentType removendo parâmetros extras
+          contentType = contentType.split(';')[0].trim();
+        }
+        
         const chunks = [];
         
         res.on('data', (chunk) => {
@@ -115,10 +183,44 @@ async function downloadImageAsBase64(imageUrl) {
         res.on('end', () => {
           try {
             const buffer = Buffer.concat(chunks);
+            
+            // Se ainda não temos um tipo válido, detectar pelos bytes
+            if (!contentType.startsWith('image/') || contentType === 'image/jpeg') {
+              const detectedType = detectMimeTypeFromBuffer(buffer);
+              if (detectedType !== 'image/jpeg') {
+                contentType = detectedType;
+                sendOutput('info', `Tipo detectado pelos bytes: ${contentType}`);
+              }
+            }
+            
+            // Lista de tipos MIME suportados pelo Gemini
+            const supportedMimeTypes = [
+              'image/jpeg',
+              'image/png', 
+              'image/gif',
+              'image/webp'
+            ];
+            
+            // Se o tipo não for suportado, converter para JPEG
+            if (!supportedMimeTypes.includes(contentType)) {
+              contentType = 'image/jpeg';
+              sendOutput('info', `Tipo não suportado, usando fallback: ${contentType}`);
+            }
+            
             const base64Image = buffer.toString('base64');
+            
+            // Validar se o base64 não está vazio
+            if (!base64Image || base64Image.length === 0) {
+              reject(new Error('Imagem base64 vazia'));
+              return;
+            }
+            
+            sendOutput('info', `Imagem processada - Tipo: ${contentType}, Tamanho: ${base64Image.length} chars`);
+            
             resolve({
               data: base64Image,
-              mimeType: contentType || 'image/jpeg'
+              mimeType: contentType,
+              mime_type: contentType // Gemini usa ambos os formatos
             });
           } catch (error) {
             reject(new Error(`Erro ao processar imagem: ${error.message}`));
@@ -234,19 +336,25 @@ async function extractImagesFromPage() {
     if (!browserView || !browserView.webContents) {
       throw new Error('BrowserView não está disponível');
     }
-
+    
     const imagesInfo = await browserView.webContents.executeJavaScript(`
       (function() {
         const images = document.querySelectorAll('.qtext img, .content img');
         const result = [];
+        const blockedDomain = 'https://www.avaeduc.com.br/blocks';
         
         for (const img of images) {
-          result.push({
-            src: img.src,
-            alt: img.alt || '',
-            width: img.width,
-            height: img.height
-          });
+          // Filtrar imagens que contêm o domínio bloqueado
+          if (!img.src.includes(blockedDomain)) {
+            result.push({
+              src: img.src,
+              alt: img.alt || '',
+              width: img.width,
+              height: img.height
+            });
+          } else {
+            console.log('Imagem filtrada (bloqueada):', img.src);
+          }
         }
         
         return result;
@@ -254,10 +362,10 @@ async function extractImagesFromPage() {
     `);
     
     if (imagesInfo && imagesInfo.length > 0) {
-      sendOutput('info', `Encontradas ${imagesInfo.length} imagens na página`);
+      sendOutput('info', `Encontradas ${imagesInfo.length} imagens válidas na página (filtradas as do domínio blocks)`);
       return imagesInfo;
     } else {
-      sendOutput('info', 'Nenhuma imagem encontrada na página');
+      sendOutput('info', 'Nenhuma imagem válida encontrada na página após filtros');
       return [];
     }
   } catch (error) {
@@ -309,21 +417,29 @@ async function startAutomation() {
           imageBase64 = await captureScreenshot();
         }
         
-        // Baixa imagens se configurado para isso
+        let imageParts = [];
+
         if (config.downloadImages) {
           const images = await extractImagesFromPage();
-          
+
           if (images.length > 0) {
-            sendOutput('info', `Baixando ${images.length} imagens...`);
-            
-            // Pega a primeira imagem (geralmente a mais relevante na questão)
-            try {
-              const imageInfo = await downloadImageAsBase64(images[0].src);
-              imageBase64 = imageInfo.data;
-              mimeType = imageInfo.mimeType;
-              sendOutput('info', `Imagem baixada com sucesso: ${images[0].src.substring(0, 50)}...`);
-            } catch (error) {
-              sendOutput('error', `Erro ao baixar imagem: ${error.message}`);
+            sendOutput('info', `Tentando baixar ${images.length} imagens...`);
+
+            for (const img of images) {
+              try {
+                const imageInfo = await downloadImageAsBase64(img.src);
+                imageParts.push({
+                  mime_type: imageInfo.mimeType,
+                  data: imageInfo.data
+                });
+                sendOutput('info', `Imagem baixada com sucesso: ${img.src.substring(0, 50)}...`);
+              } catch (error) {
+                sendOutput('warning', `Erro ao baixar imagem: ${img.src.substring(0, 50)} (${error.message})`);
+              }
+            }
+
+            if (imageParts.length === 0) {
+              sendOutput('warning', 'Nenhuma imagem pôde ser baixada. Continuando apenas com texto.');
             }
           }
         }
@@ -344,20 +460,39 @@ async function startAutomation() {
 
         // Prepara o prompt para o Gemini
         let prompt;
-        if (question && options.length && imageBase64) {
+
+        if (question && options.length && imageParts.length > 0) {
           // Se temos pergunta, opções e imagem
-          prompt = `Analise cuidadosamente esta imagem e responda à seguinte pergunta de múltipla escolha. Retorne APENAS a letra (a, b, c, d ou e) correspondente à alternativa correta, sem pontos ou texto adicional.\n\nPergunta: ${question}\n\nOpções:\n${options.map(opt => `- ${opt}`).join('\n')}`;
+          prompt = `Qual alternativa está correta? RESPONDA APENAS A LETRA MAIÚSCULA (A, B, C, D ou E)
+          
+          PERGUNTA: ${question}
+          
+          ALTERNATIVAS:
+          ${options.map(opt => `${opt.letter.toUpperCase()}) ${opt.cleanText}`).join('\n')}
+          
+          RESPONDA APENAS A LETRA MAIÚSCULA (A, B, C, D ou E):`;
+        
         } else if (question && options.length) {
           // Se temos apenas pergunta e opções (sem imagem)
-          prompt = `Dada a seguinte pergunta de múltipla escolha e suas opções, qual é a resposta correta? Retorne APENAS a letra (a, b, c, d ou e) correspondente à alternativa correta, sem pontos ou texto adicional.\n\nPergunta: ${question}\n\nOpções:\n${options.map(opt => `- ${opt}`).join('\n')}`;
+          prompt = `Qual alternativa está correta? RESPONDA APENAS A LETRA MAIÚSCULA (A, B, C, D ou E)
+          
+          QUESTÃO: ${question}
+          
+          OPÇÕES:
+          ${options.map(opt => `${opt.letter.toUpperCase()}) ${opt.cleanText}`).join('\n')}
+          
+          RESPONDA APENAS A LETRA MAIÚSCULA (A, B, C, D ou E):`;
+        
         } else if (imageBase64) {
           // Se só temos a imagem
-          prompt = "Vejo uma questão de múltipla escolha nesta imagem. Por favor, analise a questão e as alternativas. Responda apenas com a letra da alternativa correta (a, b, c, d ou e), sem explicações adicionais.";
+          prompt = `Qual alternativa está correta?
+          
+          RESPONDA APENAS A LETRA MAIÚSCULA (A, B, C, D ou E) DA ALTERNATIVA CORRETA:`;
         }
 
         // Obtém a resposta do Gemini
-        const correctOption = await getGeminiAnswer(prompt, imageBase64, options);
-        
+        const correctOption = await getGeminiAnswer(prompt, imageParts, options);
+
         if (!correctOption) {
           sendOutput('error', 'Não foi possível obter resposta do Gemini. Parando automação.');
           stopAutomation();
@@ -395,8 +530,13 @@ async function getQuestionAndOptions() {
         try {
           // Extrai a pergunta
           const questionElement = document.querySelector('${config.questionSelector}');
-          if (!questionElement) return { question: null, options: [] };
+          if (!questionElement) return { question: null, options: [], hasImage: false, imageUrls: [] };
           const questionText = questionElement.textContent.trim();
+
+          // Verifica se há imagens na pergunta
+          const images = questionElement.querySelectorAll('img');
+          const hasImage = images.length > 0;
+          const imageUrls = Array.from(images).map(img => img.src).filter(src => src);
 
           // Extrai as opções
           const optionElements = document.querySelectorAll('${config.optionsSelector}');
@@ -442,29 +582,38 @@ async function getQuestionAndOptions() {
             }
             
             if (optionText) {
+              // Extrai a letra e o texto limpo
+              const cleanText = optionText.replace(/^[a-e][.\\s]*\\s*/i, '').trim();
+              const letterMatch = optionText.match(/^([a-e])[.\\s]*/i);
+              const letter = letterMatch ? letterMatch[1].toLowerCase() : String.fromCharCode(97 + options.length);
+              
               options.push({
                 text: optionText,
+                cleanText: cleanText,
+                letter: letter,
                 value: option.value,
                 id: option.id
               });
             }
           }
           
-          return { question: questionText, options: options };
+          return { question: questionText, options: options, hasImage: hasImage, imageUrls: imageUrls };
         } catch (error) {
           console.error('Erro ao extrair pergunta/opções:', error);
-          return { question: null, options: [], error: error.toString() };
+          return { question: null, options: [], error: error.toString(), hasImage: false, imageUrls: [] };
         }
       })();
     `);
     
     return {
       question: result.question,
-      options: result.options.map(opt => opt.text)
+      options: result.options,
+      hasImage: result.hasImage,
+      imageUrls: result.imageUrls || []
     };
   } catch (error) {
     console.error('[browser_automation.js] Erro ao executar script para extrair pergunta/opções:', error);
-    return { question: null, options: [] };
+    return { question: null, options: [], hasImage: false, imageUrls: [] };
   }
 }
 
@@ -479,30 +628,48 @@ async function getGeminiAnswer(prompt, imageBase64 = null, options = []) {
     sendOutput('info', `Resposta recebida do Gemini: ${answerText}`);
     
     // Extrai apenas a letra da resposta (caso o modelo retorne mais que apenas a letra)
-    const letterMatch = answerText.trim().match(/^[a-e]/i);
-    const answerLetter = letterMatch ? letterMatch[0].toLowerCase() : null;
-    
-    if (!answerLetter) {
-      sendOutput('error', `O Gemini não retornou uma letra válida: "${answerText}"`);
-      return null;
-    }
-
-    // Se estamos trabalhando com imagem e não temos opções extraídas
-    if (options.length === 0) {
-      // Tenta selecionar diretamente pelo índice
-      const index = answerLetter.charCodeAt(0) - 'a'.charCodeAt(0);
-      return { index: index, letter: answerLetter };
+    const letterMatch = answerText.trim().match(/\b([a-e])\b/i);
+    if (letterMatch) {
+      return { type: 'letter', value: letterMatch[1].toLowerCase() };
     }
     
-    // Encontra a opção que começa com a letra retornada
-    for (const option of options) {
-      if (option.trim().toLowerCase().startsWith(answerLetter + '.')) {
-        sendOutput('info', `Opção correspondente encontrada: ${option}`);
-        return option;
+    // Tenta extrair de outros formatos
+    const altMatch = answerText.match(/\(([a-e])\)|([a-e])\)|letra\s*([a-e])|opção\s*([a-e])/i);
+    if (altMatch) {
+      return { type: 'letter', value: (altMatch[1] || altMatch[2] || altMatch[3] || altMatch[4]).toLowerCase() };
+    }
+    
+    // Se não encontrou letra, tenta índice
+    const indexMatch = answerText.match(/\b([0-4])\b/);
+    if (indexMatch) {
+      return { type: 'index', value: parseInt(indexMatch[1]) };
+    }
+    
+    // Tenta correspondência por conteúdo se temos opções
+    if (options && options.length > 0) {
+      const answerLower = answerText.toLowerCase();
+      for (let i = 0; i < options.length; i++) {
+        const option = options[i];
+        const optionTextLower = (option.cleanText || option.text || '').toLowerCase();
+        
+        // Verifica se a resposta contém partes significativas da opção
+        const words = optionTextLower.split(/\s+/).filter(word => word.length > 3);
+        let matchCount = 0;
+        
+        for (const word of words) {
+          if (answerLower.includes(word)) {
+            matchCount++;
+          }
+        }
+        
+        // Se mais de 50% das palavras significativas coincidem
+        if (words.length > 0 && matchCount / words.length > 0.5) {
+          return { type: 'letter', value: option.letter };
+        }
       }
     }
-    
-    sendOutput('error', `Não foi possível encontrar uma opção iniciada com a letra "${answerLetter}".`);
+
+    sendOutput('error', `O Gemini não retornou uma resposta válida: "${answerText}"`);
     return null;
   } catch (error) {
     sendOutput('error', `Erro ao obter resposta do Gemini: ${error.message}`);
@@ -510,20 +677,20 @@ async function getGeminiAnswer(prompt, imageBase64 = null, options = []) {
   }
 }
 
-// Seleciona a resposta e clica no botão próximo
 // Seleciona a resposta e clica no botão próximo ou finaliza o quiz
-async function selectAnswerAndNext(correctOption) {
+async function selectAnswerAndNext(correctAnswer) {
   try {
-    // Seleciona a resposta (mantendo o código existente)
-    // Se correctOption é um objeto com índice (caso de análise de imagem)
-    if (typeof correctOption === 'object' && correctOption.index !== undefined) {
-      const selectResult = await browserView.webContents.executeJavaScript(`
+    let selectResult;
+    
+    // Lida com diferentes tipos de resposta
+    if (correctAnswer && correctAnswer.type === 'index') {
+      // Seleção direta por índice para questões baseadas em imagem
+      selectResult = await browserView.webContents.executeJavaScript(`
         (function() {
           try {
             const optionElements = document.querySelectorAll('${config.optionsSelector}');
             
-            // Seleciona pelo índice
-            const index = ${correctOption.index};
+            const index = ${correctAnswer.value};
             if (index >= 0 && index < optionElements.length) {
               optionElements[index].click();
               return { success: true };
@@ -536,15 +703,14 @@ async function selectAnswerAndNext(correctOption) {
         })();
       `);
       
-      if (!selectResult.success) {
-        sendOutput('error', `Falha ao selecionar opção: ${selectResult.error}`);
-        return false;
+      if (selectResult.success) {
+        sendOutput('info', `Opção ${correctAnswer.value} selecionada com sucesso.`);
       }
+    } else if (correctAnswer && correctAnswer.type === 'letter') {
+      // Seleção por letra com correspondência fuzzy
+      const targetLetter = correctAnswer.value.toLowerCase();
       
-      sendOutput('info', `Opção ${correctOption.letter} selecionada com sucesso.`);
-    } else {
-      // Caso normal com texto da opção
-      const selectResult = await browserView.webContents.executeJavaScript(`
+      selectResult = await browserView.webContents.executeJavaScript(`
         (function() {
           try {
             const optionElements = document.querySelectorAll('${config.optionsSelector}');
@@ -553,7 +719,7 @@ async function selectAnswerAndNext(correctOption) {
             for (const option of optionElements) {
               let optionText = "";
               
-              // Tenta encontrar o texto da opção
+              // Extrai o texto da opção
               try {
                 const label = option.closest('label');
                 if (label) {
@@ -585,11 +751,33 @@ async function selectAnswerAndNext(correctOption) {
                 optionText = option.value || "";
               }
               
-              if (optionText.toLowerCase() === \`${correctOption.toLowerCase().replace(/'/g, "\\'").replace(/"/g, '\\"')}\`) {
-                // Seleciona a opção
-                option.click();
+              const optionTextLower = optionText.toLowerCase();
+              
+              // Tenta várias variações de correspondência de letra
+              const letterPatterns = [
+                new RegExp(\`^\\\\s*${targetLetter}\\\\s*[.)]?\\\\s*\`, 'i'),
+                new RegExp(\`^\\\\s*${targetLetter}[.)]\\\\s*\`, 'i'),
+                new RegExp(\`^\\\\s*${targetLetter}\\\\s*[.-]\\\\s*\`, 'i'),
+                new RegExp(\`\\\\b${targetLetter}\\\\b\`, 'i')
+              ];
+              
+              for (const pattern of letterPatterns) {
+                if (pattern.test(optionTextLower)) {
+                  option.click();
+                  selected = true;
+                  break;
+                }
+              }
+              
+              if (selected) break;
+            }
+            
+            // Se não encontrou por padrão, tenta por índice baseado na letra
+            if (!selected) {
+              const letterIndex = '${targetLetter}'.charCodeAt(0) - 97; // 'a' = 0, 'b' = 1, etc.
+              if (letterIndex >= 0 && letterIndex < optionElements.length) {
+                optionElements[letterIndex].click();
                 selected = true;
-                break;
               }
             }
             
@@ -600,12 +788,87 @@ async function selectAnswerAndNext(correctOption) {
         })();
       `);
       
-      if (!selectResult.success) {
-        sendOutput('error', `Falha ao selecionar opção: ${selectResult.error}`);
-        return false;
+      if (selectResult.success) {
+        sendOutput('info', `Opção ${targetLetter} selecionada com sucesso.`);
       }
+    } else {
+      // Compatibilidade com formato antigo
+      const correctOption = correctAnswer.value || correctAnswer;
       
-      sendOutput('info', 'Resposta selecionada com sucesso.');
+      if (typeof correctOption === 'number') {
+        selectResult = await browserView.webContents.executeJavaScript(`
+          (function() {
+            try {
+              const optionElements = document.querySelectorAll('${config.optionsSelector}');
+              
+              const index = ${correctOption};
+              if (index >= 0 && index < optionElements.length) {
+                optionElements[index].click();
+                return { success: true };
+              } else {
+                return { success: false, error: 'Índice fora dos limites' };
+              }
+            } catch (error) {
+              return { success: false, error: error.toString() };
+            }
+          })();
+        `);
+      } else {
+        selectResult = await browserView.webContents.executeJavaScript(`
+          (function() {
+            try {
+              const optionElements = document.querySelectorAll('${config.optionsSelector}');
+              let selected = false;
+              
+              for (const option of optionElements) {
+                let optionText = "";
+                
+                try {
+                  const label = option.closest('label');
+                  if (label) {
+                    optionText = label.textContent.trim();
+                  } else {
+                    const id = option.id;
+                    if (id) {
+                      const associatedLabel = document.querySelector(\`label[for="\${id}"]\`);
+                      if (associatedLabel) {
+                        optionText = associatedLabel.textContent.trim();
+                      }
+                    }
+                    
+                    if (!optionText) {
+                      const parentElement = option.parentElement;
+                      if (parentElement) {
+                        const span = parentElement.querySelector('span');
+                        if (span) {
+                          optionText = span.textContent.trim();
+                        }
+                      }
+                    }
+                    
+                    if (!optionText) {
+                      optionText = option.value || "";
+                    }
+                  }
+                } catch (e) {
+                  optionText = option.value || "";
+                }
+                
+                if (optionText.toLowerCase() === "${correctOption.replace(/\\/g, '\\\\').replace(/"/g, '\\"').toLowerCase()}") {
+                  // Seleciona a opção
+                  option.click();
+                  selected = true;
+                  break;
+                }
+              }
+              
+              return { success: selected, error: selected ? null : 'Não foi possível encontrar a opção correta' };
+            } catch (error) {
+              return { success: false, error: error.toString() };
+            }
+          })();
+        `);
+      }
     }
     
     // Pequena pausa após selecionar
@@ -719,215 +982,7 @@ async function selectAnswerAndNext(correctOption) {
     sendOutput('error', `Erro ao executar script para selecionar resposta/navegar: ${error.message}`);
     return false;
   }
-}// Seleciona a resposta e clica no botão próximo ou finaliza o quiz
-async function selectAnswerAndNext(correctOption) {
-    try {
-      // Seleciona a resposta (mantendo o código existente)
-      // Se correctOption é um objeto com índice (caso de análise de imagem)
-      if (typeof correctOption === 'object' && correctOption.index !== undefined) {
-        const selectResult = await browserView.webContents.executeJavaScript(`
-          (function() {
-            try {
-              const optionElements = document.querySelectorAll('${config.optionsSelector}');
-              
-              // Seleciona pelo índice
-              const index = ${correctOption.index};
-              if (index >= 0 && index < optionElements.length) {
-                optionElements[index].click();
-                return { success: true };
-              } else {
-                return { success: false, error: 'Índice fora dos limites' };
-              }
-            } catch (error) {
-              return { success: false, error: error.toString() };
-            }
-          })();
-        `);
-        
-        if (!selectResult.success) {
-          sendOutput('error', `Falha ao selecionar opção: ${selectResult.error}`);
-          return false;
-        }
-        
-        sendOutput('info', `Opção ${correctOption.letter} selecionada com sucesso.`);
-      } else {
-        // Caso normal com texto da opção
-        const selectResult = await browserView.webContents.executeJavaScript(`
-          (function() {
-            try {
-              const optionElements = document.querySelectorAll('${config.optionsSelector}');
-              let selected = false;
-              
-              for (const option of optionElements) {
-                let optionText = "";
-                
-                // Tenta encontrar o texto da opção
-                try {
-                  const label = option.closest('label');
-                  if (label) {
-                    optionText = label.textContent.trim();
-                  } else {
-                    const id = option.id;
-                    if (id) {
-                      const associatedLabel = document.querySelector(\`label[for="\${id}"]\`);
-                      if (associatedLabel) {
-                        optionText = associatedLabel.textContent.trim();
-                      }
-                    }
-                    
-                    if (!optionText) {
-                      const parentElement = option.parentElement;
-                      if (parentElement) {
-                        const span = parentElement.querySelector('span');
-                        if (span) {
-                          optionText = span.textContent.trim();
-                        }
-                      }
-                    }
-                    
-                    if (!optionText) {
-                      optionText = option.value || "";
-                    }
-                  }
-                } catch (e) {
-                  optionText = option.value || "";
-                }
-                
-                if (optionText.toLowerCase() === \`${correctOption.toLowerCase().replace(/'/g, "\\'").replace(/"/g, '\\"')}\`) {
-                  // Seleciona a opção
-                  option.click();
-                  selected = true;
-                  break;
-                }
-              }
-              
-              return { success: selected, error: selected ? null : 'Não foi possível encontrar a opção correta' };
-            } catch (error) {
-              return { success: false, error: error.toString() };
-            }
-          })();
-        `);
-        
-        if (!selectResult.success) {
-          sendOutput('error', `Falha ao selecionar opção: ${selectResult.error}`);
-          return false;
-        }
-        
-        sendOutput('info', 'Resposta selecionada com sucesso.');
-      }
-      
-      // Pequena pausa após selecionar
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Verifica se o botão "Próxima página" existe
-      const navigationResult = await browserView.webContents.executeJavaScript(`
-        (function() {
-          try {
-            // Procura pelo botão "Próxima página"
-            const nextButton = document.querySelector('${config.nextButtonSelector}');
-            
-            if (nextButton) {
-              // Se encontrou o botão normal de próxima página
-              nextButton.click();
-              return { success: true, action: 'next', message: 'Avançado para próxima página' };
-            } else {
-              // Se não encontrou o botão normal, procura pelo botão ">"
-              const nextNavButton = document.querySelector('input[value=">"]');
-              
-              if (nextNavButton) {
-                // Se encontrou o botão de navegação ">"
-                nextNavButton.click();
-                return { success: true, action: 'nav-next', message: 'Avançado para próxima seção usando botão >' };
-              } else {
-                // Se não encontrou o botão de navegação, procura pelo botão "Enviar tudo e terminar"
-                const submitButton = document.querySelector('input[value="Enviar tudo e terminar"]');
-                
-                if (submitButton) {
-                  // Se encontrou o botão de finalização
-                  submitButton.click();
-                  return { success: true, action: 'finish', message: 'Clicado no botão Enviar tudo e terminar' };
-                } else {
-                  // Verifica se já está na tela de confirmação de envio
-                  const confirmDialog = document.querySelector('.confirmation-dialogue');
-                  if (confirmDialog) {
-                    // Clica no botão de confirmação final
-                    const confirmButton = document.querySelector('.confirmation-buttons input[value="Enviar tudo e terminar"]');
-                    if (confirmButton) {
-                      confirmButton.click();
-                      return { success: true, action: 'confirm', message: 'Confirmado envio final' };
-                    }
-                  }
-                  
-                  // Se não encontrou nenhum botão, verifica se há resultados da avaliação (tela final)
-                  const resultPage = document.querySelector('.quizreviewsummary');
-                  if (resultPage) {
-                    return { success: true, action: 'completed', message: 'Quiz já foi completado' };
-                  }
-                  
-                  return { success: false, error: 'Nenhum botão de navegação encontrado' };
-                }
-              }
-            }
-          } catch (error) {
-            return { success: false, error: error.toString() };
-          }
-        })();
-      `);
-      
-      if (!navigationResult.success) {
-        sendOutput('error', `Falha na navegação: ${navigationResult.error}`);
-        return false;
-      }
-      
-      sendOutput('info', navigationResult.message);
-      
-      // Se estamos na etapa de confirmação final, lida com o diálogo de confirmação
-      if (navigationResult.action === 'finish') {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Aguarda o diálogo aparecer
-        
-        const confirmResult = await browserView.webContents.executeJavaScript(`
-          (function() {
-            try {
-              // Procura pelo botão de confirmação no diálogo
-              const confirmButtons = document.querySelectorAll('.confirmation-buttons button');
-              
-              for (const button of confirmButtons) {
-                if (button.textContent.includes('Enviar tudo e terminar')) {
-                  button.click();
-                  return { success: true, message: 'Confirmação final enviada' };
-                }
-              }
-              
-              // Tenta via evento do moodle (matcher pelo código do botão)
-              try {
-                require(['core/yui'], function(Y) { 
-                  Y.one('.confirmation-buttons button').simulate('click');
-                });
-                return { success: true, message: 'Confirmação final enviada via YUI' };
-              } catch (e) {
-                console.log('Erro ao usar YUI:', e);
-              }
-              
-              return { success: false, error: 'Botão de confirmação não encontrado' };
-            } catch (error) {
-              return { success: false, error: error.toString() };
-            }
-          })();
-        `);
-        
-        if (!confirmResult.success) {
-          sendOutput('warning', `Falha na confirmação final: ${confirmResult.error}. Continuando automação...`);
-        } else {
-          sendOutput('info', confirmResult.message);
-        }
-      }
-      
-      return true;
-    } catch (error) {
-      sendOutput('error', `Erro ao executar script para selecionar resposta/navegar: ${error.message}`);
-      return false;
-    }
-  }
+}
 
 // Pausa a automação
 function pauseAutomation() {
