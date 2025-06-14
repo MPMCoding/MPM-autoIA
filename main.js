@@ -427,6 +427,41 @@ ipcMain.on('db-query', (event, query, params) => {
   }
 });
 
+// Handler para salvar perguntas e respostas no banco de dados
+ipcMain.on('save-question-answer', (event, data) => {
+  console.log('[main.js] Recebido pedido para salvar pergunta e resposta:', data);
+  try {
+    // Encaminha a solicitação para o processo de renderização (navegador.component.ts)
+    // que irá usar o DatabaseService para salvar no banco de dados
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('save-question-answer', data);
+      console.log('[main.js] Solicitação de salvamento encaminhada para o processo de renderização');
+    } else {
+      console.error('[main.js] Não foi possível encaminhar solicitação: mainWindow não disponível');
+      if (event) {
+        event.reply('save-question-answer-result', { 
+          success: false, 
+          error: 'Janela principal não disponível' 
+        });
+      }
+    }
+  } catch (err) {
+    console.error('[main.js] Erro ao processar solicitação de salvamento:', err.message);
+    if (event) {
+      event.reply('save-question-answer-result', { 
+        success: false, 
+        error: err.message 
+      });
+    }
+  }
+});
+
+// Handler para receber o resultado do salvamento da pergunta e resposta
+ipcMain.on('save-question-answer-result', (event, result) => {
+  console.log('[main.js] Recebido resultado do salvamento:', result);
+  // Pode encaminhar o resultado de volta para o browser_automation.js se necessário
+});
+
 // --- Eventos do App --- 
 
 // Evento para redimensionamento da janela

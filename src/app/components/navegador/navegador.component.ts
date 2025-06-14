@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef, OnDestroy, NgZone } from "@angular/core";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { ElectronService } from "../../services/electron.service";
+import { DatabaseService } from "../../services/database.service";
 
 // Interface para o IPC Renderer (importada ou definida aqui se necessário)
 interface IpcRenderer {
@@ -38,7 +39,8 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
     private electronService: ElectronService,
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private databaseService: DatabaseService
   ) {
     console.log("[NavegadorComponent] Constructor - Verificando ambiente Electron e IPC.");
     this.isElectron = this.electronService.isElectron;
@@ -115,6 +117,7 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.ipcRenderer.removeAllListeners("browser-view-created");
       this.ipcRenderer.removeAllListeners("automation-status");
       this.ipcRenderer.removeAllListeners("automation-output");
+      this.ipcRenderer.removeAllListeners("save-question-answer");
       this.browserViewInitialized = false; // Marca como não inicializado
     } else {
         console.log("[NavegadorComponent] ngOnDestroy - IPC indisponível, pulando limpeza IPC.");
@@ -200,8 +203,37 @@ export class NavegadorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.detectChanges();
       });
     });
-    console.log("[NavegadorComponent] setupIpcListeners - Listeners configurados.");
-  }
+    
+    // Handler para salvar perguntas e respostas no banco de dados
+    this.ipcRenderer.on("save-question-answer", (event: any, data: any) => {
+      this.ngZone.run(async () => {
+        console.log("[NavegadorComponent] IPC save-question-answer recebido:", data);
+        try {
+          // Extrai a pergunta, resposta e metadados
+          const { pergunta, resposta, disciplina, modulo } = data;
+          
+          // Salva no banco de dados usando o DatabaseService
+          const success = await this.databaseService.savePergunta(pergunta, resposta, disciplina, modulo);
+          
+          // Envia resposta de volta para o processo principal
+          if (this.ipcRenderer) {
+            this.ipcRenderer.send("save-question-answer-result", { success });
+          }
+          
+          console.log("[NavegadorComponent] Pergunta e resposta salvas com sucesso:", success);
+        } catch (error) {
+          console.error("[NavegadorComponent] Erro ao salvar pergunta e resposta:", error);
+          // Envia resposta de erro de volta para o processo principal
+          if (this.ipcRenderer) {
+            this.ipcRenderer.send("save-question-answer-result", { 
+              success: false, 
+              error: error instanceof Error ? error.message : String(error) 
+            });
+          }
+        }
+      });
+    });
+    }
 
   goHome() {
       console.log('[NavegadorComponent] goHome() chamado pelo botão Home.');

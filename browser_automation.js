@@ -249,6 +249,40 @@ let config = {
   downloadImages: true      // Baixar imagens da página
 };
 
+// Salva a pergunta e resposta no banco de dados
+async function saveQuestionAndAnswer(question, answer) {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    throw new Error('Janela principal não disponível');
+  }
+  
+  return new Promise((resolve, reject) => {
+    // Envia um evento IPC para o renderer para salvar a pergunta e resposta
+    mainWindow.webContents.send('save-question-answer', {
+      pergunta: question,
+      resposta: answer
+    });
+    
+    // Configura um listener para receber a confirmação
+    const listener = (event, result) => {
+      ipcMain.removeListener('save-question-answer-result', listener);
+      if (result.success) {
+        resolve();
+      } else {
+        reject(new Error(result.error || 'Erro desconhecido ao salvar pergunta e resposta'));
+      }
+    };
+    
+    // Registra o listener para receber a resposta
+    ipcMain.once('save-question-answer-result', listener);
+    
+    // Define um timeout para evitar que o promise fique pendente indefinidamente
+    setTimeout(() => {
+      ipcMain.removeListener('save-question-answer-result', listener);
+      resolve(); // Resolve mesmo sem confirmação para não bloquear a automação
+    }, 5000);
+  });
+}
+
 // Inicializa o módulo de automação
 function initAutomation(bView, window) {
   browserView = bView;
@@ -500,13 +534,23 @@ async function startAutomation() {
         }
 
         // Seleciona a resposta e avança
-        const success = await selectAnswerAndNext(correctOption);
-        
-        if (!success) {
-          sendOutput('error', 'Falha ao selecionar resposta ou avançar. Parando automação.');
-          stopAutomation();
-          break;
-        }
+const success = await selectAnswerAndNext(correctOption);
+
+if (!success) {
+  sendOutput('error', 'Falha ao selecionar resposta ou avançar. Parando automação.');
+  stopAutomation();
+  break;
+}
+
+// Salva a pergunta e resposta no banco de dados
+if (question && correctOption && correctOption.rawAnswer) {
+  try {
+    await saveQuestionAndAnswer(question, correctOption.rawAnswer, options);
+    sendOutput('info', 'Pergunta e resposta salvas no banco de dados.');
+  } catch (error) {
+    sendOutput('warning', `Erro ao salvar pergunta e resposta: ${error.message}`);
+  }
+}
 
         // Pausa entre perguntas
         await new Promise(resolve => setTimeout(resolve, 3000));
@@ -617,32 +661,93 @@ async function getQuestionAndOptions() {
   }
 }
 
+// Função para salvar a pergunta e resposta no banco de dados
+async function saveQuestionAndAnswer(question, answer, options) {
+  try {
+    sendOutput('info', 'Salvando pergunta e resposta no banco de dados...');
+    
+    // Formata as opções como texto para armazenamento
+    let optionsText = '';
+    if (options && options.length > 0) {
+      optionsText = options.map(opt => `${opt.letter}: ${opt.text || opt.cleanText}`).join('\n');
+    }
+    
+    // Tenta extrair disciplina e módulo da URL ou do conteúdo da página
+    let disciplina = null;
+    let modulo = null;
+    
+    // Tenta extrair do título da página ou da URL
+    try {
+      const pageUrl = browserView.webContents.getURL();
+      const pageTitle = await browserView.webContents.executeJavaScript('document.title');
+      
+      // Extrai informações do título ou URL (exemplo simplificado)
+      // Aqui você pode implementar uma lógica mais sofisticada baseada na estrutura do site
+      if (pageTitle) {
+        // Exemplo: "Disciplina - Módulo X: Título da Aula"
+        const titleMatch = pageTitle.match(/([^-:]+)\s*[-:]\s*([^:]+)/);
+        if (titleMatch) {
+          disciplina = titleMatch[1].trim();
+          modulo = titleMatch[2].trim();
+        }
+      }
+      
+      // Se não conseguiu extrair do título, tenta da URL
+      if (!disciplina && pageUrl) {
+        // Exemplo: extrair de URLs como /cursos/python/modulo-2/
+        const urlMatch = pageUrl.match(/\/cursos\/([^\/]+)\/([^\/]+)\//i);
+        if (urlMatch) {
+          disciplina = urlMatch[1].replace(/-/g, ' ');
+          modulo = urlMatch[2].replace(/-/g, ' ');
+        }
+      }
+    } catch (e) {
+      sendOutput('warning', `Não foi possível extrair metadados: ${e.message}`);
+    }
+    
+    // Envia para o processo principal via IPC
+    ipcMain.emit('save-question-answer', null, {
+      pergunta: question,
+      resposta: answer,
+      opcoes: optionsText,
+      disciplina: disciplina,
+      modulo: modulo
+    });
+    
+    sendOutput('info', 'Solicitação de salvamento enviada.');
+    return true;
+  } catch (error) {
+    sendOutput('error', `Erro ao salvar pergunta e resposta: ${error.message}`);
+    return false;
+  }
+}
+
 // Obtém a resposta do Gemini
-async function getGeminiAnswer(prompt, imageBase64 = null, options = []) {
+async function getGeminiAnswer(prompt, imageParts = [], options = []) {
   try {
     sendOutput('info', 'Enviando prompt para Gemini...');
     
     // Usar a função callGeminiAPI implementada no início do arquivo
-    const answerText = await callGeminiAPI(prompt, imageBase64);
+    const answerText = await callGeminiAPI(prompt, imageParts);
     
     sendOutput('info', `Resposta recebida do Gemini: ${answerText}`);
     
     // Extrai apenas a letra da resposta (caso o modelo retorne mais que apenas a letra)
     const letterMatch = answerText.trim().match(/\b([a-e])\b/i);
     if (letterMatch) {
-      return { type: 'letter', value: letterMatch[1].toLowerCase() };
+      return { type: 'letter', value: letterMatch[1].toLowerCase(), rawAnswer: answerText };
     }
     
     // Tenta extrair de outros formatos
     const altMatch = answerText.match(/\(([a-e])\)|([a-e])\)|letra\s*([a-e])|opção\s*([a-e])/i);
     if (altMatch) {
-      return { type: 'letter', value: (altMatch[1] || altMatch[2] || altMatch[3] || altMatch[4]).toLowerCase() };
+      return { type: 'letter', value: (altMatch[1] || altMatch[2] || altMatch[3] || altMatch[4]).toLowerCase(), rawAnswer: answerText };
     }
     
     // Se não encontrou letra, tenta índice
     const indexMatch = answerText.match(/\b([0-4])\b/);
     if (indexMatch) {
-      return { type: 'index', value: parseInt(indexMatch[1]) };
+      return { type: 'index', value: parseInt(indexMatch[1]), rawAnswer: answerText };
     }
     
     // Tenta correspondência por conteúdo se temos opções
@@ -664,7 +769,7 @@ async function getGeminiAnswer(prompt, imageBase64 = null, options = []) {
         
         // Se mais de 50% das palavras significativas coincidem
         if (words.length > 0 && matchCount / words.length > 0.5) {
-          return { type: 'letter', value: option.letter };
+          return { type: 'letter', value: option.letter, rawAnswer: answerText };
         }
       }
     }
@@ -674,6 +779,182 @@ async function getGeminiAnswer(prompt, imageBase64 = null, options = []) {
   } catch (error) {
     sendOutput('error', `Erro ao obter resposta do Gemini: ${error.message}`);
     return null;
+  }
+}
+
+// Função para finalizar o quiz clicando no botão "Enviar tudo e terminar"
+async function finalizarQuiz() {
+  try {
+    sendOutput('info', 'Tentando finalizar o quiz...');
+    
+    // Primeira tentativa
+    let confirmResult = await browserView.webContents.executeJavaScript(`
+      (function() {
+        try {
+          console.log('Tentando encontrar botão de confirmação final...');
+          
+          const confirmButtons = document.querySelectorAll('.confirmation-buttons button');
+          for (const button of confirmButtons) {
+            if (button.textContent.includes('Enviar tudo e terminar')) {
+              button.click();
+              return { success: true, message: 'Confirmação final enviada (botão dialog)' };
+            }
+          }
+    
+          // Procura especificamente pelo botão "Enviar tudo e terminar" evitando o "Retornar à tentativa"
+          const allButtons = document.querySelectorAll('button.btn.btn-secondary[type="submit"], button.btn.btn-secondary');
+          for (const btn of allButtons) {
+            if (btn.textContent.trim() === 'Enviar tudo e terminar') {
+              btn.click();
+              return { success: true, message: 'Confirmação final enviada (botão Enviar tudo e terminar)' };
+            }
+          }
+          
+          // Procura pelo botão dentro de um form que aponta para processattempt.php
+          const processForm = document.querySelector('form[action*="processattempt.php"]');
+          if (processForm) {
+            const submitBtn = processForm.querySelector('button[type="submit"]');
+            if (submitBtn) {
+              submitBtn.click();
+              return { success: true, message: 'Confirmação final enviada (botão dentro do form processattempt)' };
+            }
+          }
+    
+          const anyButton = Array.from(document.querySelectorAll('.btn.btn-secondary')).find(btn => 
+            btn.textContent.includes('Enviar tudo e terminar'));
+          if (anyButton) {
+            anyButton.click();
+            return { success: true, message: 'Confirmação final enviada (botão secundário)' };
+          }
+    
+          const submitForm = document.querySelector('form[action*="processattempt.php"]');
+          if (submitForm) {
+            submitForm.submit();
+            return { success: true, message: 'Confirmação final enviada (via formulário)' };
+          }
+    
+          // Fallback final se nenhum método funcionar
+          return { success: false, error: 'Nenhum botão ou formulário encontrado para confirmação final' };
+        } catch (error) {
+          return { success: false, error: error.toString() };
+        }
+      })();
+    `);
+    
+    if (confirmResult && confirmResult.success) {
+      sendOutput('info', `Confirmação final: ${confirmResult.message || 'Enviado com sucesso'}`);
+      return true;
+    }
+    
+    // Se falhou, aguarda e tenta novamente
+    sendOutput('warning', 'Primeira tentativa falhou. Aguardando 2 segundos e tentando novamente...');
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Segunda tentativa
+    confirmResult = await browserView.webContents.executeJavaScript(`
+      (function() {
+        try {
+          // Procura especificamente pelo botão "Enviar tudo e terminar" evitando o "Retornar à tentativa"
+          const allButtons = document.querySelectorAll('button.btn.btn-secondary[type="submit"], button.btn.btn-secondary');
+          for (const btn of allButtons) {
+            if (btn.textContent.trim() === 'Enviar tudo e terminar') {
+              btn.click();
+              return { success: true, message: 'Botão Enviar tudo e terminar clicado com sucesso (segunda tentativa)' };
+            }
+          }
+          
+          // Procura pelo botão dentro de um form que aponta para processattempt.php
+          const processForm = document.querySelector('form[action*="processattempt.php"]');
+          if (processForm) {
+            const submitBtn = processForm.querySelector('button[type="submit"]');
+            if (submitBtn) {
+              submitBtn.click();
+              return { success: true, message: 'Botão dentro do form processattempt clicado com sucesso (segunda tentativa)' };
+            }
+          }
+          
+          const submitForm = document.querySelector('form[action*="processattempt.php"]');
+          if (submitForm) {
+            submitForm.submit();
+            return { success: true, message: 'Formulário enviado com sucesso (segunda tentativa)' };
+          }
+          
+          return { success: false, error: 'Botão de confirmação não encontrado (segunda tentativa)' };
+        } catch (error) {
+          return { success: false, error: error.toString() };
+        }
+      })();
+    `);
+    
+    if (confirmResult && confirmResult.success) {
+      sendOutput('info', `Confirmação final: ${confirmResult.message || 'Enviado com sucesso'}`);
+      return true;
+    }
+    
+    // Se ainda falhou, aguarda mais e tenta uma terceira vez
+    sendOutput('warning', 'Segunda tentativa falhou. Aguardando mais 2 segundos e tentando novamente...');
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Terceira tentativa
+    confirmResult = await browserView.webContents.executeJavaScript(`
+      (function() {
+        try {
+          // Tenta usar YUI para simular o clique especificamente no botão "Enviar tudo e terminar"
+          if (typeof Y !== 'undefined') {
+            const submitButtons = Y.all('button.btn.btn-secondary[type="submit"], button.btn.btn-secondary');
+            if (submitButtons && submitButtons.size() > 0) {
+              // Procura pelo botão com o texto correto
+              let found = false;
+              submitButtons.each(function(btn) {
+                if (btn.get('text').trim() === 'Enviar tudo e terminar') {
+                  btn.simulate('click');
+                  found = true;
+                  return false; // Interrompe o loop
+                }
+              });
+              
+              if (found) {
+                return { success: true, message: 'Botão Enviar tudo e terminar clicado via YUI (terceira tentativa)' };
+              }
+              
+              // Se não encontrou o botão específico, tenta encontrar o form correto
+              const processForm = Y.one('form[action*="processattempt.php"]');
+              if (processForm) {
+                const submitBtn = processForm.one('button[type="submit"]');
+                if (submitBtn) {
+                  submitBtn.simulate('click');
+                  return { success: true, message: 'Botão dentro do form processattempt clicado via YUI (terceira tentativa)' };
+                }
+              }
+            }
+          }
+          
+          // Tenta enviar o formulário diretamente
+          const forms = document.querySelectorAll('form');
+          for (const form of forms) {
+            if (form.action && form.action.includes('processattempt.php')) {
+              form.submit();
+              return { success: true, message: 'Formulário enviado diretamente (terceira tentativa)' };
+            }
+          }
+          
+          return { success: false, error: 'Todas as tentativas falharam' };
+        } catch (error) {
+          return { success: false, error: error.toString() };
+        }
+      })();
+    `);
+    
+    if (confirmResult && confirmResult.success) {
+      sendOutput('info', `Confirmação final: ${confirmResult.message || 'Enviado com sucesso'}`);
+      return true;
+    }
+    
+    sendOutput('error', 'Não foi possível finalizar o quiz após múltiplas tentativas');
+    return false;
+  } catch (error) {
+    sendOutput('error', `Erro ao finalizar quiz: ${error.toString()}`);
+    return false;
   }
 }
 
@@ -878,6 +1159,12 @@ async function selectAnswerAndNext(correctAnswer) {
     const navigationResult = await browserView.webContents.executeJavaScript(`
       (function() {
         try {
+          // Verifica se estamos na página de resumo/confirmação
+          const summaryPage = document.querySelector('.quizsummaryofattempt');
+          if (summaryPage) {
+            return { success: true, action: 'summary', message: 'Página de resumo detectada' };
+          }
+          
           // Procura pelo botão "Próxima página"
           const nextButton = document.querySelector('${config.nextButtonSelector}');
           
@@ -894,19 +1181,42 @@ async function selectAnswerAndNext(correctAnswer) {
               nextNavButton.click();
               return { success: true, action: 'nav-next', message: 'Avançado para próxima seção usando botão >' };
             } else {
-              // Se não encontrou o botão de navegação, procura pelo botão "Enviar tudo e terminar"
-              const submitButton = document.querySelector('input[value="Enviar tudo e terminar"]');
+              // Se não encontrou o botão de navegação, procura pelo botão "Enviar tudo e terminar" ou "Finalizar tentativa"
+              // Primeiro procura especificamente pelo botão com o texto "Enviar tudo e terminar"
+              const allButtons = document.querySelectorAll('button.btn.btn-secondary');
+              let foundFinishButton = false;
+              
+              for (const btn of allButtons) {
+                if (btn.textContent.trim() === 'Enviar tudo e terminar') {
+                  btn.click();
+                  foundFinishButton = true;
+                  return { success: true, action: 'finish', message: 'Clicado no botão Enviar tudo e terminar' };
+                }
+              }
+              
+              // Se não encontrou pelo texto, procura pelo botão dentro do form correto
+              const processForm = document.querySelector('form[action*="processattempt.php"]');
+              if (processForm) {
+                const submitBtn = processForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                  submitBtn.click();
+                  return { success: true, action: 'finish', message: 'Clicado no botão de finalização dentro do form processattempt' };
+                }
+              }
+              
+              // Fallback para os seletores antigos
+              const submitButton = document.querySelector('input[value="Enviar tudo e terminar"], input[value="Finalizar tentativa"], input[value="Finalizar tentativa ..."]');
               
               if (submitButton) {
                 // Se encontrou o botão de finalização
                 submitButton.click();
-                return { success: true, action: 'finish', message: 'Clicado no botão Enviar tudo e terminar' };
+                return { success: true, action: 'finish', message: 'Clicado no botão de finalização (fallback)' };
               } else {
                 // Verifica se já está na tela de confirmação de envio
                 const confirmDialog = document.querySelector('.confirmation-dialogue');
                 if (confirmDialog) {
                   // Clica no botão de confirmação final
-                  const confirmButton = document.querySelector('.confirmation-buttons input[value="Enviar tudo e terminar"]');
+                  const confirmButton = document.querySelector('.confirmation-buttons input[value="Enviar tudo e terminar"], .confirmation-buttons input[value="Finalizar tentativa"], .confirmation-buttons input[value="Finalizar tentativa ..."], .confirmation-buttons button.btn.btn-secondary');
                   if (confirmButton) {
                     confirmButton.click();
                     return { success: true, action: 'confirm', message: 'Confirmado envio final' };
@@ -936,45 +1246,18 @@ async function selectAnswerAndNext(correctAnswer) {
     
     sendOutput('info', navigationResult.message);
     
+    // Se estamos na página de resumo, tenta finalizar o quiz
+    if (navigationResult.action === 'summary') {
+      // Aguarda 2 segundos para garantir que a página carregou completamente
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return await finalizarQuiz();
+    }
+    
     // Se estamos na etapa de confirmação final, lida com o diálogo de confirmação
     if (navigationResult.action === 'finish') {
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Aguarda o diálogo aparecer
-      
-      const confirmResult = await browserView.webContents.executeJavaScript(`
-        (function() {
-          try {
-            // Procura pelo botão de confirmação no diálogo
-            const confirmButtons = document.querySelectorAll('.confirmation-buttons button');
-            
-            for (const button of confirmButtons) {
-              if (button.textContent.includes('Enviar tudo e terminar')) {
-                button.click();
-                return { success: true, message: 'Confirmação final enviada' };
-              }
-            }
-            
-            // Tenta via evento do moodle (matcher pelo código do botão)
-            try {
-              require(['core/yui'], function(Y) { 
-                Y.one('.confirmation-buttons button').simulate('click');
-              });
-              return { success: true, message: 'Confirmação final enviada via YUI' };
-            } catch (e) {
-              console.log('Erro ao usar YUI:', e);
-            }
-            
-            return { success: false, error: 'Botão de confirmação não encontrado' };
-          } catch (error) {
-            return { success: false, error: error.toString() };
-          }
-        })();
-      `);
-      
-      if (!confirmResult.success) {
-        sendOutput('warning', `Falha na confirmação final: ${confirmResult.error}. Continuando automação...`);
-      } else {
-        sendOutput('info', confirmResult.message);
-      }
+      // Aguarda 2 segundos para garantir que o diálogo apareceu
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return await finalizarQuiz();
     }
     
     return true;
@@ -1031,6 +1314,7 @@ module.exports = {
   stopAutomation,
   pauseAutomation,
   resumeAutomation,
+  finalizarQuiz,
   captureScreenshot,
   downloadImageAsBase64,
   analyzeImage: async (imageBase64, prompt) => callGeminiAPI(prompt, imageBase64)
