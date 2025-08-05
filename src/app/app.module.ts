@@ -16,6 +16,7 @@ import { ProfessorComponent } from './components/professor/professor.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { NavegadorComponent } from './components/navegador/navegador.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { UserInfoComponent } from './components/user-info/user-info.component';
 
 // Diretivas
 import { WebviewDirective } from './directives/webview.directive';
@@ -34,21 +35,27 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ChartModule } from 'primeng/chart';
 import { MessageModule } from 'primeng/message';
+import { TagModule } from 'primeng/tag';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 // Serviços
 import { DatabaseService } from './services/database.service';
 import { ElectronService } from './services/electron.service';
+import { AuthService } from './services/auth.service';
+
+// Guards
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'navegador', component: NavegadorComponent },
-  { path: 'resumos', component: ResumosComponent },
-  { path: 'pesquisa', component: PesquisaComponent },
-  { path: 'perguntas', component: PerguntasComponent },
-  { path: 'professor', component: ProfessorComponent },
-  { path: 'admin', component: AdminComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'navegador', component: NavegadorComponent, canActivate: [AuthGuard] },
+  { path: 'resumos', component: ResumosComponent, canActivate: [AuthGuard] },
+  { path: 'pesquisa', component: PesquisaComponent, canActivate: [AuthGuard] },
+  { path: 'perguntas', component: PerguntasComponent, canActivate: [AuthGuard] },
+  { path: 'professor', component: ProfessorComponent, canActivate: [AuthGuard] },
+  { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({
@@ -63,6 +70,7 @@ const routes: Routes = [
     AdminComponent,
     NavegadorComponent,
     SidebarComponent,
+    UserInfoComponent,
     WebviewDirective
   ],
   imports: [
@@ -82,12 +90,16 @@ const routes: Routes = [
     DialogModule,
     ToastModule,
     ChartModule,
-    MessageModule
+    MessageModule,
+    TagModule,
+    ProgressBarModule
   ],
   providers: [
     MessageService,
     DatabaseService,
-    ElectronService
+    ElectronService,
+    AuthService,
+    AuthGuard
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

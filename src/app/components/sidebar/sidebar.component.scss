@@ -1,4 +1,4 @@
-/* Estilos para o componente de sidebar */
+/* Estilos modernos para o componente de sidebar */
 
 :host {
   display: block;
@@ -9,35 +9,232 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #1e293b;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
   color: white;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+    z-index: 1;
+  }
 }
 
-.sidebar-header {
-  padding: 1rem;
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+// Logo Section
+.logo-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+
+  .logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    
+    i {
+      color: white;
+      font-size: 1.5rem;
+    }
+  }
+
+  .app-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff, #e2e8f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .app-description {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0;
+    font-weight: 400;
+  }
 }
 
-.sidebar-logo {
-  max-width: 120px;
-  margin-bottom: 0.5rem;
+// User Section
+.user-section {
+  padding: 0 1rem;
 }
 
-.sidebar-title {
-  font-size: 1.2rem;
-  margin: 0;
-  color: white;
-}
-
-.sidebar-menu {
+// Menu Section
+.menu-section {
   flex: 1;
   padding: 1rem 0;
+  overflow-y: auto;
+
+  .menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .menu-item {
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s;
+      }
+
+      .menu-icon {
+        font-size: 1.1rem;
+        margin-right: 0.75rem;
+        width: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      span {
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        
+        &::before {
+          left: 100%;
+        }
+
+        .menu-icon {
+          transform: scale(1.1);
+          color: #60a5fa;
+        }
+      }
+
+      &.active {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        transform: translateX(4px);
+        
+        &::after {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 3px;
+          height: 20px;
+          background: #60a5fa;
+          border-radius: 2px;
+        }
+
+        .menu-icon {
+          color: #ffffff;
+          transform: scale(1.1);
+        }
+
+        span {
+          color: #ffffff;
+          font-weight: 600;
+        }
+      }
+    }
+  }
 }
 
-.sidebar-footer {
-  padding: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 0.8rem;
-  text-align: center;
+// Animações
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.sidebar-container {
+  animation: slideIn 0.4s ease-out;
+}
+
+.menu-item {
+  animation: slideIn 0.4s ease-out;
+  animation-fill-mode: both;
+  
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .sidebar-container {
+    width: 100%;
+    position: fixed;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    
+    &.mobile-open {
+      transform: translateX(0);
+    }
+  }
+  
+  .logo-section {
+    padding: 1rem;
+    
+    .app-name {
+      font-size: 1.2rem;
+    }
+  }
+  
+  .menu-item {
+    margin: 0.2rem 0.5rem;
+    padding: 0.6rem 0.8rem;
+  }
+}
+
+// Scrollbar personalizada
+.menu-section::-webkit-scrollbar {
+  width: 4px;
+}
+
+.menu-section::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.menu-section::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
 }

@@ -30,7 +30,7 @@
     "@types/node": "^18.16.0",
     "electron": "^25.0.0",
     "electron-builder": "^24.0.0",
-    "electron-rebuild": "^3.2.13",
+    "electron-rebuild": "^3.2.9",
     "typescript": "~5.0.4"
   },
   "dependencies": {
@@ -42,6 +42,7 @@
     "@angular/platform-browser": "^16.0.0",
     "@angular/platform-browser-dynamic": "^16.0.0",
     "@angular/router": "^16.0.0",
+    "@supabase/supabase-js": "^2.53.0",
     "better-sqlite3": "^8.4.0",
     "chart.js": "^4.4.9",
     "primeflex": "^3.3.0",

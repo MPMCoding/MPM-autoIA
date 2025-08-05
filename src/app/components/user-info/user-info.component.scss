@@ -1,0 +1,181 @@
+.user-info-container {
+  .user-card {
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-200);
+    background: var(--surface-primary);
+    
+    ::ng-deep .p-card-body {
+      padding: 1.25rem;
+    }
+    
+    .user-info-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    
+    .user-details {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      min-width: 0; // Para permitir text-overflow
+    }
+    
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: var(--shadow-sm);
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+    }
+    
+    .user-text {
+      flex: 1;
+      min-width: 0;
+      
+      h5 {
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin: 0 0 0.25rem 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      p {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    
+    .user-actions {
+      flex-shrink: 0;
+      
+      ::ng-deep .p-button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+        border-radius: var(--border-radius-md);
+        transition: all var(--transition-fast);
+        
+        &.p-button-outlined {
+          border-color: var(--gray-300);
+          color: var(--text-secondary);
+          
+          &:hover {
+            background: var(--danger-color);
+            border-color: var(--danger-color);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+          }
+        }
+        
+        .p-button-icon {
+          font-size: 0.75rem;
+        }
+        
+        .p-button-label {
+          font-weight: 500;
+        }
+      }
+    }
+  }
+  
+  .subscription-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    .subscription-details {
+      .progress-container {
+        .progress-success ::ng-deep .p-progressbar-value {
+          background: linear-gradient(90deg, #4CAF50, #66BB6A);
+        }
+        
+        .progress-warning ::ng-deep .p-progressbar-value {
+          background: linear-gradient(90deg, #FF9800, #FFB74D);
+        }
+        
+        .progress-danger ::ng-deep .p-progressbar-value {
+          background: linear-gradient(90deg, #F44336, #EF5350);
+        }
+      }
+      
+      .alert {
+        padding: 12px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        
+        &.alert-warning {
+          background-color: #fff3cd;
+          border: 1px solid #ffeaa7;
+          color: #856404;
+        }
+        
+        &.alert-danger {
+          background-color: #f8d7da;
+          border: 1px solid #f5c6cb;
+          color: #721c24;
+        }
+      }
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .user-info-container {
+    .user-card {
+      .flex {
+        flex-direction: column;
+        gap: 1rem;
+        
+        .flex:first-child {
+          flex-direction: row;
+        }
+      }
+    }
+  }
+}
+
+// Animações
+.user-info-container {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Hover effects
+.user-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.subscription-card:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}

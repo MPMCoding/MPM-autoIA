@@ -1,0 +1,92 @@
+<div class="user-info-container" *ngIf="currentUser">
+  <!-- Card de Informações do Usuário -->
+  <p-card styleClass="user-card mb-3">
+    <div class="user-info-content">
+      <div class="user-details">
+        <div class="user-avatar">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="user-text">
+          <h5>{{ currentUser.nome }}</h5>
+          <p>{{ currentUser.email }}</p>
+        </div>
+      </div>
+      <div class="user-actions">
+        <p-button 
+          icon="pi pi-sign-out" 
+          label="Sair" 
+          styleClass="p-button-outlined p-button-sm"
+          (click)="logout()">
+        </p-button>
+      </div>
+    </div>
+  </p-card>
+
+  <!-- Card de Status da Assinatura -->
+  <p-card styleClass="subscription-card" *ngIf="subscriptionStatus">
+    <div class="flex align-items-center justify-content-between mb-3">
+      <h6 class="m-0 text-900">Status da Assinatura</h6>
+      <p-tag 
+        [value]="getStatusText()" 
+        [severity]="getStatusSeverity()"
+        styleClass="text-sm">
+      </p-tag>
+    </div>
+    
+    <div class="subscription-details">
+      <div class="flex justify-content-between align-items-center mb-2">
+        <span class="text-600 text-sm">Data de Vencimento:</span>
+        <span class="text-900 font-medium text-sm">{{ formatExpirationDate() }}</span>
+      </div>
+      
+      <div class="flex justify-content-between align-items-center mb-3" *ngIf="subscriptionStatus.isActive">
+        <span class="text-600 text-sm">Dias Restantes:</span>
+        <span class="text-900 font-medium text-sm">{{ subscriptionStatus.daysUntilExpiration }}</span>
+      </div>
+      
+      <!-- Barra de Progresso para Dias Restantes -->
+      <div class="progress-container mb-3" *ngIf="subscriptionStatus.isActive">
+        <div class="flex justify-content-between align-items-center mb-1">
+          <span class="text-xs text-600">Tempo Restante</span>
+          <span class="text-xs text-600">{{ subscriptionStatus.daysUntilExpiration }}/30 dias</span>
+        </div>
+        <p-progressBar 
+          [value]="(subscriptionStatus.daysUntilExpiration / 30) * 100"
+          [style]="{'height': '8px'}"
+          [styleClass]="getStatusSeverity() === 'danger' ? 'progress-danger' : getStatusSeverity() === 'warning' ? 'progress-warning' : 'progress-success'">
+        </p-progressBar>
+      </div>
+      
+      <!-- Avisos e Ações -->
+      <div class="subscription-actions">
+        <!-- Aviso de Expiração Próxima -->
+        <div *ngIf="subscriptionStatus.isActive && subscriptionStatus.daysUntilExpiration <= 7" 
+             class="alert alert-warning mb-2">
+          <i class="pi pi-exclamation-triangle mr-2"></i>
+          <span class="text-sm">
+            <strong>Atenção:</strong> Sua assinatura vence em 
+            {{ subscriptionStatus.daysUntilExpiration }} dia(s).
+          </span>
+        </div>
+        
+        <!-- Aviso de Expiração -->
+        <div *ngIf="!subscriptionStatus.isActive" 
+             class="alert alert-danger mb-2">
+          <i class="pi pi-times-circle mr-2"></i>
+          <span class="text-sm">
+            <strong>Assinatura Expirada:</strong> Renove para continuar usando o sistema.
+          </span>
+        </div>
+        
+        <!-- Botão de Renovação -->
+        <p-button 
+          *ngIf="!subscriptionStatus.isActive || subscriptionStatus.daysUntilExpiration <= 7"
+          label="Renovar Assinatura" 
+          icon="pi pi-refresh"
+          styleClass="p-button-warning w-full text-sm"
+          (click)="showRenewalInfo()">
+        </p-button>
+      </div>
+    </div>
+  </p-card>
+</div>

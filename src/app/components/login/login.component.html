@@ -9,7 +9,36 @@
         <p class="text-600">Seu assistente de aprendizagem inteligente</p>
       </div>
       
-      <form (ngSubmit)="login()" class="p-fluid">
+      <!-- Configuração do Supabase -->
+      <div *ngIf="showSupabaseConfig" class="mb-4">
+        <div class="text-center mb-3">
+          <h4 class="text-lg font-semibold text-800">Configuração do Supabase</h4>
+          <p class="text-sm text-600">Configure as credenciais do Supabase para continuar</p>
+        </div>
+        
+        <div class="field mb-3">
+          <span class="p-float-label">
+            <input id="supabaseUrl" type="url" pInputText [(ngModel)]="supabaseUrl" name="supabaseUrl" required>
+            <label for="supabaseUrl">URL do Supabase</label>
+          </span>
+        </div>
+        
+        <div class="field mb-3">
+          <span class="p-float-label">
+            <input id="supabaseKey" type="password" pInputText [(ngModel)]="supabaseKey" name="supabaseKey" required>
+            <label for="supabaseKey">Chave Anônima do Supabase</label>
+          </span>
+        </div>
+        
+        <div class="field mb-3">
+          <p-button label="Salvar Configuração" (click)="configureSupabase()" styleClass="p-button-success w-full"></p-button>
+        </div>
+        
+        <hr class="my-4">
+      </div>
+
+      <!-- Formulário de Login -->
+      <form (ngSubmit)="login()" class="p-fluid" [style.display]="showSupabaseConfig ? 'none' : 'block'">
         <div class="field mb-5">
           <span class="p-float-label p-input-icon-right">
             <i class="pi pi-envelope"></i>
@@ -32,11 +61,17 @@
           <p-button label="Entrar" type="submit" styleClass="p-button-primary w-full" [loading]="loading"></p-button>
         </div>
         
-        <div class="text-center">
+        <div class="text-center mb-3">
           <p class="text-sm text-600">
             Ainda não tem uma conta? 
             <a href="javascript:void(0)" class="text-primary hover:text-primary-darker" (click)="register()">Cadastre-se</a>
           </p>
+        </div>
+        
+        <div class="text-center">
+          <a href="javascript:void(0)" class="text-xs text-500 hover:text-primary" (click)="toggleSupabaseConfig()">
+            <i class="pi pi-cog mr-1"></i>Configurar Supabase
+          </a>
         </div>
       </form>
     </p-card>

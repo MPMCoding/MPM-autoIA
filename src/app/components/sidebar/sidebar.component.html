@@ -9,6 +9,11 @@
     </div>
   </div>
   
+  <!-- Informações do Usuário -->
+  <div class="user-section p-mb-4">
+    <app-user-info></app-user-info>
+  </div>
+  
   <nav class="menu-section">
     <ul class="menu-list">
       <li *ngFor="let item of menuItems" 
@@ -17,11 +22,6 @@
           (click)="navigateTo(item.route)">
         <i class="{{item.icon}} menu-icon"></i>
         <span>{{item.label}}</span>
-      </li>
-      
-      <li class="menu-item logout" (click)="logout()">
-        <i class="pi pi-sign-out menu-icon"></i>
-        <span>Sair</span>
       </li>
     </ul>
   </nav>

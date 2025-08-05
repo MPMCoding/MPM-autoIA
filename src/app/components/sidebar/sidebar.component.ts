@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 interface MenuItem {
   label: string;
@@ -24,7 +25,10 @@ export class SidebarComponent {
     { label: 'Administração', icon: 'pi pi-cog', route: '/admin', active: false },
   ];
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
     // Atualiza o item ativo com base na rota atual
     this.updateActiveItem(this.router.url);
     
@@ -46,8 +50,9 @@ export class SidebarComponent {
     this.router.navigate([route]);
   }
 
-  // Faz logout e retorna para a tela de login
-  logout() {
+  // Faz logout usando o AuthService
+  async logout() {
+    await this.authService.logout();
     this.router.navigate(['/login']);
   }
 }
